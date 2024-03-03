@@ -1,5 +1,5 @@
-// myPartL.ts
-// a Maltese-cross to illustrate the usage of the generic UI-app desiXY-ui and the generic CLI-app desiXY-cli
+// door.ts
+// a door design with an hyperbolic arc
 
 // step-1 : import from geometrix
 import type {

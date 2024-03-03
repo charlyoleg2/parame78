@@ -1,3 +1,3 @@
 // index.ts : entry point
 
-export * from './facade/myPartL';
+export * from './facade/door';
