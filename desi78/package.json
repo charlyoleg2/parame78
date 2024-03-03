@@ -38,10 +38,9 @@
 		"test:unit": "vitest",
 		"test:unit:once": "vitest --run",
 		"ci": "run-s check build pretty lint test:unit:once svgo",
-		"svgo1": "svgo --config ./svgo.config.cjs -f src/pointedCorners/svg -o dist/pgdsvg/",
-		"svgo2": "svgo --config ./svgo.config.cjs -f src/modifiedCorners/svg -o dist/pgdsvg/",
-		"svgo": "run-s svgo1 svgo2",
-		"browserBundleA": "esbuild src/myGroup1/myCircle.ts --bundle --format=esm --outfile=dist2/myCircle.js",
+		"svgo1": "svgo --config ./svgo.config.cjs -f src/facade/svg -o dist/pgdsvg/",
+		"svgo": "run-s svgo1",
+		"browserBundleA": "esbuild src/facade/door.ts --bundle --format=esm --outfile=dist2/door.js",
 		"browserBundleAll": "esbuild dist/index.js --bundle --format=esm --outfile=dist2/desi78.js",
 		"clean": "shx rm -fr dist dist2 node_modules"
 	},
