@@ -1,0 +1,68 @@
+{
+	"name": "parame78",
+	"version": "0.5.1",
+	"description": "parame78 is the top-monorepo for desi78",
+	"private": true,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/charlyoleg2/parame78.git"
+	},
+	"homepage": "https://charlyoleg2.github.io/parame78/",
+	"keywords": [
+		"cad",
+		"programmatic",
+		"2D",
+		"circle",
+		"stroke",
+		"arc",
+		"gear"
+	],
+	"author": "charlyoleg2",
+	"paxApps": {
+		"colorBg": "DarkGreen",
+		"colorTitle": "Orange",
+		"libs": [
+			"desi78"
+		]
+	},
+	"scripts": {
+		"degit_paxApps": "degit https://github.com/charlyoleg2/parame_paxApps/paxApps paxApps",
+		"del_package_lock": "shx rm package-lock.json",
+		"install_paxApps": "run-s degit_paxApps del_package_lock",
+		"clean_paxApps": "shx rm -fr paxApps",
+		"desi78:dev": "npm -w desi78 run dev",
+		"desi78:ci": "npm -w desi78 run ci",
+		"desi78:svgo": "npm -w des78 run svgo",
+		"desi78:clean": "npm -w desi78 run clean",
+		"desi78:version": "npm -w desi78 version patch",
+		"desi78:publish": "npm -w desi78 publish --provenance",
+		"paxScr:cirun": "npm -w paxScr run cirun",
+		"paxScr:brun": "npm -w paxScr run brun",
+		"paxScr:clean": "npm -w paxScr run clean",
+		"desiXY-ui:dev": "npm -w desiXY-ui run dev",
+		"desiXY-ui:build": "npm -w desiXY-ui run build",
+		"desiXY-ui:clean": "npm -w desiXY-ui run clean",
+		"desiXY-ui:preview": "npm -w desiXY-ui run preview",
+		"desiXY-cli:build": "npm -w desiXY-cli run build",
+		"desiXY-cli:clean": "npm -w desiXY-cli run clean",
+		"dev": "run-p desi78:dev desiXY-ui:dev",
+		"ci": "run-s desi78:ci paxScr:brun desiXY-ui:build desiXY-cli:build",
+		"svgo": "run-s desi78:svgo",
+		"clean-root": "shx rm -fr tmp output output2",
+		"clean": "run-s clean-root desi78:clean paxScr:clean desiXY-ui:clean desiXY-cli:clean",
+		"preview": "run-s desiXY-ui:preview",
+		"versions": "run-s desi78:version",
+		"gh-publish": "run-s desi78:publish",
+		"ls-workspaces": "npm -ws exec -c pwd"
+	},
+	"workspaces": [
+		"desi78",
+		"paxApps/*"
+	],
+	"type": "module",
+	"devDependencies": {
+		"degit": "^2.8.4",
+		"npm-run-all": "^4.1.5",
+		"shx": "^0.3.4"
+	}
+}
