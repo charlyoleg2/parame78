@@ -17,7 +17,7 @@ import {
 	//contourCircle,
 	figure,
 	//degToRad,
-	radToDeg,
+	//radToDeg,
 	ffix,
 	pNumber,
 	//pCheckbox,
@@ -29,19 +29,27 @@ import {
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
-	partName: 'myPartL',
+	partName: 'door',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('D1', 'mm', 10, 1, 200, 1),
-		pNumber('D2', 'mm', 30, 10, 200, 1),
-		pNumber('D3', 'mm', 60, 10, 200, 1),
-		pNumber('L1', 'mm', 40, 10, 200, 1)
+		pNumber('H1', 'mm', 500, 100, 4000, 10),
+		pNumber('H2', 'mm', 1600, 100, 4000, 10),
+		pNumber('H3', 'mm', 200, 10, 500, 10),
+		pNumber('L1', 'mm', 1200, 400, 4000, 10),
+		pNumber('L2', 'mm', 200, 50, 500, 10),
+		pNumber('R1', 'mm', 200, 50, 500, 10),
+		pNumber('R2', 'mm', 200, 50, 500, 10),
+		pNumber('W1', 'mm', 200, 50, 500, 10)
 	],
 	paramSvg: {
-		D1: 'door_face.svg',
-		D2: 'door_face.svg',
-		D3: 'door_face.svg',
-		L1: 'door_face.svg'
+		H1: 'door_face.svg',
+		H2: 'door_face.svg',
+		H3: 'door_face.svg',
+		L1: 'door_face.svg',
+		L2: 'door_face.svg',
+		R1: 'door_face.svg',
+		R2: 'door_face.svg',
+		W1: 'door_face.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -53,43 +61,39 @@ const pDef: tParamDef = {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const fig1 = figure();
+	const figDoor = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const R1 = param.D1 / 2;
-		const R2 = param.D2 / 2;
-		const R3 = param.D3 / 2;
-		const L12 = param.L1 / 2;
-		const aL12 = Math.asin(L12 / param.D3);
+		const Lg = param.L1 + 2 * param.L2;
+		const xmid = Lg / 2;
+		const Hi = param.H1 + param.H2;
+		const He = param.H2 + param.H3;
+		const Hg = param.H1 + He;
 		// step-5 : checks on the parameter values
-		if (param.D1 > param.D3) {
-			throw `err291: D1 ${param.D1} is too large compare to D3 ${param.D3}`;
-		}
-		if (param.D2 > param.D3) {
-			throw `err292: D2 ${param.D2} is too large compare to D3 ${param.D3}`;
-		}
-		if (aL12 > Math.PI / 4) {
-			throw `err295: L1 ${param.L1} is too large compare to D3 ${param.D3}`;
-		}
 		// step-6 : any logs
-		rGeome.logstr += `myPartL: aL12 ${ffix(radToDeg(aL12))} degree\n`;
+		rGeome.logstr += `door: height-int ${ffix(Hi / 1000)}  height-ext ${ffix(Hg / 1000)}  width-ext ${ffix(Lg / 1000)} m\n`;
 		// step-7 : drawing of the figures
-		// fig1
-		const ctrCross = contour(R2, 0);
-		for (let i = 0; i < 4; i++) {
-			const aOffset = (i * Math.PI) / 2;
-			ctrCross
-				.addSegStrokeAP(aOffset + aL12, R3)
-				.addSegStrokeAP(aOffset + Math.PI / 4, R1)
-				.addSegStrokeAP(aOffset + Math.PI / 2 - aL12, R3)
-				.addSegStrokeAP(aOffset + Math.PI / 2, R2);
-		}
-		//ctrCross.closeSegStroke();
-		fig1.addMain(ctrCross);
+		// figDoor
+		const ctrDoor = contour(0, 0)
+			.addSegStrokeA(param.L2, 0)
+			.addSegStrokeA(param.L2, param.H1)
+			.addCornerRounded(param.R1)
+			.addSegStrokeA(xmid, Hi)
+			.addSegStrokeA(param.L2 + param.L1, param.H1)
+			.addCornerRounded(param.R1)
+			.addSegStrokeA(param.L2 + param.L1, 0)
+			.addSegStrokeA(2 * param.L2 + param.L1, 0)
+			.addSegStrokeA(2 * param.L2 + param.L1, param.H1)
+			.addCornerRounded(param.R2)
+			.addSegStrokeA(xmid, Hg)
+			.addSegStrokeA(0, param.H1)
+			.addCornerRounded(param.R2)
+			.closeSegStroke();
+		figDoor.addMain(ctrDoor);
 		// final figure list
 		rGeome.fig = {
-			face1: fig1
+			faceDoor: figDoor
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -97,9 +101,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			extrudes: [
 				{
 					outName: `subpax_${designName}`,
-					face: `${designName}_face1`,
+					face: `${designName}_faceDoor`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: 1,
+					length: param.W1,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
 				}
@@ -117,7 +121,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.sub = {};
 		// step-10 : final log message
 		// finalize
-		rGeome.logstr += 'myPartL drawn successfully!\n';
+		rGeome.logstr += 'door drawn successfully!\n';
 		rGeome.calcErr = false;
 	} catch (emsg) {
 		rGeome.logstr += emsg as string;
@@ -127,13 +131,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 }
 
 // step-11 : definiton of the final object that gathers the precedent object and function
-const myPartLDef: tPageDef = {
-	pTitle: 'My Part-L',
-	pDescription:
-		'A simple design for illustration the usage of the generic apps (desiXY-cli and desiXY-ui)',
+const doorDef: tPageDef = {
+	pTitle: 'Door',
+	pDescription: 'A door with hyperbolic arc',
 	pDef: pDef,
 	pGeom: pGeom
 };
 
 // step-12 : export the final object
-export { myPartLDef };
+export { doorDef };
