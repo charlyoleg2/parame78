@@ -103,6 +103,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `external cosh a2 ${ffix(a2)}  b2 ${ffix(b2)}  c2 ${ffix(c2)}\n`;
 		// step-7 : drawing of the figures
 		// figDoor
+		const pnb = 10;
+		for (let i = 0; i < pnb; i++) {
+			figDoor.addPoint(chainette(xmid, a1, b1, c1, -1 + i / pnb));
+			figDoor.addPoint(chainette(xmid, a2, b2, c2, -1 + i / pnb));
+		}
 		const p1 = chainette(xmid, a1, b1, c1, -1);
 		const p2 = chainette(xmid, a1, b1, c1, -0.5);
 		const p3 = chainette(xmid, a1, b1, c1, 0);
