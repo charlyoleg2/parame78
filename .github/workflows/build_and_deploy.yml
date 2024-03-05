@@ -1,6 +1,6 @@
-# build_and_deploy_parame.yml
+# build_and_deploy.yml
 
-name: Build and Deploy ParameXY
+name: Build and Deploy
 on: [push]
 jobs:
     build-and-deploy:
@@ -35,14 +35,14 @@ jobs:
                   npm run degit_paxApps
                   npm i
 
-            - name: Build and check ParameXY
+            - name: Build and check
               env:
-                  BASE_PATH: "/`basename ${{ github.repository}}`"
+                  BASE_PATH: ${{ github.event.repository.name }}
               run: |
                   npm run ci
                   npm -w desiXY-ui run github-pages-fix
 
-            - name: Deploy ParameXY to GitHub pages
+            - name: Deploy to GitHub pages
               uses: crazy-max/ghaction-github-pages@v4
               with:
                   target_branch: gh-pages
