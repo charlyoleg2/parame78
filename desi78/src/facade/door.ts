@@ -19,6 +19,7 @@ import {
 	vector,
 	contour,
 	//contourCircle,
+	ctrRectangle,
 	figure,
 	//degToRad,
 	//radToDeg,
@@ -26,6 +27,7 @@ import {
 	pNumber,
 	//pCheckbox,
 	//pDropdown,
+	pSectionSeparator,
 	initGeom,
 	EExtrude,
 	EBVolume
@@ -36,14 +38,16 @@ const pDef: tParamDef = {
 	partName: 'door',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
+		pNumber('L1', 'mm', 1200, 400, 4000, 10),
+		pNumber('L2', 'mm', 200, 50, 500, 10),
+		pNumber('W1', 'mm', 1000, 50, 5000, 10),
+		pSectionSeparator('Heights'),
 		pNumber('H1', 'mm', 500, 100, 4000, 10),
 		pNumber('H2', 'mm', 1600, 100, 4000, 10),
 		pNumber('H3', 'mm', 200, 10, 500, 10),
-		pNumber('L1', 'mm', 1200, 400, 4000, 10),
-		pNumber('L2', 'mm', 200, 50, 500, 10),
+		pSectionSeparator('Details'),
 		pNumber('R1', 'mm', 200, 50, 500, 10),
-		pNumber('R2', 'mm', 1000, 50, 5000, 10),
-		pNumber('W1', 'mm', 1000, 50, 5000, 10)
+		pNumber('R2', 'mm', 1000, 50, 5000, 10)
 	],
 	paramSvg: {
 		H1: 'door_face.svg',
@@ -80,6 +84,8 @@ function chainetted(a: number, b: number, x: number): number {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figDoor = figure();
+	const figTop = figure();
+	const figSide = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -172,9 +178,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addCornerRounded(param.R2)
 			.closeSegStroke();
 		figDoor.addMain(ctrDoor);
+		// figTop
+		figTop.addMain(ctrRectangle(-param.L2 - param.L1 / 2, 0, param.L2, param.W1));
+		figTop.addMain(ctrRectangle(param.L1 / 2, 0, param.L2, param.W1));
+		figTop.addSecond(ctrRectangle(-param.L1 / 2, 0, param.L1, param.W1));
+		// figSide
+		figSide.addMain(ctrRectangle(0, 0, param.W1, param.H1 + param.H2 + param.H3));
+		figSide.addSecond(ctrRectangle(0, 0, param.W1, param.H1 + param.H2));
 		// final figure list
 		rGeome.fig = {
-			faceDoor: figDoor
+			faceDoor: figDoor,
+			faceTop: figTop,
+			faceSide: figSide
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
