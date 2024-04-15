@@ -39,7 +39,8 @@
 		"test:unit:once": "vitest --run",
 		"ci": "run-s check build pretty lint test:unit:once svgo",
 		"svgo1": "svgo --config ./svgo.config.js -f src/facade/svg -o dist/pgdsvg/",
-		"svgo": "run-s svgo1",
+		"svgo2": "svgo --config ./svgo.config.js -f src/menuiserie/svg -o dist/pgdsvg/",
+		"svgo": "run-s svgo1 svgo2",
 		"browserBundleA": "esbuild src/facade/door.ts --bundle --format=esm --outfile=dist2/door.js",
 		"browserBundleAll": "esbuild dist/index.js --bundle --format=esm --outfile=dist2/desi78.js",
 		"clean": "shx rm -fr dist dist2 node_modules"
