@@ -93,6 +93,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figPlancherBottom = figure();
 	const figFaceBeam = figure();
 	const figFaceLeg = figure();
+	const figFaceButtress = figure();
 	const figSide = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
@@ -151,6 +152,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figFaceBeam.addSecond(ctrRectangle(0, param.H1, paramA, param.T1));
 		figFaceLeg.mergeFigure(figFaceBeam); // inherit plancher decoration
+		figFaceButtress.mergeFigure(figFaceBeam); // inherit plancher decoration
 		const ctrBeam = function (side: number): tContour {
 			const rCtr = contour(faceMid + side * (faceMid - param.E1), param.H1)
 				.addSegStrokeR(-side * param.W4, 0)
@@ -178,12 +180,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(-2 * (buttressW2 + paramH2b), 0)
 			.closeSegStroke();
 		figFaceBeam.addSecond(ctrButtress);
-		// figLegBeam
+		// figFaceLeg
 		figFaceLeg.addSecond(ctrBeam(-1));
 		figFaceLeg.addSecond(ctrBeam(1));
 		figFaceLeg.addMain(ctrLeg(-1));
 		figFaceLeg.addMain(ctrLeg(1));
-		figFaceLeg.addMain(ctrButtress);
+		figFaceLeg.addSecond(ctrButtress);
+		// figFaceButtress
+		figFaceButtress.addSecond(ctrBeam(-1));
+		figFaceButtress.addSecond(ctrBeam(1));
+		figFaceButtress.addSecond(ctrLeg(-1));
+		figFaceButtress.addSecond(ctrLeg(1));
+		figFaceButtress.addMain(ctrButtress);
 		// figSide
 		figSide.addSecond(ctrRectangle(0, param.H1 + param.T1, paramB, param.T1));
 		for (let i = 0; i < param.N2; i++) {
@@ -200,6 +208,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			facePlancherBottom: figPlancherBottom,
 			faceBeam: figFaceBeam,
 			faceLeg: figFaceLeg,
+			faceButtress: figFaceButtress,
 			faceSide: figSide
 		};
 		// step-8 : recipes of the 3D construction
@@ -207,12 +216,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const tmBeam = transform3d(); // helper for calculating the rotation and translation of the beams
 		tmBeam.addRotation(Math.PI / 2, 0, 0);
 		tmBeam.addTranslation(0, paramB, 0);
+		tmBeam.addRotation(0, 0, -Math.PI / 2);
+		tmBeam.addTranslation(0, paramA, 0);
 		const tmLeg1 = transform3d();
 		tmLeg1.addRotation(Math.PI / 2, 0, 0);
 		tmLeg1.addTranslation(0, param.S2 + param.S1, 0);
+		tmLeg1.addRotation(0, 0, -Math.PI / 2);
+		tmLeg1.addTranslation(0, paramA, 0);
 		const tmLeg2 = transform3d();
 		tmLeg2.addRotation(Math.PI / 2, 0, 0);
 		tmLeg2.addTranslation(0, paramB - param.S1, 0);
+		tmLeg2.addRotation(0, 0, -Math.PI / 2);
+		tmLeg2.addTranslation(0, paramA, 0);
 		rGeome.vol = {
 			extrudes: [
 				{
@@ -254,6 +269,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: param.S2,
 					rotate: tmLeg2.getRotation(),
 					translate: tmLeg2.getTranslation()
+				},
+				{
+					outName: `subpax_${designName}_buttress1`,
+					face: `${designName}_faceButtress`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.S2,
+					rotate: tmLeg1.getRotation(),
+					translate: tmLeg1.getTranslation()
+				},
+				{
+					outName: `subpax_${designName}_buttress2`,
+					face: `${designName}_faceButtress`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.S2,
+					rotate: tmLeg2.getRotation(),
+					translate: tmLeg2.getTranslation()
 				}
 			],
 			volumes: [
@@ -265,7 +296,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 						`subpax_${designName}_plancherBottom`,
 						`subpax_${designName}_beam`,
 						`subpax_${designName}_leg1`,
-						`subpax_${designName}_leg2`
+						`subpax_${designName}_leg2`,
+						`subpax_${designName}_buttress1`,
+						`subpax_${designName}_buttress2`
 					]
 				}
 			]
