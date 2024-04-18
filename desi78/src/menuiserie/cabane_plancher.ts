@@ -54,6 +54,8 @@ const pDef: tParamDef = {
 		pNumber('E1', 'mm', 200, 0, 1000, 10),
 		pSectionSeparator('Pilotis side'),
 		pNumber('T1', 'mm', 20, 1, 300, 1),
+		pNumber('ES1', 'mm', 0.2, 0, 2, 0.1),
+		pNumber('ES2', 'mm', 0.2, 0, 2, 0.1),
 		pNumber('S1', 'mm', 200, 0, 1000, 10),
 		pNumber('S2', 'mm', 100, 10, 400, 10)
 	],
@@ -71,6 +73,8 @@ const pDef: tParamDef = {
 		W5: 'cabane_plancher_face.svg',
 		E1: 'cabane_plancher_face.svg',
 		T1: 'cabane_plancher_face.svg',
+		ES1: 'cabane_plancher_top.svg',
+		ES2: 'cabane_plancher_bottom.svg',
 		S1: 'cabane_plancher_side.svg',
 		S2: 'cabane_plancher_side.svg'
 	},
@@ -91,8 +95,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const paramA = param.N1 * param.W1;
-		const paramB = param.N2 * param.W2;
+		const paramA = param.N1 * param.W1 + (param.N1 - 1) * param.ES1;
+		const paramB = param.N2 * param.W2 + (param.N2 - 1) * param.ES2;
 		const goldenRatio = 1.618;
 		const ratioBA = paramB / paramA;
 		// step-5 : checks on the parameter values
@@ -102,17 +106,21 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-7 : drawing of the figures
 		// figPlancherTop
 		for (let i = 0; i < param.N1; i++) {
-			figPlancherTop.addMain(ctrRectangle(0, i * param.W1, paramB, param.W1));
+			figPlancherTop.addMain(ctrRectangle(0, i * (param.W1 + param.ES1), paramB, param.W1));
 		}
 		for (let i = 0; i < param.N2; i++) {
-			figPlancherTop.addSecond(ctrRectangle(i * param.W2, 0, param.W2, paramA));
+			figPlancherTop.addSecond(ctrRectangle(i * (param.W2 + param.ES2), 0, param.W2, paramA));
 		}
 		// figPlancherBottom
 		for (let i = 0; i < param.N1; i++) {
-			figPlancherBottom.addSecond(ctrRectangle(0, i * param.W1, paramB, param.W1));
+			figPlancherBottom.addSecond(
+				ctrRectangle(0, i * (param.W1 + param.ES1), paramB, param.W1)
+			);
 		}
 		for (let i = 0; i < param.N2; i++) {
-			figPlancherBottom.addMain(ctrRectangle(i * param.W2, 0, param.W2, paramA));
+			figPlancherBottom.addMain(
+				ctrRectangle(i * (param.W2 + param.ES2), 0, param.W2, paramA)
+			);
 		}
 		// figPlancherFace
 		// figPlancherSide
