@@ -27,7 +27,7 @@
 	},
 	"scripts": {
 		"degit_paxApps": "degit https://github.com/charlyoleg2/parame_paxApps/paxApps paxApps",
-		"del_package_lock": "shx rm package-lock.json",
+		"del_package_lock": "shx rm -f package-lock.json",
 		"patch_paxApps": "patch -p0 -Nt < scr/patchPaxApps.patch",
 		"clean_patch": "shx rm -f paxApps/desiXY-cli/package.json.rej paxApps/desiXY-uis/package.json.rej",
 		"install_paxApps": "run-s degit_paxApps del_package_lock patch_paxApps clean_patch",
