@@ -1,0 +1,24 @@
+diff -ruN paxApps/desiXY-cli/package.json paxApps2/desiXY-cli/package.json
+--- paxApps/desiXY-cli/package.json	2024-04-19 20:53:55.716702822 +0200
++++ paxApps2/desiXY-cli/package.json	2024-04-19 20:51:41.841393440 +0200
+@@ -2,7 +2,7 @@
+ 	"name": "desiXY-cli",
+ 	"version": "0.5.2",
+ 	"description": "The generic cli as frontend of geometrix-design-library",
+-	"private": false,
++	"private": true,
+ 	"type": "module",
+ 	"exports": {
+ 		".": {
+diff -ruN paxApps/desiXY-uis/package.json paxApps2/desiXY-uis/package.json
+--- paxApps/desiXY-uis/package.json	2024-04-19 20:53:41.864767691 +0200
++++ paxApps2/desiXY-uis/package.json	2024-04-19 20:46:26.000000000 +0200
+@@ -2,7 +2,7 @@
+ 	"name": "desiXY-uis",
+ 	"version": "0.5.9",
+ 	"description": "mini-server for static content of desiXY-ui",
+-	"private": false,
++	"private": true,
+ 	"type": "module",
+ 	"exports": {
+ 		".": {
