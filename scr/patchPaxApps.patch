@@ -1,8 +1,10 @@
 diff -ruN paxApps/desiXY-cli/package.json paxApps2/desiXY-cli/package.json
---- paxApps/desiXY-cli/package.json	2024-04-19 21:01:15.687197624 +0200
-+++ paxApps2/desiXY-cli/package.json	2024-04-19 21:07:23.438438532 +0200
-@@ -2,7 +2,7 @@
- 	"name": "desiXY-cli",
+--- paxApps/desiXY-cli/package.json	2024-04-19 21:53:10.187113187 +0200
++++ paxApps2/desiXY-cli/package.json	2024-04-19 21:52:57.271140538 +0200
+@@ -1,8 +1,8 @@
+ {
+-	"name": "desiXY-cli",
++	"name": "desi78-cli",
  	"version": "0.5.2",
  	"description": "The generic cli as frontend of geometrix-design-library",
 -	"private": true,
@@ -11,10 +13,12 @@ diff -ruN paxApps/desiXY-cli/package.json paxApps2/desiXY-cli/package.json
  	"exports": {
  		".": {
 diff -ruN paxApps/desiXY-uis/package.json paxApps2/desiXY-uis/package.json
---- paxApps/desiXY-uis/package.json	2024-04-19 21:01:29.179164027 +0200
-+++ paxApps2/desiXY-uis/package.json	2024-04-19 21:07:33.258421783 +0200
-@@ -2,7 +2,7 @@
- 	"name": "desiXY-uis",
+--- paxApps/desiXY-uis/package.json	2024-04-19 21:53:28.507074521 +0200
++++ paxApps2/desiXY-uis/package.json	2024-04-19 21:53:48.855031744 +0200
+@@ -1,8 +1,8 @@
+ {
+-	"name": "desiXY-uis",
++	"name": "desi78-uis",
  	"version": "0.5.9",
  	"description": "mini-server for static content of desiXY-ui",
 -	"private": true,
