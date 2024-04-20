@@ -108,6 +108,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const paramH3b = paramW5b * Math.tan(a1);
 		const paramH3c = param.H3 / Math.tan(a1);
 		const legFootPrint = param.W3 / Math.cos(Math.PI / 2 - a1);
+		const legFootLength = param.W3 / Math.sin(Math.PI / 2 - a1);
 		const legShift = param.H1 / Math.tan(a1);
 		const buttressW2 = faceMid - param.E1 - param.W5 - paramH3c - legFootPrint;
 		const paramH2b = param.H2 / Math.tan(a1);
@@ -125,6 +126,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `cabane-plancher-size: A: ${ffix(paramA)} mm, B: ${ffix(paramB)} mm, surface: ${ffix(paramA * paramB * 10 ** -6)} m2\n`;
 		rGeome.logstr += `Comparison with the golden-ratio: B/A: ${ffix(ratioBA)}   ${ffix((100 * ratioBA) / goldenRatio)} %\n`;
 		rGeome.logstr += `beam-bevel: W5b: ${ffix(paramW5b)} mm, H3b: ${ffix(paramH3b)} mm\n`;
+		rGeome.logstr += `buttress-length: ${ffix(2 * (buttressW2 + paramH2b))} mm\n`;
+		rGeome.logstr += `leg-length: ${ffix(param.H1 / Math.sin(a1) + legFootLength)} mm\n`;
 		// step-7 : drawing of the figures
 		// figPlancherTop
 		for (let i = 0; i < param.N1; i++) {
