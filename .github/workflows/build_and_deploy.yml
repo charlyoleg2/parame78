@@ -32,7 +32,7 @@ jobs:
             - name: clean and install
               run: |
                   npm ci
-                  npm run degit_paxApps
+                  npm run preinstall_paxApps
                   npm i
 
             - name: Build and check
