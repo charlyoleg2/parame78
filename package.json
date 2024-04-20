@@ -49,11 +49,13 @@
 		"desiXY-cli:run": "npm -w desi78-cli run run",
 		"desiXY-cli:clean": "npm -w desi78-cli run clean",
 		"desiXY-cli:version": "npm -w desi78-cli version patch",
+		"desiXY-cli:publish": "npm -w desi78-cli publish --provenance",
 		"desiXY-uis:build": "npm -w desi78-uis run build",
 		"desiXY-uis:copy_public": "npm -w desi78-uis run copy_public",
 		"desiXY-uis:run": "npm -w desi78-uis run run",
 		"desiXY-uis:clean": "npm -w desi78-uis run clean",
 		"desiXY-uis:version": "npm -w desi78-uis version patch",
+		"desiXY-uis:publish": "npm -w desi78-uis publish --provenance",
 		"dev": "run-p desi78:dev desiXY-ui:dev",
 		"ci": "run-s desi78:ci paxScr:brun desiXY-ui:build desiXY-cli:build desiXY-uis:build desiXY-uis:copy_public",
 		"svgo": "run-s desi78:svgo",
@@ -64,7 +66,7 @@
 		"run-cli": "run-s desiXY-cli:run",
 		"msgVersion": "echo 'warn064: Upgrade manually the version-numbers in scr/patchPaxApps.patch'",
 		"versions": "run-s desi78:version desiXY-cli:version desiXY-uis:version msgVersion",
-		"gh-publish": "run-s desi78:publish",
+		"gh-publish": "run-s desi78:publish desiXY-cli:publish desiXY-uis:publish",
 		"ls-workspaces": "npm -ws exec -c pwd"
 	},
 	"workspaces": [
