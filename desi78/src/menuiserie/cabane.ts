@@ -45,40 +45,63 @@ const pDef: tParamDef = {
 	partName: 'cabane',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('N1', 'planches', 8, 2, 100, 1),
-		pNumber('N2', 'planches', 13, 2, 100, 1),
-		pNumber('W1', 'mm', 200, 20, 800, 1),
-		pNumber('W2', 'mm', 200, 20, 800, 1),
-		pSectionSeparator('Pilotis face'),
+		pNumber('W1', 'mm', 1600, 100, 4000, 1),
+		pNumber('W2', 'mm', 2600, 100, 4000, 1),
 		pNumber('H1', 'mm', 400, 10, 2000, 10),
-		pNumber('H2', 'mm', 150, 10, 400, 1),
-		pNumber('H3', 'mm', 150, 10, 400, 1),
-		pNumber('W3', 'mm', 150, 10, 400, 1),
-		pNumber('a1', 'degree', 80, 20, 90, 1),
-		pNumber('W4', 'mm', 150, 10, 400, 1),
-		pNumber('W5', 'mm', 100, 10, 400, 1),
-		pNumber('E1', 'mm', 200, 0, 1000, 10),
-		pSectionSeparator('Pilotis side'),
 		pNumber('T1', 'mm', 20, 1, 300, 1),
-		pNumber('S1', 'mm', 200, 0, 1000, 10),
-		pNumber('S2', 'mm', 100, 10, 400, 10)
+		pSectionSeparator('Face'),
+		pNumber('RCz', 'mm', 2000, 100, 4000, 1),
+		pNumber('RCx', 'mm', 0, -2000, 2000, 1),
+		pNumber('RLz', 'mm', 1200, 100, 4000, 1),
+		pNumber('RLx', 'mm', 400, 100, 2000, 1),
+		pNumber('RLe', 'mm', 200, 100, 2000, 1),
+		pNumber('RRz', 'mm', 900, 100, 4000, 1),
+		pNumber('RRx', 'mm', 200, 100, 2000, 1),
+		pNumber('RRe', 'mm', 100, 100, 2000, 1),
+		pSectionSeparator('Side'),
+		pNumber('RCyf', 'mm', 500, 0, 2000, 1),
+		pNumber('RCyb', 'mm', 300, 0, 2000, 1),
+		pNumber('RLyf', 'mm', 400, 0, 2000, 1),
+		pNumber('RLyb', 'mm', 200, 0, 2000, 1),
+		pNumber('RRyf', 'mm', 300, 0, 2000, 1),
+		pNumber('RRyb', 'mm', 100, 0, 2000, 1),
+		pSectionSeparator('Door'),
+		pNumber('DPL', 'mm', 0, -2000, 2000, 1),
+		pNumber('DW', 'mm', 600, 100, 3000, 1),
+		pNumber('DLz', 'mm', 1400, 100, 4000, 1),
+		pNumber('DLx', 'mm', 200, 100, 1000, 1),
+		pNumber('DCz', 'mm', 2000, 100, 4000, 1),
+		pNumber('DCx', 'mm', 300, 100, 1000, 1),
+		pNumber('DRz', 'mm', 1200, 100, 4000, 1),
+		pNumber('DRx', 'mm', 200, 100, 1000, 1)
 	],
 	paramSvg: {
-		N1: 'cabane_plancher_top.svg',
-		N2: 'cabane_plancher_bottom.svg',
-		W1: 'cabane_plancher_top.svg',
-		W2: 'cabane_plancher_bottom.svg',
-		H1: 'cabane_plancher_face.svg',
-		H2: 'cabane_plancher_face.svg',
-		H3: 'cabane_plancher_face.svg',
-		W3: 'cabane_plancher_face.svg',
-		a1: 'cabane_plancher_face.svg',
-		W4: 'cabane_plancher_face.svg',
-		W5: 'cabane_plancher_face.svg',
-		E1: 'cabane_plancher_face.svg',
-		T1: 'cabane_plancher_face.svg',
-		S1: 'cabane_plancher_side.svg',
-		S2: 'cabane_plancher_side.svg'
+		W1: 'cabane_face.svg',
+		W2: 'cabane_side.svg',
+		H1: 'cabane_face.svg',
+		T1: 'cabane_face.svg',
+		RCz: 'cabane_face.svg',
+		RCx: 'cabane_face.svg',
+		RLz: 'cabane_face.svg',
+		RLx: 'cabane_face.svg',
+		RLe: 'cabane_face.svg',
+		RRz: 'cabane_face.svg',
+		RRx: 'cabane_face.svg',
+		RRe: 'cabane_face.svg',
+		RCyf: 'cabane_side.svg',
+		RCyb: 'cabane_side.svg',
+		RLyf: 'cabane_side.svg',
+		RLyb: 'cabane_side.svg',
+		RRyf: 'cabane_side.svg',
+		RRyb: 'cabane_side.svg',
+		DPL: 'cabane_face.svg',
+		DW: 'cabane_face.svg',
+		DLz: 'cabane_face.svg',
+		DLx: 'cabane_face.svg',
+		DCz: 'cabane_face.svg',
+		DCx: 'cabane_face.svg',
+		DRz: 'cabane_face.svg',
+		DRx: 'cabane_face.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -97,8 +120,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const paramA = param.N1 * param.W1;
-		const paramB = param.N2 * param.W2;
+		const cpl_N1 = 8;
+		const cpl_N2 = 13;
+		const cpl_W1 = param.W1 / cpl_N1;
+		const cpl_W2 = param.W2 / cpl_N2;
+		const paramA = cpl_N1 * cpl_W1;
+		const paramB = cpl_N2 * cpl_W2;
 		const goldenRatio = 1.618;
 		const ratioBA = paramB / paramA;
 		// step-5 : checks on the parameter values
@@ -108,10 +135,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-7 : drawing of the figures
 		// sub-desingn
 		const plancherParam = designParam(cabanePlancherDef.pDef, '');
-		plancherParam.setVal('N1', param.N1);
-		plancherParam.setVal('W1', param.W1);
-		plancherParam.setVal('N2', param.N2);
-		plancherParam.setVal('W2', param.W2);
+		plancherParam.setVal('N1', cpl_N1);
+		plancherParam.setVal('W1', cpl_W1);
+		plancherParam.setVal('N2', cpl_N2);
+		plancherParam.setVal('W2', cpl_W2);
 		const plancherGeom = cabanePlancherDef.pGeom(
 			0,
 			plancherParam.getParamVal(),
@@ -124,7 +151,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figPlancherBottom
 		figPlancherBottom.mergeFigure(plancherGeom.fig.facePlancherBottom);
 		// figPlancherFace
+		figPlancherFace.mergeFigure(plancherGeom.fig.faceBeam);
 		// figPlancherSide
+		figPlancherSide.mergeFigure(plancherGeom.fig.faceSide);
 		// final figure list
 		rGeome.fig = {
 			facePlancherTop: figPlancherTop,
