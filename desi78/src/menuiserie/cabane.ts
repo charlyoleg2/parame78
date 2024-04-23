@@ -22,7 +22,7 @@ import {
 	//vector,
 	contour,
 	//contourCircle,
-	//ctrRectangle,
+	ctrRectangle,
 	figure,
 	//degToRad,
 	//radToDeg,
@@ -54,10 +54,10 @@ const pDef: tParamDef = {
 		pNumber('RCx', 'mm', 0, -2000, 2000, 1),
 		pNumber('RLz', 'mm', 1200, 100, 4000, 1),
 		pNumber('RLx', 'mm', 400, 100, 2000, 1),
-		pNumber('RLe', 'mm', 200, 100, 2000, 1),
+		pNumber('RLe', 'mm', 200, 0, 2000, 1),
 		pNumber('RRz', 'mm', 900, 100, 4000, 1),
 		pNumber('RRx', 'mm', 200, 100, 2000, 1),
-		pNumber('RRe', 'mm', 100, 100, 2000, 1),
+		pNumber('RRe', 'mm', 100, 0, 2000, 1),
 		pSectionSeparator('Side'),
 		pNumber('RCyf', 'mm', 500, 0, 2000, 1),
 		pNumber('RCyb', 'mm', 300, 0, 2000, 1),
@@ -176,18 +176,28 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += prefixLog(plancherGeom.logstr, plancherParam.getPartNameSuffix());
 		// figPlancherTop
 		figTop.mergeFigure(plancherGeom.fig.facePlancherTop, true);
-		const ctrRoofL = contour(-param.RLyb, -param.RLx)
+		const ctrRoof = contour(-param.RLyb, -param.RLx)
 			.addSegStrokeA(param.W2 + param.RLyf, -param.RLx)
-			.addSegStrokeA(param.W2 + param.RCyf, param.W1 / 2 + param.RCx)
-			.addSegStrokeA(-param.RCyb, param.W1 / 2 + param.RCx)
-			.closeSegStroke();
-		const ctrRoofR = contour(-param.RCyb, param.W1 / 2 + param.RCx)
 			.addSegStrokeA(param.W2 + param.RCyf, param.W1 / 2 + param.RCx)
 			.addSegStrokeA(param.W2 + param.RRyf, param.W1 + param.RRx)
 			.addSegStrokeA(-param.RRyb, param.W1 + param.RRx)
+			.addSegStrokeA(-param.RCyb, param.W1 / 2 + param.RCx)
 			.closeSegStroke();
-		figTop.addMain(ctrRoofL);
-		figTop.addMain(ctrRoofR);
+		figTop.addMain(ctrRoof);
+		const ctrRoofSub = ctrRectangle(
+			0,
+			-param.RLx + param.RLe,
+			param.W2,
+			param.W1 + param.RLx + param.RRx - param.RLe - param.RRe
+		);
+		const ctrRoofSubInt = ctrRectangle(
+			param.T1,
+			-param.RLx + param.RLe + param.T1,
+			param.W2 - 2 * param.T1,
+			param.W1 + param.RLx + param.RRx - param.RLe - param.RRe - 2 * param.T1
+		);
+		figTop.addSecond(ctrRoofSub);
+		figTop.addSecond(ctrRoofSubInt);
 		// figFaceFront
 		figFaceFront.mergeFigure(plancherGeom.fig.faceBeam);
 		// figFaceBack
