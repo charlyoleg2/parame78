@@ -3,7 +3,7 @@
 
 // step-1 : import from geometrix
 import type {
-	//tContour,
+	tContour,
 	tParamDef,
 	tParamVal,
 	tGeom,
@@ -25,7 +25,7 @@ import {
 	ctrRectangle,
 	figure,
 	//degToRad,
-	//radToDeg,
+	radToDeg,
 	ffix,
 	pNumber,
 	//pCheckbox,
@@ -66,13 +66,13 @@ const pDef: tParamDef = {
 		pNumber('RRyf', 'mm', 300, 0, 2000, 1),
 		pNumber('RRyb', 'mm', 100, 0, 2000, 1),
 		pSectionSeparator('Door'),
-		pNumber('DPL', 'mm', 0, -2000, 2000, 1),
+		pNumber('DPL', 'mm', -100, -2000, 2000, 1),
 		pNumber('DW', 'mm', 600, 100, 3000, 1),
-		pNumber('DLz', 'mm', 1400, 100, 4000, 1),
+		pNumber('DLz', 'mm', 900, 100, 4000, 1),
 		pNumber('DLx', 'mm', 200, 100, 1000, 1),
-		pNumber('DCz', 'mm', 2000, 100, 4000, 1),
+		pNumber('DCz', 'mm', 1500, 100, 4000, 1),
 		pNumber('DCx', 'mm', 300, 100, 1000, 1),
-		pNumber('DRz', 'mm', 1200, 100, 4000, 1),
+		pNumber('DRz', 'mm', 700, 100, 4000, 1),
 		pNumber('DRx', 'mm', 200, 100, 1000, 1),
 		pSectionSeparator('Window'),
 		pNumber('Fz1', 'mm', 1000, 0, 3000, 1),
@@ -143,10 +143,30 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const goldenRatio = 1.618;
 		const ratioBA = paramB / paramA;
 		const cpl_W = param.W1 / 20;
+		const wall_z0 = param.H1 + 2 * param.T1;
+		const door_x0 = param.W1 / 2 + param.DPL;
+		const roofLA = Math.atan2(param.RCz - param.RLz, param.W1 / 2 + param.RCx + param.RLx);
+		const roofRA = Math.atan2(param.RCz - param.RRz, param.W1 / 2 - param.RCx + param.RRx);
+		const dRLx = param.T1 * Math.cos(roofLA - Math.PI / 2);
+		const dRLz = -param.T1 * Math.sin(roofLA - Math.PI / 2);
+		const dRRx = param.T1 * Math.cos(roofRA - Math.PI / 2);
+		const dRRz = -param.T1 * Math.sin(roofRA - Math.PI / 2);
+		const dRCzL = param.T1 / Math.sin(Math.PI / 2 - roofLA);
+		const dRCzR = param.T1 / Math.sin(Math.PI / 2 - roofRA);
+		const dRILx = param.RLe - dRLx;
+		const dRILz = dRILx * Math.tan(roofLA);
+		const dRIRx = param.RRe - dRRx;
+		const dRIRz = dRIRx * Math.tan(roofRA);
+		const RILx = -param.RLx + param.RLe;
+		const RILz = wall_z0 + param.RLz - dRLz + dRILz;
+		const RIRx = param.W1 + param.RRx - param.RRe;
+		const RIRz = wall_z0 + param.RRz - dRRz + dRIRz;
+		rGeome.logstr += `dbg164: ${RILx}, ${RILz}, ${RIRx}, ${RIRz}\n`;
 		// step-5 : checks on the parameter values
 		// step-6 : any logs
 		rGeome.logstr += `cabane-plancher-size: A: ${ffix(paramA)} m, B: ${ffix(paramB)} m, surface: ${ffix(paramA * paramB)} m2\n`;
 		rGeome.logstr += `Comparison with the golden-ratio: B/A: ${ffix(ratioBA)}   ${ffix((100 * ratioBA) / goldenRatio)} %\n`;
+		rGeome.logstr += `roof angles: left: ${ffix(radToDeg(roofLA))} degree, right: ${ffix(radToDeg(roofRA))} degree\n`;
 		// step-7 : drawing of the figures
 		// sub-desingn
 		const plancherParam = designParam(cabanePlancherDef.pDef, '');
@@ -199,11 +219,43 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop.addSecond(ctrRoofSub);
 		figTop.addSecond(ctrRoofSubInt);
 		// figFaceFront
-		figFaceFront.mergeFigure(plancherGeom.fig.faceBeam);
+		figFaceFront.mergeFigure(plancherGeom.fig.faceBeam, true);
+		const ctrWallFace = function (door: boolean): tContour {
+			const rCtr = contour(0, wall_z0);
+			if (door) {
+				rCtr.addSegStrokeA(door_x0, wall_z0)
+					.addSegStrokeA(door_x0 - param.DLx, wall_z0 + param.DLz)
+					.addSegStrokeA(door_x0 + param.DCx, wall_z0 + param.DCz)
+					.addSegStrokeA(door_x0 + param.DW + param.DRx, wall_z0 + param.DRz)
+					.addSegStrokeA(door_x0 + param.DW, wall_z0);
+			}
+			rCtr.addSegStrokeA(param.W1, wall_z0)
+				.addSegStrokeA(RIRx, RIRz)
+				.addSegStrokeA(param.W1 / 2 + param.RCx, wall_z0 + param.RCz - dRCzR);
+			if (dRCzL !== dRCzR) {
+				rCtr.addSegStrokeA(param.W1 / 2 + param.RCx, wall_z0 + param.RCz - dRCzL);
+			}
+			rCtr.addSegStrokeA(RILx, RILz).closeSegStroke();
+			return rCtr;
+		};
+		const ctrFaceF = ctrWallFace(true);
+		const ctrFaceRoof = contour(param.W1 / 2 + param.RCx, wall_z0 + param.RCz)
+			.addSegStrokeA(-param.RLx, wall_z0 + param.RLz)
+			.addSegStrokeA(-param.RLx + dRLx, wall_z0 + param.RLz - dRLz)
+			.addSegStrokeA(param.W1 / 2 + param.RCx, wall_z0 + param.RCz - dRCzL);
+		if (dRCzL !== dRCzR) {
+			ctrFaceRoof.addSegStrokeA(param.W1 / 2 + param.RCx, wall_z0 + param.RCz - dRCzR);
+		}
+		ctrFaceRoof
+			.addSegStrokeA(param.W1 + param.RRx - dRRx, wall_z0 + param.RRz - dRRz)
+			.addSegStrokeA(param.W1 + param.RRx, wall_z0 + param.RRz)
+			.closeSegStroke();
+		figFaceFront.addMain(ctrFaceF);
+		figFaceFront.addSecond(ctrFaceRoof);
 		// figFaceBack
-		figFaceBack.mergeFigure(plancherGeom.fig.faceBeam);
+		figFaceBack.mergeFigure(plancherGeom.fig.faceBeam, true);
 		// figPlancherSide
-		figSide.mergeFigure(plancherGeom.fig.faceSide);
+		figSide.mergeFigure(plancherGeom.fig.faceSide, true);
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
