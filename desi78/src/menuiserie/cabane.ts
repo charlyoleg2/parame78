@@ -20,7 +20,7 @@ import {
 	//Point,
 	//ShapePoint,
 	//vector,
-	//contour,
+	contour,
 	//contourCircle,
 	//ctrRectangle,
 	figure,
@@ -126,10 +126,10 @@ const pDef: tParamDef = {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figPlancherTop = figure();
-	const figPlancherBottom = figure();
-	const figPlancherFace = figure();
-	const figPlancherSide = figure();
+	const figTop = figure();
+	const figFaceFront = figure();
+	const figFaceBack = figure();
+	const figSide = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -175,19 +175,31 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		checkGeom(plancherGeom);
 		rGeome.logstr += prefixLog(plancherGeom.logstr, plancherParam.getPartNameSuffix());
 		// figPlancherTop
-		figPlancherTop.mergeFigure(plancherGeom.fig.facePlancherTop);
-		// figPlancherBottom
-		figPlancherBottom.mergeFigure(plancherGeom.fig.facePlancherBottom);
-		// figPlancherFace
-		figPlancherFace.mergeFigure(plancherGeom.fig.faceBeam);
+		figTop.mergeFigure(plancherGeom.fig.facePlancherTop, true);
+		const ctrRoofL = contour(-param.RLyb, -param.RLx)
+			.addSegStrokeA(param.W2 + param.RLyf, -param.RLx)
+			.addSegStrokeA(param.W2 + param.RCyf, param.W1 / 2 + param.RCx)
+			.addSegStrokeA(-param.RCyb, param.W1 / 2 + param.RCx)
+			.closeSegStroke();
+		const ctrRoofR = contour(-param.RCyb, param.W1 / 2 + param.RCx)
+			.addSegStrokeA(param.W2 + param.RCyf, param.W1 / 2 + param.RCx)
+			.addSegStrokeA(param.W2 + param.RRyf, param.W1 + param.RRx)
+			.addSegStrokeA(-param.RRyb, param.W1 + param.RRx)
+			.closeSegStroke();
+		figTop.addMain(ctrRoofL);
+		figTop.addMain(ctrRoofR);
+		// figFaceFront
+		figFaceFront.mergeFigure(plancherGeom.fig.faceBeam);
+		// figFaceBack
+		figFaceBack.mergeFigure(plancherGeom.fig.faceBeam);
 		// figPlancherSide
-		figPlancherSide.mergeFigure(plancherGeom.fig.faceSide);
+		figSide.mergeFigure(plancherGeom.fig.faceSide);
 		// final figure list
 		rGeome.fig = {
-			facePlancherTop: figPlancherTop,
-			facePlancherBottom: figPlancherBottom,
-			facePlancherFace: figPlancherFace,
-			facePlancherSide: figPlancherSide
+			faceTop: figTop,
+			faceFaceFront: figFaceFront,
+			faceFaceBack: figFaceBack,
+			faceSide: figSide
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -195,7 +207,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			extrudes: [
 				{
 					outName: `subpax_${designName}`,
-					face: `${designName}_facePlancherTop`,
+					face: `${designName}_faceTop`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.T1,
 					rotate: [0, 0, 0],
