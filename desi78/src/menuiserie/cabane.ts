@@ -129,6 +129,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figTop = figure();
 	const figFaceFront = figure();
 	const figFaceBack = figure();
+	const figFaceRoof = figure();
+	const figFaceSide = figure();
 	const figSide = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
@@ -254,6 +256,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figFaceFront.addSecond(ctrFaceRoof);
 		// figFaceBack
 		figFaceBack.mergeFigure(plancherGeom.fig.faceBeam, true);
+		figFaceBack.addSecond(ctrFaceF);
+		figFaceBack.addSecond(ctrFaceRoof);
+		// figFaceRoof
+		figFaceRoof.mergeFigure(plancherGeom.fig.faceBeam, true);
+		figFaceRoof.addSecond(ctrFaceF);
+		figFaceRoof.addMain(ctrFaceRoof);
+		// figFaceSide
+		figFaceSide.mergeFigure(plancherGeom.fig.faceBeam, true);
+		figFaceSide.addSecond(ctrFaceF);
+		figFaceSide.addSecond(ctrFaceRoof);
 		// figPlancherSide
 		figSide.mergeFigure(plancherGeom.fig.faceSide, true);
 		// final figure list
@@ -261,6 +273,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faceTop: figTop,
 			faceFaceFront: figFaceFront,
 			faceFaceBack: figFaceBack,
+			faceFaceRoof: figFaceRoof,
+			faceFaceSide: figFaceSide,
 			faceSide: figSide
 		};
 		// step-8 : recipes of the 3D construction
