@@ -135,12 +135,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const cpl_N1 = 8;
 		const cpl_N2 = 13;
-		const cpl_W1 = param.W1 / cpl_N1;
-		const cpl_W2 = param.W2 / cpl_N2;
-		const paramA = cpl_N1 * cpl_W1;
-		const paramB = cpl_N2 * cpl_W2;
+		const cpl_ES = 0.2;
+		const cpl_W1 = (param.W1 - (cpl_N1 - 1) * cpl_ES) / cpl_N1;
+		const cpl_W2 = (param.W2 - (cpl_N2 - 1) * cpl_ES) / cpl_N2;
+		const paramA = cpl_N1 * cpl_W1 + (cpl_N1 - 1) * cpl_ES;
+		const paramB = cpl_N2 * cpl_W2 + (cpl_N2 - 1) * cpl_ES;
 		const goldenRatio = 1.618;
 		const ratioBA = paramB / paramA;
+		const cpl_W = param.W1 / 20;
 		// step-5 : checks on the parameter values
 		// step-6 : any logs
 		rGeome.logstr += `cabane-plancher-size: A: ${ffix(paramA)} m, B: ${ffix(paramB)} m, surface: ${ffix(paramA * paramB)} m2\n`;
@@ -152,6 +154,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		plancherParam.setVal('W1', cpl_W1);
 		plancherParam.setVal('N2', cpl_N2);
 		plancherParam.setVal('W2', cpl_W2);
+		plancherParam.setVal('H1', param.H1);
+		plancherParam.setVal('H2', cpl_W);
+		plancherParam.setVal('H3', cpl_W);
+		plancherParam.setVal('W3', cpl_W);
+		plancherParam.setVal('a1', 80);
+		plancherParam.setVal('W4', cpl_W);
+		plancherParam.setVal('W5', cpl_W - 1);
+		plancherParam.setVal('E1', cpl_W);
+		plancherParam.setVal('T1', param.T1);
+		plancherParam.setVal('ES1', cpl_ES);
+		plancherParam.setVal('ES2', cpl_ES);
+		plancherParam.setVal('S1', 2 * cpl_W);
+		plancherParam.setVal('S2', cpl_W);
 		const plancherGeom = cabanePlancherDef.pGeom(
 			0,
 			plancherParam.getParamVal(),
