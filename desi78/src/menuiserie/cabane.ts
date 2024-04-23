@@ -73,7 +73,14 @@ const pDef: tParamDef = {
 		pNumber('DCz', 'mm', 2000, 100, 4000, 1),
 		pNumber('DCx', 'mm', 300, 100, 1000, 1),
 		pNumber('DRz', 'mm', 1200, 100, 4000, 1),
-		pNumber('DRx', 'mm', 200, 100, 1000, 1)
+		pNumber('DRx', 'mm', 200, 100, 1000, 1),
+		pSectionSeparator('Window'),
+		pNumber('Fz1', 'mm', 1000, 0, 3000, 1),
+		pNumber('Fz2', 'mm', 1000, 10, 3000, 1),
+		pNumber('FSx', 'mm', 100, -1000, 1000, 1),
+		pNumber('FWL', 'mm', 500, 10, 1000, 1),
+		pNumber('FWH', 'mm', 500, 10, 1000, 1),
+		pNumber('FPLx', 'mm', -100, -3000, 3000, 1)
 	],
 	paramSvg: {
 		W1: 'cabane_face.svg',
@@ -101,7 +108,13 @@ const pDef: tParamDef = {
 		DCz: 'cabane_face.svg',
 		DCx: 'cabane_face.svg',
 		DRz: 'cabane_face.svg',
-		DRx: 'cabane_face.svg'
+		DRx: 'cabane_face.svg',
+		Fz1: 'cabane_face.svg',
+		Fz2: 'cabane_face.svg',
+		FSx: 'cabane_face.svg',
+		FWL: 'cabane_face.svg',
+		FWH: 'cabane_face.svg',
+		FPLx: 'cabane_face.svg'
 	},
 	sim: {
 		tMax: 100,
