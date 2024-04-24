@@ -376,21 +376,60 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
 		rGeome.vol = {
+			inherits: [
+				{
+					outName: `inpax_${designName}_plancher`,
+					subdesign: 'pax_cabane_plancher',
+					subgeom: plancherGeom,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				}
+			],
 			extrudes: [
 				{
-					outName: `subpax_${designName}`,
-					face: `${designName}_faceTop`,
+					outName: `subpax_${designName}_roof`,
+					face: `${designName}_faceFaceRoof`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W2,
+					rotate: [Math.PI / 2, 0, Math.PI / 2],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_Wfront`,
+					face: `${designName}_faceFaceFront`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.T1,
-					rotate: [0, 0, 0],
+					rotate: [Math.PI / 2, 0, Math.PI / 2],
+					translate: [param.W2 - param.T1, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_Wback`,
+					face: `${designName}_faceFaceBack`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.T1,
+					rotate: [Math.PI / 2, 0, Math.PI / 2],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_Wside`,
+					face: `${designName}_faceFaceSide`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.W2,
+					rotate: [Math.PI / 2, 0, Math.PI / 2],
 					translate: [0, 0, 0]
 				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
-					boolMethod: EBVolume.eIdentity,
-					inList: [`subpax_${designName}`]
+					boolMethod: EBVolume.eUnion,
+					inList: [
+						`inpax_${designName}_plancher`,
+						`subpax_${designName}_roof`,
+						`subpax_${designName}_Wfront`,
+						`subpax_${designName}_Wback`,
+						`subpax_${designName}_Wside`
+					]
 				}
 			]
 		};
