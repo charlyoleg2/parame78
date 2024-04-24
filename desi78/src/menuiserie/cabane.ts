@@ -58,13 +58,14 @@ const pDef: tParamDef = {
 		pNumber('RRz', 'mm', 900, 100, 4000, 1),
 		pNumber('RRx', 'mm', 200, 100, 2000, 1),
 		pNumber('RRe', 'mm', 100, 0, 2000, 1),
-		pSectionSeparator('Side'),
+		pSectionSeparator('Roof top'),
 		pNumber('RCyf', 'mm', 500, 0, 2000, 1),
 		pNumber('RCyb', 'mm', 300, 0, 2000, 1),
 		pNumber('RLyf', 'mm', 400, 0, 2000, 1),
 		pNumber('RLyb', 'mm', 200, 0, 2000, 1),
 		pNumber('RRyf', 'mm', 300, 0, 2000, 1),
 		pNumber('RRyb', 'mm', 100, 0, 2000, 1),
+		pNumber('RoR', 'mm', 300, 0, 500, 1),
 		pSectionSeparator('Door'),
 		pNumber('DPL', 'mm', -100, -2000, 2000, 1),
 		pNumber('DW', 'mm', 600, 100, 3000, 1),
@@ -74,13 +75,15 @@ const pDef: tParamDef = {
 		pNumber('DCx', 'mm', 300, 100, 1000, 1),
 		pNumber('DRz', 'mm', 700, 100, 4000, 1),
 		pNumber('DRx', 'mm', 200, 100, 1000, 1),
+		pNumber('DR', 'mm', 200, 0, 500, 1),
 		pSectionSeparator('Window'),
-		pNumber('Fz1', 'mm', 1000, 0, 3000, 1),
-		pNumber('Fz2', 'mm', 1000, 10, 3000, 1),
+		pNumber('Fz1', 'mm', 700, 0, 3000, 1),
+		pNumber('Fz2', 'mm', 700, 10, 3000, 1),
 		pNumber('FSx', 'mm', 100, -1000, 1000, 1),
 		pNumber('FWL', 'mm', 500, 10, 1000, 1),
-		pNumber('FWH', 'mm', 500, 10, 1000, 1),
-		pNumber('FPLx', 'mm', -100, -3000, 3000, 1)
+		pNumber('FWH', 'mm', 700, 10, 1000, 1),
+		pNumber('FPLx', 'mm', -700, -3000, 3000, 1),
+		pNumber('FR', 'mm', 100, 0, 500, 1)
 	],
 	paramSvg: {
 		W1: 'cabane_face.svg',
@@ -101,6 +104,7 @@ const pDef: tParamDef = {
 		RLyb: 'cabane_side.svg',
 		RRyf: 'cabane_side.svg',
 		RRyb: 'cabane_side.svg',
+		RoR: 'cabane_side.svg',
 		DPL: 'cabane_face.svg',
 		DW: 'cabane_face.svg',
 		DLz: 'cabane_face.svg',
@@ -109,12 +113,14 @@ const pDef: tParamDef = {
 		DCx: 'cabane_face.svg',
 		DRz: 'cabane_face.svg',
 		DRx: 'cabane_face.svg',
+		DR: 'cabane_face.svg',
 		Fz1: 'cabane_face.svg',
 		Fz2: 'cabane_face.svg',
 		FSx: 'cabane_face.svg',
 		FWL: 'cabane_face.svg',
 		FWH: 'cabane_face.svg',
-		FPLx: 'cabane_face.svg'
+		FPLx: 'cabane_face.svg',
+		FR: 'cabane_face.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -163,12 +169,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const RILz = wall_z0 + param.RLz - dRLz + dRILz;
 		const RIRx = param.W1 + param.RRx - param.RRe;
 		const RIRz = wall_z0 + param.RRz - dRRz + dRIRz;
-		rGeome.logstr += `dbg164: ${RILx}, ${RILz}, ${RIRx}, ${RIRz}\n`;
+		//rGeome.logstr += `dbg164: ${RILx}, ${RILz}, ${RIRx}, ${RIRz}\n`;
+		const wallLA = Math.atan2(RILz - wall_z0, -RILx);
+		const wallRA = Math.atan2(RIRz - wall_z0, RIRx - param.W1);
+		const dFWLxL = param.T1 / Math.sin(wallLA);
+		const dFWLxR = param.T1 / Math.sin(wallRA);
+		const dFWHxL = 1;
+		const dFWHzL = 1;
+		const dFWHxR = 1;
+		const dFWHzR = 1;
+		const win_x0 = param.W1 / 2 + param.FPLx;
 		// step-5 : checks on the parameter values
 		// step-6 : any logs
 		rGeome.logstr += `cabane-plancher-size: A: ${ffix(paramA)} m, B: ${ffix(paramB)} m, surface: ${ffix(paramA * paramB)} m2\n`;
 		rGeome.logstr += `Comparison with the golden-ratio: B/A: ${ffix(ratioBA)}   ${ffix((100 * ratioBA) / goldenRatio)} %\n`;
 		rGeome.logstr += `roof angles: left: ${ffix(radToDeg(roofLA))} degree, right: ${ffix(radToDeg(roofRA))} degree\n`;
+		rGeome.logstr += `side-wall angles: left: ${ffix(radToDeg(wallLA))} degree, right: ${ffix(radToDeg(wallRA))} degree\n`;
 		// step-7 : drawing of the figures
 		// sub-desingn
 		const plancherParam = designParam(cabanePlancherDef.pDef, '');
@@ -199,11 +215,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figPlancherTop
 		figTop.mergeFigure(plancherGeom.fig.facePlancherTop, true);
 		const ctrRoof = contour(-param.RLyb, -param.RLx)
+			.addCornerRounded(param.RoR)
 			.addSegStrokeA(param.W2 + param.RLyf, -param.RLx)
+			.addCornerRounded(param.RoR)
 			.addSegStrokeA(param.W2 + param.RCyf, param.W1 / 2 + param.RCx)
+			.addCornerRounded(param.RoR)
 			.addSegStrokeA(param.W2 + param.RRyf, param.W1 + param.RRx)
+			.addCornerRounded(param.RoR)
 			.addSegStrokeA(-param.RRyb, param.W1 + param.RRx)
+			.addCornerRounded(param.RoR)
 			.addSegStrokeA(-param.RCyb, param.W1 / 2 + param.RCx)
+			.addCornerRounded(param.RoR)
 			.closeSegStroke();
 		figTop.addMain(ctrRoof);
 		const ctrRoofSub = ctrRectangle(
@@ -227,8 +249,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			if (door) {
 				rCtr.addSegStrokeA(door_x0, wall_z0)
 					.addSegStrokeA(door_x0 - param.DLx, wall_z0 + param.DLz)
+					.addCornerRounded(param.DR)
 					.addSegStrokeA(door_x0 + param.DCx, wall_z0 + param.DCz)
+					.addCornerRounded(param.DR)
 					.addSegStrokeA(door_x0 + param.DW + param.DRx, wall_z0 + param.DRz)
+					.addCornerRounded(param.DR)
 					.addSegStrokeA(door_x0 + param.DW, wall_z0);
 			}
 			rCtr.addSegStrokeA(param.W1, wall_z0)
@@ -241,6 +266,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			return rCtr;
 		};
 		const ctrFaceF = ctrWallFace(true);
+		const ctrFaceB = ctrWallFace(false);
 		const ctrFaceRoof = contour(param.W1 / 2 + param.RCx, wall_z0 + param.RCz)
 			.addSegStrokeA(-param.RLx, wall_z0 + param.RLz)
 			.addSegStrokeA(-param.RLx + dRLx, wall_z0 + param.RLz - dRLz)
@@ -252,20 +278,51 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeA(param.W1 + param.RRx - dRRx, wall_z0 + param.RRz - dRRz)
 			.addSegStrokeA(param.W1 + param.RRx, wall_z0 + param.RRz)
 			.closeSegStroke();
+		const ctrFaceWindow = contour(win_x0, wall_z0 + param.Fz1)
+			.addCornerRounded(param.FR)
+			.addSegStrokeA(win_x0 + param.FWL, wall_z0 + param.Fz1)
+			.addCornerRounded(param.FR)
+			.addSegStrokeA(win_x0 + param.FSx + param.FWH, wall_z0 + param.Fz1 + param.Fz2)
+			.addCornerRounded(param.FR)
+			.addSegStrokeA(win_x0 + param.FSx, wall_z0 + param.Fz1 + param.Fz2)
+			.addCornerRounded(param.FR)
+			.closeSegStroke();
+		const ctrFaceL = contour(0, wall_z0)
+			.addSegStrokeA(dFWLxL, wall_z0)
+			.addSegStrokeA(RILx + dFWHxL, RILz + dFWHzL)
+			.addSegStrokeA(RILx, RILz)
+			.closeSegStroke();
+		const ctrFaceR = contour(param.W1, wall_z0)
+			.addSegStrokeA(RIRx, RIRz)
+			.addSegStrokeA(RIRx - dFWHxR, RIRz + dFWHzR)
+			.addSegStrokeA(param.W1 - dFWLxR, wall_z0)
+			.closeSegStroke();
 		figFaceFront.addMain(ctrFaceF);
+		figFaceFront.addSecond(ctrFaceWindow);
 		figFaceFront.addSecond(ctrFaceRoof);
+		figFaceFront.addSecond(ctrFaceL);
+		figFaceFront.addSecond(ctrFaceR);
 		// figFaceBack
 		figFaceBack.mergeFigure(plancherGeom.fig.faceBeam, true);
-		figFaceBack.addSecond(ctrFaceF);
+		figFaceBack.addMain(ctrFaceB);
+		figFaceBack.addMain(ctrFaceWindow);
 		figFaceBack.addSecond(ctrFaceRoof);
+		figFaceFront.addSecond(ctrFaceL);
+		figFaceFront.addSecond(ctrFaceR);
 		// figFaceRoof
 		figFaceRoof.mergeFigure(plancherGeom.fig.faceBeam, true);
 		figFaceRoof.addSecond(ctrFaceF);
+		figFaceFront.addSecond(ctrFaceWindow);
 		figFaceRoof.addMain(ctrFaceRoof);
+		figFaceFront.addSecond(ctrFaceL);
+		figFaceFront.addSecond(ctrFaceR);
 		// figFaceSide
 		figFaceSide.mergeFigure(plancherGeom.fig.faceBeam, true);
 		figFaceSide.addSecond(ctrFaceF);
+		figFaceFront.addSecond(ctrFaceWindow);
 		figFaceSide.addSecond(ctrFaceRoof);
+		figFaceFront.addMain(ctrFaceL);
+		figFaceFront.addMain(ctrFaceR);
 		// figPlancherSide
 		figSide.mergeFigure(plancherGeom.fig.faceSide, true);
 		// final figure list

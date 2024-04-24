@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="558.12854"
+   width="571.14929"
    height="382.1853"
-   viewBox="0 0 147.67151 101.11986"
+   viewBox="0 0 151.11658 101.11986"
    version="1.1"
    id="svg1"
    inkscape:version="1.3.2 (1:1.3.2+202311252150+091e20ef0f)"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="1.4967093"
-     inkscape:cx="387.5168"
-     inkscape:cy="1826.674"
+     inkscape:zoom="1.0583333"
+     inkscape:cx="283.46458"
+     inkscape:cy="1880.315"
      inkscape:window-width="1370"
      inkscape:window-height="836"
      inkscape:window-x="0"
@@ -34,6 +34,12 @@
      inkscape:current-layer="layer1" />
   <defs
      id="defs1">
+    <rect
+       x="11.600971"
+       y="2427.0171"
+       width="41.990555"
+       height="36.80209"
+       id="rect88" />
     <rect
        x="438.81738"
        y="2296.8982"
@@ -205,13 +211,13 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-6.3048663,-608.08728)">
+     transform="translate(-2.8597925,-608.08728)">
     <rect
        style="fill:#ffffff;stroke:#ffffff;stroke-width:0.264583;stroke-linejoin:bevel"
        id="rect41"
-       width="147.40692"
+       width="150.85201"
        height="100.85526"
-       x="6.4371581"
+       x="2.992084"
        y="608.2196"
        inkscape:export-filename="cabane_side.svg"
        inkscape:export-xdpi="96"
@@ -440,5 +446,18 @@
          x="254.05859"
          y="2191.4552"
          id="tspan17">W2</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text88"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.6667px;line-height:1.25;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;white-space:pre;shape-inside:url(#rect88);shape-padding:0;shape-margin:0;inline-size:0;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"><tspan
+         x="11.601562"
+         y="2440.2287"
+         id="tspan18">RoR</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
+       d="m 17.344142,628.08761 -6.009717,14.87065 8.327839,12.81216"
+       id="path88"
+       sodipodi:nodetypes="ccc" />
   </g>
 </svg>
