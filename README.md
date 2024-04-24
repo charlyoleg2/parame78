@@ -5,23 +5,33 @@ Parame78
 Presentation
 ------------
 
-*Parame78* is the top-monorepo for the *geometrix design* library *desi78*. It contains the personal collection of design of *charlyoleg*.
+*Parame78* is the top-monorepo for the design-library *desi78*. It contains a collection of 3D shapes designed by *charlyoleg*.
 
-This is the monorepo that contains a single *javascript* packages:
+This monorepo contains a single *javascript* package:
 
 1. desi78: architecture facade designs
 
-The *UI* and *Cli* apps are generated automatically within *paxApps*.
+The *UI* and *Cli* apps associated to *desi78* are generated automatically using [paxApps](https://github.com/charlyoleg2/parame_paxApps).
 
-A public instance of *desiXY-ui* is available on that [github-page](https://charlyoleg2.github.io/parame78/).
-The *code source* is available on [github](https://github.com/charlyoleg2/parame78).
+This repo is a typical [parametrix](https://charlyoleg2.github.io/parametrix/) design library, publishing on *npmjs* its associated UI and CLI.
+You can use it as template for starting your own design library.
+
+
+Links
+-----
+
+- [desi78-ui](https://charlyoleg2.github.io/parame78/) : public instance of the UI
+- [sources](https://github.com/charlyoleg2/parame78) : git-repository
+- [pkg](https://github.com/charlyoleg2/parame78) : desi78 as npm-package
+- [pkg-cli](https://www.npmjs.com/package/desi78-cli) : desi78-cli as npm-package
+- [pkg-uis](https://www.npmjs.com/package/desi78-uis) : desi78-uis as npm-package
 
 
 Prerequisite
 ------------
 
 - [node](https://nodejs.org) version 20.10.0 or higher
-- [npm](https://docs.npmjs.com/cli/v7/commands/npm) version 10.2.4 or higher
+- [npm](https://docs.npmjs.com/cli/v7/commands/npm) version 10.5.0 or higher
 
 
 Getting started
@@ -48,4 +58,15 @@ npm -w desi78 run build
 npm -w desiXY-ui run dev
 ```
 
+Publish a new release
+---------------------
 
+```bash
+npm run versions
+vim scr/patchPaxApps.patch
+git diff
+git commit -am 'increment sub versions'
+npm version patch
+git push
+git push origin v0.5.6
+```
