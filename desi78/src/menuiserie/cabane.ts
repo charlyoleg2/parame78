@@ -174,10 +174,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const wallRA = Math.atan2(RIRz - wall_z0, RIRx - param.W1);
 		const dFWLxL = param.T1 / Math.sin(wallLA);
 		const dFWLxR = param.T1 / Math.sin(wallRA);
-		const dFWHxL = 1;
-		const dFWHzL = 1;
-		const dFWHxR = 1;
-		const dFWHzR = 1;
+		const dFWHWL = param.T1 / Math.cos(roofLA - Math.PI / 2 + wallLA);
+		const dFWHWR = param.T1 / Math.cos(roofRA - Math.PI / 2 + wallRA);
+		const dFWHxL = dFWHWL * Math.cos(roofLA);
+		const dFWHzL = dFWHWL * Math.sin(roofLA);
+		const dFWHxR = dFWHWR * Math.cos(roofRA);
+		const dFWHzR = dFWHWR * Math.sin(roofRA);
+		//rGeome.logstr += `dbg183: ${dFWLxL}, ${dFWHzL}, ${dFWHWL}, ${dFWHWR}\n`;
 		const win_x0 = param.W1 / 2 + param.FPLx;
 		// step-5 : checks on the parameter values
 		// step-6 : any logs
@@ -212,7 +215,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		);
 		checkGeom(plancherGeom);
 		rGeome.logstr += prefixLog(plancherGeom.logstr, plancherParam.getPartNameSuffix());
-		// figPlancherTop
+		// figTop
 		figTop.mergeFigure(plancherGeom.fig.facePlancherTop, true);
 		const ctrRoof = contour(-param.RLyb, -param.RLx)
 			.addCornerRounded(param.RoR)
@@ -307,24 +310,60 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figFaceBack.addMain(ctrFaceB);
 		figFaceBack.addMain(ctrFaceWindow);
 		figFaceBack.addSecond(ctrFaceRoof);
-		figFaceFront.addSecond(ctrFaceL);
-		figFaceFront.addSecond(ctrFaceR);
+		figFaceBack.addSecond(ctrFaceL);
+		figFaceBack.addSecond(ctrFaceR);
 		// figFaceRoof
 		figFaceRoof.mergeFigure(plancherGeom.fig.faceBeam, true);
 		figFaceRoof.addSecond(ctrFaceF);
-		figFaceFront.addSecond(ctrFaceWindow);
+		figFaceRoof.addSecond(ctrFaceWindow);
 		figFaceRoof.addMain(ctrFaceRoof);
-		figFaceFront.addSecond(ctrFaceL);
-		figFaceFront.addSecond(ctrFaceR);
+		figFaceRoof.addSecond(ctrFaceL);
+		figFaceRoof.addSecond(ctrFaceR);
 		// figFaceSide
 		figFaceSide.mergeFigure(plancherGeom.fig.faceBeam, true);
 		figFaceSide.addSecond(ctrFaceF);
-		figFaceFront.addSecond(ctrFaceWindow);
+		figFaceSide.addSecond(ctrFaceWindow);
 		figFaceSide.addSecond(ctrFaceRoof);
-		figFaceFront.addMain(ctrFaceL);
-		figFaceFront.addMain(ctrFaceR);
-		// figPlancherSide
+		figFaceSide.addMain(ctrFaceL);
+		figFaceSide.addMain(ctrFaceR);
+		// figSide
 		figSide.mergeFigure(plancherGeom.fig.faceSide, true);
+		const ctrSideCB = contour(0, wall_z0)
+			.addSegStrokeA(param.T1, wall_z0)
+			.addSegStrokeA(param.T1, wall_z0 + param.RCz - dRCzL)
+			.addSegStrokeA(0, wall_z0 + param.RCz - dRCzL)
+			.closeSegStroke();
+		const ctrSideCF = contour(param.W2 - param.T1, wall_z0)
+			.addSegStrokeA(param.W2, wall_z0)
+			.addSegStrokeA(param.W2, wall_z0 + param.RCz - dRCzL)
+			.addSegStrokeA(param.W2 - param.T1, wall_z0 + param.RCz - dRCzL)
+			.closeSegStroke();
+		const ctrSideL = contour(0, wall_z0)
+			.addSegStrokeA(param.W2, wall_z0)
+			.addSegStrokeA(param.W2, RILz)
+			.addSegStrokeA(0, RILz)
+			.closeSegStroke();
+		const ctrSideR = contour(0, wall_z0)
+			.addSegStrokeA(param.W2, wall_z0)
+			.addSegStrokeA(param.W2, RIRz)
+			.addSegStrokeA(0, RIRz)
+			.closeSegStroke();
+		const ctrSideRoofL = contour(-param.RCyb, wall_z0 + param.RCz)
+			.addSegStrokeA(-param.RLyb, wall_z0 + param.RLz)
+			.addSegStrokeA(param.W2 + param.RLyf, wall_z0 + param.RLz)
+			.addSegStrokeA(param.W2 + param.RCyf, wall_z0 + param.RCz)
+			.closeSegStroke();
+		const ctrSideRoofR = contour(-param.RCyb, wall_z0 + param.RCz)
+			.addSegStrokeA(-param.RRyb, wall_z0 + param.RRz)
+			.addSegStrokeA(param.W2 + param.RRyf, wall_z0 + param.RRz)
+			.addSegStrokeA(param.W2 + param.RCyf, wall_z0 + param.RCz)
+			.closeSegStroke();
+		figSide.addSecond(ctrSideCF);
+		figSide.addSecond(ctrSideCB);
+		figSide.addSecond(ctrSideR);
+		figSide.addSecond(ctrSideRoofR);
+		figSide.addMain(ctrSideL);
+		figSide.addMain(ctrSideRoofL);
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,
