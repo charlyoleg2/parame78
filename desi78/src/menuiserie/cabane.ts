@@ -182,12 +182,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const dFWHzR = dFWHWR * Math.sin(roofRA);
 		//rGeome.logstr += `dbg183: ${dFWLxL}, ${dFWHzL}, ${dFWHWL}, ${dFWHWR}\n`;
 		const win_x0 = param.W1 / 2 + param.FPLx;
+		const roofMaxB = Math.max(param.RCyb, param.RRyb, param.RLyb);
+		const roofMaxF = Math.max(param.RCyf, param.RRyf, param.RLyf);
+		const roofMaxL = roofMaxB + roofMaxF + param.W2;
 		// step-5 : checks on the parameter values
 		// step-6 : any logs
 		rGeome.logstr += `cabane-plancher-size: A: ${ffix(paramA)} m, B: ${ffix(paramB)} m, surface: ${ffix(paramA * paramB)} m2\n`;
 		rGeome.logstr += `Comparison with the golden-ratio: B/A: ${ffix(ratioBA)}   ${ffix((100 * ratioBA) / goldenRatio)} %\n`;
 		rGeome.logstr += `roof angles: left: ${ffix(radToDeg(roofLA))} degree, right: ${ffix(radToDeg(roofRA))} degree\n`;
 		rGeome.logstr += `side-wall angles: left: ${ffix(radToDeg(wallLA))} degree, right: ${ffix(radToDeg(wallRA))} degree\n`;
+		rGeome.logstr += `roof: length-max: ${ffix(roofMaxL)} mm, back-max: ${ffix(roofMaxB)} mm, front-max: ${ffix(roofMaxF)} mm\n`;
 		// step-7 : drawing of the figures
 		// sub-desingn
 		const plancherParam = designParam(cabanePlancherDef.pDef, '');
@@ -387,12 +391,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			],
 			extrudes: [
 				{
-					outName: `subpax_${designName}_roof`,
+					outName: `subpax_${designName}_roofTop`,
+					face: `${designName}_faceTop`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: wall_z0 + param.RCz,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_roofMax`,
 					face: `${designName}_faceFaceRoof`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.W2,
+					length: roofMaxL,
 					rotate: [Math.PI / 2, 0, Math.PI / 2],
-					translate: [0, 0, 0]
+					translate: [-roofMaxB, 0, 0]
 				},
 				{
 					outName: `subpax_${designName}_Wfront`,
@@ -421,11 +433,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			],
 			volumes: [
 				{
+					outName: `ipax_${designName}_roof`,
+					boolMethod: EBVolume.eIntersection,
+					inList: [`subpax_${designName}_roofMax`, `subpax_${designName}_roofTop`]
+				},
+				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
 					inList: [
 						`inpax_${designName}_plancher`,
-						`subpax_${designName}_roof`,
+						`ipax_${designName}_roof`,
 						`subpax_${designName}_Wfront`,
 						`subpax_${designName}_Wback`,
 						`subpax_${designName}_Wside`
