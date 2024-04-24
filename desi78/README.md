@@ -19,7 +19,7 @@ Links
 
 - [desi78-ui](https://charlyoleg2.github.io/parame78/) : public instance of the UI
 - [sources](https://github.com/charlyoleg2/parame78) : git-repository
-- [pkg](https://github.com/charlyoleg2/parame78) : desi78 as npm-package
+- [pkg](https://www.npmjs.com/package/desi78) : desi78 as npm-package
 - [pkg-cli](https://www.npmjs.com/package/desi78-cli) : desi78-cli as npm-package
 - [pkg-uis](https://www.npmjs.com/package/desi78-uis) : desi78-uis as npm-package
 
