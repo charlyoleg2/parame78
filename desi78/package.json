@@ -11,13 +11,9 @@
 	"author": "charlyoleg",
 	"license": "ISC",
 	"keywords": [
-		"cad",
-		"programmatic",
-		"2D",
-		"circle",
-		"stroke",
-		"arc",
-		"gear"
+		"parametrix",
+		"3D",
+		"CAD"
 	],
 	"type": "module",
 	"exports": {

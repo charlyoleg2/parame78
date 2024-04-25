@@ -1,7 +1,7 @@
 diff -ruN paxApps/desiXY-cli/package.json paxApps2/desiXY-cli/package.json
---- paxApps/desiXY-cli/package.json	2024-04-21 12:36:00.000000000 +0200
-+++ paxApps2/desiXY-cli/package.json	2024-04-21 12:40:11.456851428 +0200
-@@ -1,11 +1,11 @@
+--- paxApps/desiXY-cli/package.json	2024-04-25 20:12:31.000000000 +0200
++++ paxApps2/desiXY-cli/package.json	2024-04-25 20:16:45.014120781 +0200
+@@ -1,13 +1,13 @@
  {
 -	"name": "desiXY-cli",
 -	"description": "The generic cli as frontend of geometrix-design-library",
@@ -16,12 +16,15 @@ diff -ruN paxApps/desiXY-cli/package.json paxApps2/desiXY-cli/package.json
 -		"url": "git+https://github.com/charlyoleg2/parame_paxApps.git"
 +		"url": "git+https://github.com/charlyoleg2/parame78.git"
  	},
- 	"type": "module",
- 	"exports": {
+-	"homepage": "https://charlyoleg2.github.io/parame_paxApps/",
++	"homepage": "https://charlyoleg2.github.io/parame78/",
+ 	"author": "charlyoleg",
+ 	"license": "ISC",
+ 	"keywords": [
 diff -ruN paxApps/desiXY-uis/package.json paxApps2/desiXY-uis/package.json
---- paxApps/desiXY-uis/package.json	2024-04-21 12:36:00.000000000 +0200
-+++ paxApps2/desiXY-uis/package.json	2024-04-21 12:39:17.393042403 +0200
-@@ -1,11 +1,11 @@
+--- paxApps/desiXY-uis/package.json	2024-04-25 20:12:31.000000000 +0200
++++ paxApps2/desiXY-uis/package.json	2024-04-25 20:17:37.809988468 +0200
+@@ -1,13 +1,13 @@
  {
 -	"name": "desiXY-uis",
 -	"description": "mini-server for static content of desiXY-ui",
@@ -36,5 +39,8 @@ diff -ruN paxApps/desiXY-uis/package.json paxApps2/desiXY-uis/package.json
 -		"url": "git+https://github.com/charlyoleg2/parame_paxApps.git"
 +		"url": "git+https://github.com/charlyoleg2/parame78.git"
  	},
- 	"type": "module",
- 	"exports": {
+-	"homepage": "https://charlyoleg2.github.io/parame_paxApps/",
++	"homepage": "https://charlyoleg2.github.io/parame78/",
+ 	"author": "charlyoleg",
+ 	"license": "ISC",
+ 	"keywords": [
