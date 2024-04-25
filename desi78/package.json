@@ -8,6 +8,8 @@
 		"url": "git+https://github.com/charlyoleg2/parame78.git"
 	},
 	"homepage": "https://charlyoleg2.github.io/parame78/",
+	"author": "charlyoleg",
+	"license": "ISC",
 	"keywords": [
 		"cad",
 		"programmatic",
@@ -17,7 +19,19 @@
 		"arc",
 		"gear"
 	],
-	"author": "charlyoleg",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"!dist/**/*.map",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
 	"tsup": {
 		"entry": [
 			"src/index.ts"
@@ -62,19 +76,5 @@
 		"tsup": "^8.0.2",
 		"typescript": "^5.4.5",
 		"vitest": "^1.5.0"
-	},
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./dist/index.js"
-		}
-	},
-	"files": [
-		"dist",
-		"!dist/**/*.map",
-		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
-	],
-	"types": "./dist/index.d.ts",
-	"type": "module"
+	}
 }

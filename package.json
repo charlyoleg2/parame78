@@ -7,8 +7,9 @@
 		"type": "git",
 		"url": "git+https://github.com/charlyoleg2/parame78.git"
 	},
-	"type": "module",
 	"homepage": "https://charlyoleg2.github.io/parame78/",
+	"author": "charlyoleg2",
+	"license": "ISC",
 	"keywords": [
 		"cad",
 		"programmatic",
@@ -18,7 +19,7 @@
 		"arc",
 		"gear"
 	],
-	"author": "charlyoleg2",
+	"type": "module",
 	"workspaces": [
 		"desi78",
 		"paxApps/*"
