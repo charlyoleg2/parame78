@@ -13,8 +13,8 @@ This monorepo contains a single *javascript* package:
 
 The *UI* and *Cli* apps associated to *desi78* are generated automatically using [paxApps](https://github.com/charlyoleg2/parame_paxApps).
 
-This repo is a typical designer-repository.
-This repo is a typical [parametrix](https://charlyoleg2.github.io/parametrix/) design library, publishing on *npmjs* its associated UI and CLI.
+This repo is a typical designer-repository using [parametrix](https://charlyoleg2.github.io/parametrix/).
+The design-library and its associated UI and CLI are published as *npm-packages*.
 You can use it as template for starting your own design library.
 
 
