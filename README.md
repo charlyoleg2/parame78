@@ -15,7 +15,7 @@ The *UI* and *Cli* apps associated to *desi78* are generated automatically using
 
 This repo is a typical designer-repository using [parametrix](https://charlyoleg2.github.io/parametrix/).
 The design-library and its associated UI and CLI are published as *npm-packages*.
-You can use it as template for starting your own design library.
+You can use this repo as template for starting your own design library.
 
 
 Links
