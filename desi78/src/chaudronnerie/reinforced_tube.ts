@@ -1,5 +1,5 @@
-// tube.ts
-// a reinforced tube
+// reinforced_tube.ts
+// a tube with wall internally reinforced
 
 // step-1 : import from geometrix
 import type {
@@ -39,7 +39,7 @@ import {
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
 	// partName is used in URL. Choose a name without slash, backslash and space.
-	partName: 'tube',
+	partName: 'reinforced_tube',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('D1L', 'mm', 1600, 100, 4000, 1),
@@ -52,13 +52,13 @@ const pDef: tParamDef = {
 		pNumber('S23L', 'mm', 0, 0, 200, 1)
 	],
 	paramSvg: {
-		D1L: 'tube_section.svg',
-		H1: 'tube_section.svg',
-		E1: 'tube_section.svg',
-		E2: 'tube_section_detail.svg',
-		N2: 'tube_section.svg',
-		R23: 'tube_section.svg',
-		S23L: 'tube_section.svg'
+		D1L: 'reinforced_tube_section.svg',
+		H1: 'reinforced_tube_section.svg',
+		E1: 'reinforced_tube_section.svg',
+		E2: 'reinforced_tube_section_detail.svg',
+		N2: 'reinforced_tube_section.svg',
+		R23: 'reinforced_tube_section.svg',
+		S23L: 'reinforced_tube_section.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -360,7 +360,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 }
 
 // step-11 : definiton of the final object that gathers the precedent object and function
-const tubeDef: tPageDef = {
+const ReinforcedTubeDef: tPageDef = {
 	pTitle: 'Reinforced tube',
 	pDescription: 'A strong tube with less metal',
 	pDef: pDef,
@@ -368,4 +368,4 @@ const tubeDef: tPageDef = {
 };
 
 // step-12 : export the final object
-export { tubeDef };
+export { ReinforcedTubeDef };
