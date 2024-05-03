@@ -43,7 +43,7 @@ const pDef: tParamDef = {
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('D1L', 'mm', 1600, 100, 4000, 1),
-		pNumber('H1', 'mm', 6000, 10, 2000, 10),
+		pNumber('H1', 'mm', 6000, 10, 20000, 10),
 		pNumber('E1', 'mm', 20, 1, 300, 1),
 		pSectionSeparator('Reinforcement'),
 		pNumber('E2', 'mm', 20, 1, 300, 1),
