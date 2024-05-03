@@ -95,7 +95,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const D2e = R1Li * aWave * 0.5; // approximate arbitrary value
 		const R2e = D2e / 2;
 		const R2i = R2e - param.E2;
-		const R3i = (R2i * (1 - param.R32)) / param.R32;
+		const R3i = (R2i * param.R32) / (100 - param.R32);
 		const R3e = R3i + param.E2;
 		const WaveCordeInt = aWave * R1Li;
 		// step-5 : checks on the parameter values
