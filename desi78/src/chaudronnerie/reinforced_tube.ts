@@ -148,14 +148,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const p3 = p0.setPolar(Aoffset + 2 * aW22 + aWave, R1Li - R2e);
 			figTopExt.addSecond(contourCircle(p1.cx, p1.cy, R2e));
 			figTopExt.addSecond(contourCircle(p1.cx, p1.cy, R2i));
-			figTopExt.addSecond(contourCircle(p2.cx, p1.cy, R3e));
-			figTopExt.addSecond(contourCircle(p2.cx, p1.cy, R3i));
+			figTopExt.addSecond(contourCircle(p2.cx, p2.cy, R3e));
+			figTopExt.addSecond(contourCircle(p2.cx, p2.cy, R3i));
 			figTopExt.addSecond(contourCircle(p3.cx, p3.cy, R2e));
 			figTopExt.addSecond(contourCircle(p3.cx, p3.cy, R2i));
 		}
 		if (param.internal_cylinder === 1) {
-			figTopExt.addMain(contourCircle(0, 0, R1Li - param.S23L));
-			figTopExt.addMain(contourCircle(0, 0, R1Li - param.S23L - param.E4));
+			figTopExt.addSecond(contourCircle(0, 0, R1Li - param.S23L));
+			figTopExt.addSecond(contourCircle(0, 0, R1Li - param.S23L - param.E4));
 		}
 		// figTopInt
 		figTopInt.addSecond(contourCircle(0, 0, param.D1L / 2));
