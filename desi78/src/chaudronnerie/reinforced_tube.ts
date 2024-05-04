@@ -16,7 +16,7 @@ import {
 	//designParam,
 	//checkGeom,
 	//prefixLog,
-	//point,
+	point,
 	//Point,
 	//ShapePoint,
 	//vector,
@@ -28,7 +28,7 @@ import {
 	radToDeg,
 	ffix,
 	pNumber,
-	//pCheckbox,
+	pCheckbox,
 	pDropdown,
 	pSectionSeparator,
 	initGeom,
@@ -44,17 +44,21 @@ const pDef: tParamDef = {
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('D1L', 'mm', 1600, 100, 4000, 1),
 		pNumber('H1', 'mm', 6000, 10, 20000, 10),
-		pNumber('E1', 'mm', 20, 1, 300, 1),
-		pSectionSeparator('Reinforcement'),
-		pNumber('E2', 'mm', 20, 1, 300, 1),
+		pNumber('E1', 'mm', 10, 1, 300, 1),
+		pSectionSeparator('Wave'),
+		pNumber('E2', 'mm', 10, 1, 300, 1),
 		pNumber('N2', 'wave', 20, 4, 400, 1),
 		pNumber('W22', 'mm', 80, 1, 600, 1),
-		pDropdown('wave_method', ['S23L_R32', 'D3_R32']),
 		pNumber('S23L', 'mm', 200, 1, 600, 1),
-		pNumber('R32', '%', 50, 10, 90, 0.1),
+		pDropdown('D2_method', ['D2_from_Rvw', 'D2_direct']),
+		pNumber('Rvw', '%', 50, 5, 95, 0.1),
 		pNumber('D2', 'mm', 20, 1, 600, 1),
+		pDropdown('D3_method', ['D3_from_R32', 'D3_direct']),
+		pNumber('R32', '%', 50, 5, 95, 0.1),
 		pNumber('D3', 'mm', 20, 1, 600, 1),
-		pNumber('af', 'degree', 0, -45, 45, 1)
+		pSectionSeparator('Optional internal cylinder'),
+		pCheckbox('internal_cylinder', false),
+		pNumber('E4', 'mm', 10, 1, 300, 1)
 	],
 	paramSvg: {
 		D1L: 'reinforced_tube_section.svg',
@@ -63,12 +67,15 @@ const pDef: tParamDef = {
 		E2: 'reinforced_tube_section_detail.svg',
 		N2: 'reinforced_tube_section.svg',
 		W22: 'reinforced_tube_section.svg',
-		wave_method: 'reinforced_tube_section.svg',
 		S23L: 'reinforced_tube_section.svg',
+		D2_method: 'reinforced_tube_section.svg',
 		R32: 'reinforced_tube_section.svg',
 		D2: 'reinforced_tube_section.svg',
+		D3_method: 'reinforced_tube_section.svg',
+		Rvw: 'reinforced_tube_section.svg',
 		D3: 'reinforced_tube_section.svg',
-		af: 'reinforced_tube_section.svg'
+		internal_cylinder: 'reinforced_tube_section.svg',
+		E4: 'reinforced_tube_section.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -76,6 +83,14 @@ const pDef: tParamDef = {
 		tUpdate: 500 // every 0.5 second
 	}
 };
+
+// externalized functions
+function biggestR(iA: number, iL: number): number {
+	const CB = (iL * Math.sin(iA)) / Math.sin((3 * Math.PI) / 4 - iA / 2);
+	const ct = 1 - Math.cos(Math.PI / 2 + iA);
+	const rR = Math.sqrt(CB ** 2 / (2 * ct));
+	return rR;
+}
 
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
@@ -92,10 +107,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const LintW22 = aW22 * R1Li;
 		const aN2 = (2 * Math.PI) / param.N2;
 		const aWave = aN2 - 2 * aW22;
-		const D2e = R1Li * aWave * 0.5; // approximate arbitrary value
-		const R2e = D2e / 2;
+		const aR2e = aWave * (1 - param.Rvw / 100.0) * 0.5;
+		const R2e = param.D2_method === 0 ? biggestR(aR2e, R1Li) : param.D2 / 2 + param.E2;
 		const R2i = R2e - param.E2;
-		const R3i = (R2i * param.R32) / (100 - param.R32);
+		const R3ip = (R2i * param.R32) / (100 - param.R32);
+		const R3i = param.D3_method === 0 ? R3ip : param.D3 / 2;
 		const R3e = R3i + param.E2;
 		const WaveCordeInt = aWave * R1Li;
 		// step-5 : checks on the parameter values
@@ -124,6 +140,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figTopExt
 		figTopExt.addMain(contourCircle(0, 0, param.D1L / 2));
 		figTopExt.addMain(contourCircle(0, 0, param.D1L / 2 - param.E1));
+		for (let i = 0; i < param.N2; i++) {
+			const Aoffset = i * aN2;
+			const p0 = point(0, 0);
+			const p1 = p0.setPolar(Aoffset + 2 * aW22, R1Li - R2e);
+			const p2 = p0.setPolar(Aoffset + 2 * aW22 + aWave / 2, R1Li - param.S23L + R3e);
+			const p3 = p0.setPolar(Aoffset + 2 * aW22 + aWave, R1Li - R2e);
+			figTopExt.addSecond(contourCircle(p1.cx, p1.cy, R2e));
+			figTopExt.addSecond(contourCircle(p1.cx, p1.cy, R2i));
+			figTopExt.addSecond(contourCircle(p2.cx, p1.cy, R3e));
+			figTopExt.addSecond(contourCircle(p2.cx, p1.cy, R3i));
+			figTopExt.addSecond(contourCircle(p3.cx, p3.cy, R2e));
+			figTopExt.addSecond(contourCircle(p3.cx, p3.cy, R2i));
+		}
+		if (param.internal_cylinder === 1) {
+			figTopExt.addMain(contourCircle(0, 0, R1Li - param.S23L));
+			figTopExt.addMain(contourCircle(0, 0, R1Li - param.S23L - param.E4));
+		}
 		// figTopInt
 		figTopInt.addSecond(contourCircle(0, 0, param.D1L / 2));
 		figTopInt.addSecond(contourCircle(0, 0, param.D1L / 2 - param.E1));
