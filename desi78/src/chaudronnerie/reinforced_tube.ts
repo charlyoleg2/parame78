@@ -201,7 +201,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			//	.closeSegStroke();
 			//figTopExt.addSecond(ctrT1);
 			const [pEx, pEy, pFx, pFy] = cscPts(p2.cx, p2.cy, p3.cx, p3.cy, R3i, R2e, false);
-			const [pHx, pHy, pGx, pGy] = cscPts(p2.cx, p2.cy, p3.cx, p3.cy, R2e, R3i, false);
+			const [pHx, pHy, pGx, pGy] = cscPts(p2.cx, p2.cy, p3.cx, p3.cy, R3e, R2i, false);
 			//const ctrT2 = contour(pEx, pEy)
 			//	.addSegStrokeA(pFx, pFy)
 			//	.addSegStrokeA(pGx, pGy)
