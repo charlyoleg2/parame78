@@ -20,7 +20,7 @@ import {
 	//Point,
 	//ShapePoint,
 	//vector,
-	//contour,
+	contour,
 	contourCircle,
 	ctrRectangle,
 	figure,
@@ -91,6 +91,34 @@ function biggestR(iA: number, iL: number): number {
 	const rR = Math.sqrt(CB ** 2 / (2 * ct));
 	return rR;
 }
+function cscPts(
+	ix1: number,
+	iy1: number,
+	ix2: number,
+	iy2: number,
+	iR1: number,
+	iR2: number,
+	iCcw: boolean
+): [number, number, number, number] {
+	//const CB = Math.sqrt(iL1 ** 2 + iL2 ** 2 - 2 * iL1 * iL2 * Math.cos(iA));
+	const dx12 = ix2 - ix1;
+	const dy12 = iy2 - iy1;
+	const CB = Math.sqrt(dx12 ** 2 + dy12 ** 2);
+	const aCB = Math.atan2(dy12, dx12);
+	if (CB < iR1 + iR2) {
+		throw `err995: CB ${ffix(CB)} is too small compare to R1 ${ffix(iR1)} and R2 ${ffix(iR2)}`;
+	}
+	const FB = CB / (1 + iR2 / iR1);
+	const CF = CB - FB;
+	const DBF = Math.acos(iR1 / FB);
+	const ECF = Math.acos(iR2 / CF);
+	const sign = iCcw ? 1 : -1;
+	const pB = point(ix1, iy1);
+	const pD = pB.translatePolar(aCB - sign * DBF, iR1);
+	const pC = point(ix2, iy2);
+	const pE = pC.translatePolar(aCB + Math.PI - sign * ECF, iR2);
+	return [pD.cx, pD.cy, pE.cx, pE.cy];
+}
 
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
@@ -124,10 +152,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (aWave < 0) {
 			throw `err105: N2 ${param.N2} is too large compare to D1L ${param.D1L} and E1 ${param.E1}`;
 		}
-		if (WaveCordeInt < 2 * (R2e + R3e)) {
-			if (param.S23L < 2 * (R2e + R3e)) {
-				throw `err113: S23L ${param.S23L} is too small compare to D1L ${param.D1L} and N2 ${param.N2}`;
-			}
+		// replace by err995
+		//if (WaveCordeInt < 2 * (R2e + R3e)) {
+		//	if (param.S23L < 2 * (R2e + R3e)) {
+		//		throw `err113: S23L ${param.S23L} is too small compare to D1L ${param.D1L} and N2 ${param.N2}`;
+		//	}
+		//}
+		if (R2i < 0) {
+			throw `err143: E2 ${param.E2} is too large compare to R2e ${ffix(R2e)}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `reinforced_tube internal-external diameter: D1Li: ${ffix(2 * R1Li)} mm\n`;
@@ -152,6 +184,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figTopExt.addSecond(contourCircle(p2.cx, p2.cy, R3i));
 			figTopExt.addSecond(contourCircle(p3.cx, p3.cy, R2e));
 			figTopExt.addSecond(contourCircle(p3.cx, p3.cy, R2i));
+			const [pAx, pAy, pBx, pBy] = cscPts(p1.cx, p1.cy, p2.cx, p2.cy, R2e, R3i, true);
+			const [pDx, pDy, pCx, pCy] = cscPts(p1.cx, p1.cy, p2.cx, p2.cy, R2i, R3e, true);
+			const ctrT1 = contour(pAx, pAy)
+				.addSegStrokeA(pBx, pBy)
+				.addSegStrokeA(pCx, pCy)
+				.addSegStrokeA(pDx, pDy)
+				.closeSegStroke();
+			figTopExt.addSecond(ctrT1);
 		}
 		if (param.internal_cylinder === 1) {
 			figTopExt.addSecond(contourCircle(0, 0, R1Li - param.S23L));
