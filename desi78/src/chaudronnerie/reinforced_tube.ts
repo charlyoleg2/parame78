@@ -172,27 +172,66 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figTopExt
 		figTopExt.addMain(contourCircle(0, 0, param.D1L / 2));
 		figTopExt.addMain(contourCircle(0, 0, param.D1L / 2 - param.E1));
+		const ctrWi = contour(R1Li - param.E2, 0);
+		const ctrWe = contour(R1Li, 0);
+		const p0 = point(0, 0);
 		for (let i = 0; i < param.N2; i++) {
 			const Aoffset = i * aN2;
-			const p0 = point(0, 0);
+			const pWi1 = p0.setPolar(Aoffset + aW22, R1Li - param.E2);
+			const pWi2 = p0.setPolar(Aoffset + 2 * aW22, R1Li - param.E2);
+			const pWe1 = p0.setPolar(Aoffset + aW22, R1Li);
+			const pWe2 = p0.setPolar(Aoffset + 2 * aW22, R1Li);
+			ctrWi.addPointA(pWi1.cx, pWi1.cy).addPointA(pWi2.cx, pWi2.cy).addSegArc2();
+			ctrWe.addPointA(pWe1.cx, pWe1.cy).addPointA(pWe2.cx, pWe2.cy).addSegArc2();
 			const p1 = p0.setPolar(Aoffset + 2 * aW22, R1Li - R2e);
 			const p2 = p0.setPolar(Aoffset + 2 * aW22 + aWave / 2, R1Li - param.S23L + R3e);
 			const p3 = p0.setPolar(Aoffset + 2 * aW22 + aWave, R1Li - R2e);
-			figTopExt.addSecond(contourCircle(p1.cx, p1.cy, R2e));
-			figTopExt.addSecond(contourCircle(p1.cx, p1.cy, R2i));
-			figTopExt.addSecond(contourCircle(p2.cx, p2.cy, R3e));
-			figTopExt.addSecond(contourCircle(p2.cx, p2.cy, R3i));
-			figTopExt.addSecond(contourCircle(p3.cx, p3.cy, R2e));
-			figTopExt.addSecond(contourCircle(p3.cx, p3.cy, R2i));
+			//figTopExt.addSecond(contourCircle(p1.cx, p1.cy, R2e));
+			//figTopExt.addSecond(contourCircle(p1.cx, p1.cy, R2i));
+			//figTopExt.addSecond(contourCircle(p2.cx, p2.cy, R3e));
+			//figTopExt.addSecond(contourCircle(p2.cx, p2.cy, R3i));
+			//figTopExt.addSecond(contourCircle(p3.cx, p3.cy, R2e));
+			//figTopExt.addSecond(contourCircle(p3.cx, p3.cy, R2i));
 			const [pAx, pAy, pBx, pBy] = cscPts(p1.cx, p1.cy, p2.cx, p2.cy, R2e, R3i, true);
 			const [pDx, pDy, pCx, pCy] = cscPts(p1.cx, p1.cy, p2.cx, p2.cy, R2i, R3e, true);
-			const ctrT1 = contour(pAx, pAy)
-				.addSegStrokeA(pBx, pBy)
-				.addSegStrokeA(pCx, pCy)
-				.addSegStrokeA(pDx, pDy)
-				.closeSegStroke();
-			figTopExt.addSecond(ctrT1);
+			//const ctrT1 = contour(pAx, pAy)
+			//	.addSegStrokeA(pBx, pBy)
+			//	.addSegStrokeA(pCx, pCy)
+			//	.addSegStrokeA(pDx, pDy)
+			//	.closeSegStroke();
+			//figTopExt.addSecond(ctrT1);
+			const [pEx, pEy, pFx, pFy] = cscPts(p2.cx, p2.cy, p3.cx, p3.cy, R3i, R2e, false);
+			const [pHx, pHy, pGx, pGy] = cscPts(p2.cx, p2.cy, p3.cx, p3.cy, R2e, R3i, false);
+			//const ctrT2 = contour(pEx, pEy)
+			//	.addSegStrokeA(pFx, pFy)
+			//	.addSegStrokeA(pGx, pGy)
+			//	.addSegStrokeA(pHx, pHy)
+			//	.closeSegStroke();
+			//figTopExt.addSecond(ctrT2);
+			ctrWi.addPointA(pDx, pDy).addSegArc(R2i, false, true);
+			ctrWe.addPointA(pAx, pAy).addSegArc(R2e, false, true);
+			ctrWi.addSegStrokeA(pCx, pCy);
+			ctrWe.addSegStrokeA(pBx, pBy);
+			const pWi3 = p0.setPolar(Aoffset + 2 * aW22 + aWave / 2, R1Li - param.S23L);
+			const pWe3 = p0.setPolar(Aoffset + 2 * aW22 + aWave / 2, R1Li - param.S23L + param.E2);
+			ctrWi.addPointA(pWi3.cx, pWi3.cy).addPointA(pHx, pHy).addSegArc2();
+			ctrWe.addPointA(pWe3.cx, pWe3.cy).addPointA(pEx, pEy).addSegArc2();
+			ctrWi.addSegStrokeA(pGx, pGy);
+			ctrWe.addSegStrokeA(pFx, pFy);
+			const pWi4 = p0.setPolar(Aoffset + aN2, R1Li - param.E2);
+			const pWe4 = p0.setPolar(Aoffset + aN2, R1Li);
+			ctrWi.addPointA(pWi4.cx, pWi4.cy).addSegArc(R2i, false, true);
+			ctrWe.addPointA(pWe4.cx, pWe4.cy).addSegArc(R2e, false, true);
 		}
+		//figTopExt.addPoints(ctrWi.generatePoints());
+		//figTopExt.addPoints(ctrWe.generatePoints());
+		const ctrWiLen = 3;
+		const ctrWeLen = 4;
+		rGeome.logstr += `Wave-internal length: ${ffix(ctrWiLen)} mm\n`;
+		rGeome.logstr += `Wave-external length: ${ffix(ctrWeLen)} mm\n`;
+		rGeome.logstr += `Wave-average length: ${ffix((ctrWeLen + ctrWiLen) / 2)} mm\n`;
+		figTopExt.addSecond(ctrWi);
+		figTopExt.addSecond(ctrWe);
 		if (param.internal_cylinder === 1) {
 			figTopExt.addSecond(contourCircle(0, 0, R1Li - param.S23L));
 			figTopExt.addSecond(contourCircle(0, 0, R1Li - param.S23L - param.E4));
