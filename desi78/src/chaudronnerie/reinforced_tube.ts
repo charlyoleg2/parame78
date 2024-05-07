@@ -66,7 +66,7 @@ const pDef: tParamDef = {
 		D1L: 'reinforced_tube_section.svg',
 		H1: 'reinforced_tube_section.svg',
 		E1: 'reinforced_tube_section.svg',
-		E2: 'reinforced_tube_section_detail.svg',
+		E2: 'reinforced_tube_section.svg',
 		N2: 'reinforced_tube_section.svg',
 		W2_method: 'reinforced_tube_section.svg',
 		RW2: 'reinforced_tube_section.svg',
