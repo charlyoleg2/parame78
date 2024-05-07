@@ -7,7 +7,7 @@ import type {
 	tParamDef,
 	tParamVal,
 	tGeom,
-	//tExtrude,
+	tExtrude,
 	//tSubInst,
 	//tSubDesign,
 	tPageDef
@@ -284,6 +284,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
+		const optExtrudes: tExtrude[] = [];
+		const optVolumeNames: string[] = [];
+		if (param.internal_cylinder === 1) {
+			const tmpVol: tExtrude = {
+				outName: `subpax_${designName}_topInt`,
+				face: `${designName}_faceTopInt`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: param.H1,
+				rotate: [0, 0, 0],
+				translate: [0, 0, 0]
+			};
+			optExtrudes.push(tmpVol);
+			optVolumeNames.push(`subpax_${designName}_topInt`);
+		}
 		rGeome.vol = {
 			extrudes: [
 				{
@@ -301,13 +315,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: param.H1,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
-				}
+				},
+				...optExtrudes
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`subpax_${designName}_topExt`, `subpax_${designName}_topWave`]
+					inList: [
+						`subpax_${designName}_topExt`,
+						`subpax_${designName}_topWave`,
+						...optVolumeNames
+					]
 				}
 			]
 		};
