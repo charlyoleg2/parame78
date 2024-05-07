@@ -3,8 +3,8 @@
 
 <svg
    width="421.32199"
-   height="314.36661"
-   viewBox="0 0 111.47478 83.176165"
+   height="329.08249"
+   viewBox="0 0 111.47478 87.069742"
    version="1.1"
    id="svg1"
    inkscape:version="1.3.2 (1:1.3.2+202404261509+091e20ef0f)"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="1.0583333"
-     inkscape:cx="409.60631"
-     inkscape:cy="2061.7324"
+     inkscape:zoom="2.9934186"
+     inkscape:cx="310.68157"
+     inkscape:cy="375.49042"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -35,6 +35,12 @@
      showguides="false" />
   <defs
      id="defs1">
+    <rect
+       x="107.25267"
+       y="487.18207"
+       width="176.19707"
+       height="25.043221"
+       id="rect5" />
     <rect
        x="256.42749"
        y="257.6907"
@@ -241,7 +247,7 @@
        style="fill:#ffffff;stroke:#ffffff;stroke-width:0.264583;stroke-linejoin:bevel"
        id="rect26"
        width="111.2102"
-       height="82.911575"
+       height="86.805153"
        x="24.763269"
        y="38.293945"
        inkscape:export-filename="reinforced_tube_section.svg"
@@ -417,11 +423,11 @@
          id="tspan7">N2</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#ArrowWide)"
-       d="m 122.36653,114.32784 9.43458,-4.72364"
+       d="m 122.78091,118.65534 9.43458,-4.72364"
        id="path23" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,21.901698,4.2819445)"
+       transform="matrix(0.26458333,0,0,0.26458333,22.316074,8.6094415)"
        id="text24"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.6667px;line-height:1.25;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;white-space:pre;shape-inside:url(#rect24);shape-padding:0;shape-margin:0;inline-size:0;display:inline;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"><tspan
          x="394.10352"
@@ -682,9 +688,9 @@
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-13.3715,-2.9375316)"
        id="text32"
-       style="font-size:14.6667px;white-space:pre;shape-inside:url(#rect39);display:inline;fill:#0055d4;stroke:none"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.6667px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono';white-space:pre;shape-inside:url(#rect39);display:inline;fill:#0055d4;stroke:none"><tspan
          x="149.97656"
-         y="459.01674"
+         y="458.64847"
          id="tspan15">Rvw=av/aw</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#ArrowWide)"
@@ -724,5 +730,13 @@
        d="m 98.620118,84.322215 9.000242,9.26163"
        id="path56-5"
        sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-2.0672806,-9.2186288)"
+       id="text3"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:14.6667px;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';white-space:pre;shape-inside:url(#rect5);display:inline;fill:#000000;stroke:none"><tspan
+         x="107.25195"
+         y="500.23174"
+         id="tspan17">RW2=aW2/aPeriod</tspan></text>
   </g>
 </svg>
