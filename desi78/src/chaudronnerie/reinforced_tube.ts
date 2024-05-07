@@ -48,7 +48,9 @@ const pDef: tParamDef = {
 		pSectionSeparator('Wave'),
 		pNumber('E2', 'mm', 10, 1, 300, 1),
 		pNumber('N2', 'wave', 20, 4, 400, 1),
-		pNumber('W22', 'mm', 80, 1, 600, 1),
+		pDropdown('W2_method', ['W2_from_RW2', 'W2_direct']),
+		pNumber('RW2', '%', 50, 5, 95, 0.1),
+		pNumber('W2', 'mm', 80, 1, 800, 1),
 		pNumber('S23L', 'mm', 200, 1, 600, 1),
 		pDropdown('D2_method', ['D2_from_Rvw', 'D2_direct']),
 		pNumber('Rvw', '%', 50, 5, 95, 0.1),
@@ -66,7 +68,9 @@ const pDef: tParamDef = {
 		E1: 'reinforced_tube_section.svg',
 		E2: 'reinforced_tube_section_detail.svg',
 		N2: 'reinforced_tube_section.svg',
-		W22: 'reinforced_tube_section.svg',
+		W2_method: 'reinforced_tube_section.svg',
+		RW2: 'reinforced_tube_section.svg',
+		W2: 'reinforced_tube_section.svg',
 		S23L: 'reinforced_tube_section.svg',
 		D2_method: 'reinforced_tube_section.svg',
 		R32: 'reinforced_tube_section.svg',
@@ -124,17 +128,21 @@ function cscPts(
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figTopExt = figure();
+	const figTopWave = figure();
 	const figTopInt = figure();
 	const figSide = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
 		const R1Li = param.D1L / 2 - param.E1;
-		const aW22 = 2 * Math.asin(param.W22 / (2 * R1Li));
-		const LextW22 = (aW22 * param.D1L) / 2;
-		const LintW22 = aW22 * R1Li;
+		const R1Lii = R1Li - param.E2;
 		const aN2 = (2 * Math.PI) / param.N2;
-		const aWave = aN2 - 2 * aW22;
+		const W2p = 2 * R1Lii * Math.sin((aN2 * param.RW2) / 100);
+		const W2 = param.W2_method === 0 ? W2p : param.W2;
+		const aW2 = 2 * Math.asin(W2 / R1Lii);
+		const LextW2 = aW2 * R1Li;
+		const LintW2 = aW2 * R1Lii;
+		const aWave = aN2 - aW2;
 		const aR2e = aWave * (1 - param.Rvw / 100.0) * 0.5;
 		const R2e = param.D2_method === 0 ? biggestR(aR2e, R1Li) : param.D2 / 2 + param.E2;
 		const R2i = R2e - param.E2;
@@ -163,8 +171,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `reinforced_tube internal-external diameter: D1Li: ${ffix(2 * R1Li)} mm\n`;
-		rGeome.logstr += `W22: angle: ${ffix(radToDeg(aW22))} degree, corde-ext: ${ffix(LextW22)} mm, corde-int: ${ffix(LintW22)} mm\n`;
-		rGeome.logstr += `W2: angle: ${ffix(radToDeg(2 * aW22))} degree, corde-ext: ${ffix(2 * LextW22)} mm, corde-int: ${ffix(2 * LintW22)} mm\n`;
+		rGeome.logstr += `W2: angle: ${ffix(radToDeg(aW2))} degree, corde-ext: ${ffix(LextW2)} mm, corde-int: ${ffix(LintW2)} mm\n`;
 		rGeome.logstr += `Wave: angle: ${ffix(radToDeg(aWave))} degree, corde-int: ${ffix(WaveCordeInt)} mm\n`;
 		rGeome.logstr += `D2: ${ffix(2 * R2i)} mm, R2i: ${ffix(R2i)} mm, R2e: ${ffix(R2e)} mm\n`;
 		rGeome.logstr += `D3: ${ffix(2 * R3i)} mm, R3i: ${ffix(R3i)} mm, R3e: ${ffix(R3e)} mm\n`;
@@ -172,20 +179,21 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figTopExt
 		figTopExt.addMain(contourCircle(0, 0, param.D1L / 2));
 		figTopExt.addMain(contourCircle(0, 0, param.D1L / 2 - param.E1));
+		// figTopWave
 		const ctrWi = contour(R1Li - param.E2, 0);
 		const ctrWe = contour(R1Li, 0);
 		const p0 = point(0, 0);
 		for (let i = 0; i < param.N2; i++) {
 			const Aoffset = i * aN2;
-			const pWi1 = p0.setPolar(Aoffset + aW22, R1Li - param.E2);
-			const pWi2 = p0.setPolar(Aoffset + 2 * aW22, R1Li - param.E2);
-			const pWe1 = p0.setPolar(Aoffset + aW22, R1Li);
-			const pWe2 = p0.setPolar(Aoffset + 2 * aW22, R1Li);
+			const pWi1 = p0.setPolar(Aoffset + aW2 / 2, R1Li - param.E2);
+			const pWi2 = p0.setPolar(Aoffset + aW2, R1Li - param.E2);
+			const pWe1 = p0.setPolar(Aoffset + aW2 / 2, R1Li);
+			const pWe2 = p0.setPolar(Aoffset + aW2, R1Li);
 			ctrWi.addPointA(pWi1.cx, pWi1.cy).addPointA(pWi2.cx, pWi2.cy).addSegArc2();
 			ctrWe.addPointA(pWe1.cx, pWe1.cy).addPointA(pWe2.cx, pWe2.cy).addSegArc2();
-			const p1 = p0.setPolar(Aoffset + 2 * aW22, R1Li - R2e);
-			const p2 = p0.setPolar(Aoffset + 2 * aW22 + aWave / 2, R1Li - param.S23L + R3e);
-			const p3 = p0.setPolar(Aoffset + 2 * aW22 + aWave, R1Li - R2e);
+			const p1 = p0.setPolar(Aoffset + aW2, R1Li - R2e);
+			const p2 = p0.setPolar(Aoffset + aW2 + aWave / 2, R1Li - param.S23L + R3e);
+			const p3 = p0.setPolar(Aoffset + aW2 + aWave, R1Li - R2e);
 			//figTopExt.addSecond(contourCircle(p1.cx, p1.cy, R2e));
 			//figTopExt.addSecond(contourCircle(p1.cx, p1.cy, R2i));
 			//figTopExt.addSecond(contourCircle(p2.cx, p2.cy, R3e));
@@ -212,8 +220,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			ctrWe.addPointA(pAx, pAy).addSegArc(R2e, false, true);
 			ctrWi.addSegStrokeA(pCx, pCy);
 			ctrWe.addSegStrokeA(pBx, pBy);
-			const pWi3 = p0.setPolar(Aoffset + 2 * aW22 + aWave / 2, R1Li - param.S23L);
-			const pWe3 = p0.setPolar(Aoffset + 2 * aW22 + aWave / 2, R1Li - param.S23L + param.E2);
+			const pWi3 = p0.setPolar(Aoffset + aW2 + aWave / 2, R1Li - param.S23L);
+			const pWe3 = p0.setPolar(Aoffset + aW2 + aWave / 2, R1Li - param.S23L + param.E2);
 			ctrWi.addPointA(pWi3.cx, pWi3.cy).addPointA(pHx, pHy).addSegArc2();
 			ctrWe.addPointA(pWe3.cx, pWe3.cy).addPointA(pEx, pEy).addSegArc2();
 			ctrWi.addSegStrokeA(pGx, pGy);
@@ -225,26 +233,39 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		//figTopExt.addPoints(ctrWi.generatePoints());
 		//figTopExt.addPoints(ctrWe.generatePoints());
-		const ctrWiLen = 3;
-		const ctrWeLen = 4;
+		const ctrWiLen = ctrWi.getPerimeter();
+		const ctrWeLen = ctrWe.getPerimeter();
 		rGeome.logstr += `Wave-internal length: ${ffix(ctrWiLen)} mm\n`;
 		rGeome.logstr += `Wave-external length: ${ffix(ctrWeLen)} mm\n`;
 		rGeome.logstr += `Wave-average length: ${ffix((ctrWeLen + ctrWiLen) / 2)} mm\n`;
+		figTopWave.addMain(ctrWi);
+		figTopWave.addMain(ctrWe);
+		// figTopInt
+		if (param.internal_cylinder === 1) {
+			figTopInt.addMain(contourCircle(0, 0, R1Li - param.S23L));
+			figTopInt.addMain(contourCircle(0, 0, R1Li - param.S23L - param.E4));
+		}
+		// complete figTopExt, figTopWave and figTopInt
+		figTopExt.mergeFigure(figTopInt, true);
+		figTopWave.mergeFigure(figTopExt, true);
+		figTopInt.mergeFigure(figTopExt, true);
 		figTopExt.addSecond(ctrWi);
 		figTopExt.addSecond(ctrWe);
-		if (param.internal_cylinder === 1) {
-			figTopExt.addSecond(contourCircle(0, 0, R1Li - param.S23L));
-			figTopExt.addSecond(contourCircle(0, 0, R1Li - param.S23L - param.E4));
-		}
-		// figTopInt
-		figTopInt.addSecond(contourCircle(0, 0, param.D1L / 2));
-		figTopInt.addSecond(contourCircle(0, 0, param.D1L / 2 - param.E1));
+		figTopInt.addSecond(ctrWi);
+		figTopInt.addSecond(ctrWe);
 		// figSide
 		figSide.addMain(ctrRectangle(-R1Li - param.E1, 0, param.E1, param.H1));
 		figSide.addMain(ctrRectangle(R1Li, 0, param.E1, param.H1));
+		figSide.addSecond(ctrRectangle(-R1Li, 0, param.S23L, param.H1));
+		figSide.addSecond(ctrRectangle(R1Li - param.S23L, 0, param.S23L, param.H1));
+		if (param.internal_cylinder === 1) {
+			figSide.addMain(ctrRectangle(-R1Li + param.S23L, 0, param.E4, param.H1));
+			figSide.addMain(ctrRectangle(R1Li - param.S23L - param.E4, 0, param.E4, param.H1));
+		}
 		// final figure list
 		rGeome.fig = {
 			faceTopExt: figTopExt,
+			faceTopWave: figTopWave,
 			faceTopInt: figTopInt,
 			faceSide: figSide
 		};
@@ -259,13 +280,21 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: param.H1,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_topWave`,
+					face: `${designName}_faceTopWave`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.H1,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
 				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`subpax_${designName}_topExt`]
+					inList: [`subpax_${designName}_topExt`, `subpax_${designName}_topWave`]
 				}
 			]
 		};
