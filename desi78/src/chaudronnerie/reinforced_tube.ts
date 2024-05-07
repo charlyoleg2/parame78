@@ -150,6 +150,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R3ip = (R2i * param.R32) / (100 - param.R32);
 		const R3i = param.D3_method === 0 ? R3ip : param.D3 / 2;
 		const R3e = R3i + param.E2;
+		const R3c = R1Li - param.S23L + R3e;
+		const aR3e = Math.asin(R3e / R3c);
 		const WaveCordeExt = aWave * R1Li;
 		// step-5 : checks on the parameter values
 		if (param.S23L < param.E2) {
@@ -232,6 +234,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const pWe4 = p0.setPolar(Aoffset + aN2, R1Li);
 			ctrWi.addPointA(pWi4.cx, pWi4.cy).addSegArc(R2i, false, true);
 			ctrWe.addPointA(pWe4.cx, pWe4.cy).addSegArc(R2e, false, true);
+			// log for af
+			if (i === 0) {
+				const dx = pGx - pHx;
+				const dy = pGy - pHy;
+				const aExt = Math.atan2(dy, dx);
+				const af = aExt - Aoffset - aW2 - aWave / 2;
+				const afDiff = af - aR3e;
+				rGeome.logstr += `af: ${ffix(radToDeg(af))} degree, afDiff: ${ffix(radToDeg(afDiff))} degree\n`;
+			}
 		}
 		//figTopExt.addPoints(ctrWi.generatePoints());
 		//figTopExt.addPoints(ctrWe.generatePoints());
