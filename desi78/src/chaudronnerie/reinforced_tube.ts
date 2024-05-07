@@ -137,11 +137,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R1Li = param.D1L / 2 - param.E1;
 		const R1Lii = R1Li - param.E2;
 		const aN2 = (2 * Math.PI) / param.N2;
-		const W2p = 2 * R1Lii * Math.sin((aN2 * param.RW2) / 100);
+		const W2p = 2 * R1Lii * Math.sin((aN2 * param.RW2) / 200);
 		const W2 = param.W2_method === 0 ? W2p : param.W2;
-		const aW2 = 2 * Math.asin(W2 / R1Lii);
+		const aW2 = 2 * Math.asin(W2 / (2 * R1Lii));
 		const LextW2 = aW2 * R1Li;
 		const LintW2 = aW2 * R1Lii;
+		const W2bis = 2 * R1Lii * Math.sin(aW2 / 2);
 		const aWave = aN2 - aW2;
 		const aR2e = aWave * (1 - param.Rvw / 100.0) * 0.5;
 		const R2e = param.D2_method === 0 ? biggestR(aR2e, R1Li) : param.D2 / 2 + param.E2;
@@ -149,7 +150,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R3ip = (R2i * param.R32) / (100 - param.R32);
 		const R3i = param.D3_method === 0 ? R3ip : param.D3 / 2;
 		const R3e = R3i + param.E2;
-		const WaveCordeInt = aWave * R1Li;
+		const WaveCordeExt = aWave * R1Li;
 		// step-5 : checks on the parameter values
 		if (param.S23L < param.E2) {
 			throw `err095: S23L ${param.S23L} is too small compare to E2 ${param.E2}`;
@@ -161,7 +162,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err105: N2 ${param.N2} is too large compare to D1L ${param.D1L} and E1 ${param.E1}`;
 		}
 		// replace by err995
-		//if (WaveCordeInt < 2 * (R2e + R3e)) {
+		//if (WaveCordeExt < 2 * (R2e + R3e)) {
 		//	if (param.S23L < 2 * (R2e + R3e)) {
 		//		throw `err113: S23L ${param.S23L} is too small compare to D1L ${param.D1L} and N2 ${param.N2}`;
 		//	}
@@ -170,9 +171,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err143: E2 ${param.E2} is too large compare to R2e ${ffix(R2e)}`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `reinforced_tube internal-external diameter: D1Li: ${ffix(2 * R1Li)} mm\n`;
-		rGeome.logstr += `W2: angle: ${ffix(radToDeg(aW2))} degree, corde-ext: ${ffix(LextW2)} mm, corde-int: ${ffix(LintW2)} mm\n`;
-		rGeome.logstr += `Wave: angle: ${ffix(radToDeg(aWave))} degree, corde-int: ${ffix(WaveCordeInt)} mm\n`;
+		rGeome.logstr += `External cylinder: D1Le: ${param.D1L} mm, D1Li: ${ffix(2 * R1Li)} mm, corde-ext: ${ffix(Math.PI * param.D1L)} mm, corde-int: ${ffix(2 * Math.PI * R1Li)} mm\n`;
+		rGeome.logstr += `Period: angle: ${ffix(radToDeg(aN2))} degree, corde-ext: ${ffix(aN2 * R1Li)} mm\n`;
+		rGeome.logstr += `W2: angle: ${ffix(radToDeg(aW2))} degree or ${ffix((100 * aW2) / aN2)} %, corde-ext: ${ffix(LextW2)} mm, corde-int: ${ffix(LintW2)} mm, W2bis: ${ffix(W2bis)} mm\n`;
+		rGeome.logstr += `Wave: angle: ${ffix(radToDeg(aWave))} degree or ${ffix((100 * aWave) / aN2)} %, corde-ext: ${ffix(WaveCordeExt)} mm\n`;
 		rGeome.logstr += `D2: ${ffix(2 * R2i)} mm, R2i: ${ffix(R2i)} mm, R2e: ${ffix(R2e)} mm\n`;
 		rGeome.logstr += `D3: ${ffix(2 * R3i)} mm, R3i: ${ffix(R3i)} mm, R3e: ${ffix(R3e)} mm\n`;
 		// step-7 : drawing of the figures
