@@ -173,7 +173,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err143: E2 ${param.E2} is too large compare to R2e ${ffix(R2e)}`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `External cylinder: D1Le: ${param.D1L} mm, D1Li: ${ffix(2 * R1Li)} mm, corde-ext: ${ffix(Math.PI * param.D1L)} mm, corde-int: ${ffix(2 * Math.PI * R1Li)} mm\n`;
+		const cylinderExtCe = Math.PI * param.D1L;
+		const cylinderExtCi = 2 * Math.PI * R1Li;
+		rGeome.logstr += `External cylinder: D1Le: ${param.D1L} mm, D1Li: ${ffix(2 * R1Li)} mm, corde-ext: ${ffix(cylinderExtCe)} mm, corde-int: ${ffix(cylinderExtCi)} mm, diff: ${ffix(cylinderExtCe - cylinderExtCi)} mm\n`;
 		rGeome.logstr += `Period: angle: ${ffix(radToDeg(aN2))} degree, corde-ext: ${ffix(aN2 * R1Li)} mm\n`;
 		rGeome.logstr += `W2: angle: ${ffix(radToDeg(aW2))} degree or ${ffix((100 * aW2) / aN2)} %, corde-ext: ${ffix(LextW2)} mm, corde-int: ${ffix(LintW2)} mm, W2bis: ${ffix(W2bis)} mm\n`;
 		rGeome.logstr += `Wave: angle: ${ffix(radToDeg(aWave))} degree or ${ffix((100 * aWave) / aN2)} %, corde-ext: ${ffix(WaveCordeExt)} mm\n`;
@@ -250,7 +252,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrWeLen = ctrWe.getPerimeter();
 		rGeome.logstr += `Wave-internal length: ${ffix(ctrWiLen)} mm\n`;
 		rGeome.logstr += `Wave-external length: ${ffix(ctrWeLen)} mm\n`;
-		rGeome.logstr += `Wave-average length: ${ffix((ctrWeLen + ctrWiLen) / 2)} mm\n`;
+		rGeome.logstr += `Wave-average length: ${ffix((ctrWeLen + ctrWiLen) / 2)} mm, diff: ${ffix(ctrWeLen - ctrWiLen)} mm\n`;
 		figTopWave.addMain(ctrWi);
 		figTopWave.addMain(ctrWe);
 		// figTopInt
