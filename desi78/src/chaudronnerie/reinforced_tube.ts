@@ -250,9 +250,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//figTopExt.addPoints(ctrWe.generatePoints());
 		const ctrWiLen = ctrWi.getPerimeter();
 		const ctrWeLen = ctrWe.getPerimeter();
-		rGeome.logstr += `Wave-internal length: ${ffix(ctrWiLen)} mm\n`;
-		rGeome.logstr += `Wave-external length: ${ffix(ctrWeLen)} mm\n`;
-		rGeome.logstr += `Wave-average length: ${ffix((ctrWeLen + ctrWiLen) / 2)} mm, diff: ${ffix(ctrWeLen - ctrWiLen)} mm\n`;
+		rGeome.logstr += `info253: Wave-internal length: ${ffix(ctrWiLen)} mm\n`;
+		rGeome.logstr += `info254: Wave-external length: ${ffix(ctrWeLen)} mm\n`;
+		rGeome.logstr += `info255: Wave-average length: ${ffix((ctrWeLen + ctrWiLen) / 2)} mm, diff: ${ffix(ctrWeLen - ctrWiLen)} mm\n`;
 		figTopWave.addMain(ctrWi);
 		figTopWave.addMain(ctrWe);
 		// figTopInt

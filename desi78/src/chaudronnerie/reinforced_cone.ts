@@ -95,6 +95,14 @@ const pDef: tParamDef = {
 	}
 };
 
+// externalized function
+function strToCorde(iStr: string): number {
+	const re1 = /info255/;
+	const line = iStr.split('\n').reduce((acc, curr) => (re1.test(curr) ? curr : acc), '');
+	const rValue = parseFloat(line.replace(/^.*length:/, '').replace(/mm,.*$/, ''));
+	return rValue;
+}
+
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
@@ -161,6 +169,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			reinTubeParam.getSuffix()
 		);
 		checkGeom(reinTubeGeom);
+		const cordeLenT = strToCorde(reinTubeGeom.logstr);
 		rGeome.logstr += prefixLog(reinTubeGeom.logstr, reinTubeParam.getPartNameSuffix());
 		// figTopWave
 		figTopWave.mergeFigure(reinTubeGeom.fig.faceTopWave);
@@ -182,6 +191,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				ctrRectangle(R4L - param.E4, 0, param.E4, cyl4Len).rotate(R4L, 0, cyl4A)
 			);
 		}
+		// extra: more logs
+		reinTubeParam.setVal('D1L', param.D1L);
+		reinTubeParam.setVal('S23L', param.S23L);
+		const reinTubeGeomL = reinforcedTubeDef.pGeom(0, reinTubeParam.getParamVal(), '');
+		checkGeom(reinTubeGeomL);
+		const cordeLenL = strToCorde(reinTubeGeomL.logstr);
+		rGeome.logstr += `wave-low-corde length: ${ffix(cordeLenL)} mm\n`;
+		reinTubeParam.setVal('D1L', param.D1H);
+		reinTubeParam.setVal('S23L', param.S23H);
+		const reinTubeGeomH = reinforcedTubeDef.pGeom(0, reinTubeParam.getParamVal(), '');
+		checkGeom(reinTubeGeomH);
+		const cordeLenH = strToCorde(reinTubeGeomH.logstr);
+		rGeome.logstr += `wave-high-corde length: ${ffix(cordeLenH)} mm\n`;
+		rGeome.logstr += `wave-corde low-high-diff: ${ffix(cordeLenL - cordeLenH)} mm\n`;
+		const cordeLenExpected = (cordeLenH * t) / 100.0 + (cordeLenL * (100 - t)) / 100.0;
+		rGeome.logstr += `wave-corde at t: ${ffix(t)} %, expected length: ${ffix(cordeLenExpected)} mm\n`;
+		rGeome.logstr += `wave-corde-t length: ${ffix(cordeLenT)} mm, diff: ${ffix(cordeLenT - cordeLenExpected)} mm\n`;
 		// final figure list
 		rGeome.fig = {
 			faceTopWave: figTopWave,
