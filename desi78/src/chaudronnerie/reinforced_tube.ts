@@ -346,7 +346,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 }
 
 // step-11 : definiton of the final object that gathers the precedent object and function
-const ReinforcedTubeDef: tPageDef = {
+const reinforcedTubeDef: tPageDef = {
 	pTitle: 'Reinforced tube',
 	pDescription: 'A strong tube with less metal',
 	pDef: pDef,
@@ -354,4 +354,4 @@ const ReinforcedTubeDef: tPageDef = {
 };
 
 // step-12 : export the final object
-export { ReinforcedTubeDef };
+export { reinforcedTubeDef };

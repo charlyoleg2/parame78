@@ -13,9 +13,9 @@ import type {
 	tPageDef
 } from 'geometrix';
 import {
-	//designParam,
-	//checkGeom,
-	//prefixLog,
+	designParam,
+	checkGeom,
+	prefixLog,
 	//point,
 	//Point,
 	//ShapePoint,
@@ -35,6 +35,9 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
+
+// design import
+import { reinforcedTubeDef } from './reinforced_tube';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -113,6 +116,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const cyl4Len = Math.sqrt(R4HL ** 2 + param.H1 ** 2);
 		const cyl4A = Math.atan2(R4HL, param.H1);
 		const E4h = param.E4 / Math.cos(cyl4A);
+		const R1t = (R1H * t) / 100.0 + (R1L * (100 - t)) / 100.0;
+		const S23t = (param.S23H * t) / 100.0 + (param.S23L * (100 - t)) / 100.0;
 		// step-5 : checks on the parameter values
 		if (R4L - E4h < 0) {
 			throw `err118: D1L ${param.D1L} is too small compare to S23L ${param.S23L}`;
@@ -129,8 +134,36 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			rGeome.logstr += `Cylinder-4 (Int): R4L: ${ffix(R4L)} mm, D4L: ${ffix(2 * R4L)} mm\n`;
 			rGeome.logstr += `Cylinder-4 (Int): angle: ${ffix(radToDeg(cyl4A))} degree, length: ${ffix(cyl4Len)} mm\n`;
 		}
+		rGeome.logstr += `Section horizontal: R1t: ${ffix(R1t)} mm, S23t: ${ffix(S23t)} mm\n`;
 		// step-7 : drawing of the figures
+		// sub-desingn
+		const reinTubeParam = designParam(reinforcedTubeDef.pDef, '');
+		reinTubeParam.setVal('D1L', 2 * R1t);
+		reinTubeParam.setVal('H1', param.H1);
+		reinTubeParam.setVal('E1', param.E1);
+		reinTubeParam.setVal('E2', param.E2);
+		reinTubeParam.setVal('N2', param.N2);
+		reinTubeParam.setVal('W2_method', param.W2_method);
+		reinTubeParam.setVal('RW2', param.RW2);
+		reinTubeParam.setVal('W2', param.W2);
+		reinTubeParam.setVal('S23L', S23t);
+		reinTubeParam.setVal('D2_method', param.D2_method);
+		reinTubeParam.setVal('R32', param.R32);
+		reinTubeParam.setVal('D2', param.D2);
+		reinTubeParam.setVal('D3_method', param.D3_method);
+		reinTubeParam.setVal('Rvw', param.Rvw);
+		reinTubeParam.setVal('D3', param.D3);
+		reinTubeParam.setVal('internal_cylinder', param.internal_cylinder);
+		reinTubeParam.setVal('E4', param.E4);
+		const reinTubeGeom = reinforcedTubeDef.pGeom(
+			0,
+			reinTubeParam.getParamVal(),
+			reinTubeParam.getSuffix()
+		);
+		checkGeom(reinTubeGeom);
+		rGeome.logstr += prefixLog(reinTubeGeom.logstr, reinTubeParam.getPartNameSuffix());
 		// figTopWave
+		figTopWave.mergeFigure(reinTubeGeom.fig.faceTopWave);
 		// figSideExt
 		figSideExt.addMain(
 			ctrRectangle(R1L - param.E1, 0, param.E1, cyl1Len).rotate(R1L, 0, cyl1A)
@@ -203,7 +236,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 }
 
 // step-11 : definiton of the final object that gathers the precedent object and function
-const ReinforcedConeDef: tPageDef = {
+const reinforcedConeDef: tPageDef = {
 	pTitle: 'Reinforced cone',
 	pDescription: 'A strong cone with less metal',
 	pDef: pDef,
@@ -211,4 +244,4 @@ const ReinforcedConeDef: tPageDef = {
 };
 
 // step-12 : export the final object
-export { ReinforcedConeDef };
+export { reinforcedConeDef };
