@@ -227,7 +227,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				translate: [0, 0, 0]
 			};
 			optExtrudes.push(tmpVol);
-			optVolumeNames.push(`subpax_${designName}_topInt`);
+			optVolumeNames.push(`subpax_${designName}_SideInt`);
 		}
 		rGeome.vol = {
 			extrudes: [
