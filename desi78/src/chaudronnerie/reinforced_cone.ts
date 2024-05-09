@@ -107,6 +107,8 @@ function strToCorde(iStr: string): number {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figTopWave = figure();
+	const figTopWaveH = figure();
+	const figTopWaveL = figure();
 	const figSideExt = figure();
 	const figSideInt = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
@@ -208,11 +210,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const cordeLenExpected = (cordeLenH * t) / 100.0 + (cordeLenL * (100 - t)) / 100.0;
 		rGeome.logstr += `wave-corde at t: ${ffix(t)} %, expected length: ${ffix(cordeLenExpected)} mm\n`;
 		rGeome.logstr += `wave-corde-t length: ${ffix(cordeLenT)} mm, diff: ${ffix(cordeLenT - cordeLenExpected)} mm\n`;
+		// figTopWaveH
+		figTopWaveH.mergeFigure(reinTubeGeomH.fig.faceTopWave);
+		// figTopWaveL
+		figTopWaveL.mergeFigure(reinTubeGeomL.fig.faceTopWave);
 		// final figure list
 		rGeome.fig = {
 			faceTopWave: figTopWave,
 			faceSideExt: figSideExt,
-			faceSideInt: figSideInt
+			faceSideInt: figSideInt,
+			faceTopWaveH: figTopWaveH,
+			faceTopWaveL: figTopWaveL
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
