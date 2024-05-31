@@ -4,6 +4,7 @@
 // step-1 : import from geometrix
 import type {
 	//tContour,
+	//tOuterInner,
 	tParamDef,
 	tParamVal,
 	tGeom,
@@ -178,13 +179,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSeg2Arcs(Math.PI + p7a, p6a)
 			.addCornerRounded(param.R2)
 			.closeSegStroke();
-		figDoor.addMain(ctrDoor);
+		figDoor.addMainO(ctrDoor);
 		// figTop
-		figTop.addMain(ctrRectangle(-param.L2 - param.L1 / 2, 0, param.L2, param.W1));
-		figTop.addMain(ctrRectangle(param.L1 / 2, 0, param.L2, param.W1));
+		figTop.addMainO(ctrRectangle(-param.L2 - param.L1 / 2, 0, param.L2, param.W1));
+		figTop.addMainO(ctrRectangle(param.L1 / 2, 0, param.L2, param.W1));
 		figTop.addSecond(ctrRectangle(-param.L1 / 2, 0, param.L1, param.W1));
 		// figSide
-		figSide.addMain(ctrRectangle(0, 0, param.W1, param.H1 + param.H2 + param.H3));
+		figSide.addMainO(ctrRectangle(0, 0, param.W1, param.H1 + param.H2 + param.H3));
 		figSide.addSecond(ctrRectangle(0, 0, param.W1, param.H1 + param.H2));
 		// final figure list
 		rGeome.fig = {

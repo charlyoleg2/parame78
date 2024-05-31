@@ -4,6 +4,7 @@
 // step-1 : import from geometrix
 import type {
 	tContour,
+	//tOuterInner,
 	tParamDef,
 	tParamVal,
 	tGeom,
@@ -131,7 +132,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-7 : drawing of the figures
 		// figPlancherTop
 		for (let i = 0; i < param.N1; i++) {
-			figPlancherTop.addMain(ctrRectangle(0, i * (param.W1 + param.ES1), paramB, param.W1));
+			figPlancherTop.addMainO(ctrRectangle(0, i * (param.W1 + param.ES1), paramB, param.W1));
 		}
 		for (let i = 0; i < param.N2; i++) {
 			figPlancherTop.addSecond(ctrRectangle(i * (param.W2 + param.ES2), 0, param.W2, paramA));
@@ -143,7 +144,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			);
 		}
 		for (let i = 0; i < param.N2; i++) {
-			figPlancherBottom.addMain(
+			figPlancherBottom.addMainO(
 				ctrRectangle(i * (param.W2 + param.ES2), 0, param.W2, paramA)
 			);
 		}
@@ -165,8 +166,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.closeSegStroke();
 			return rCtr;
 		};
-		figFaceBeam.addMain(ctrBeam(-1));
-		figFaceBeam.addMain(ctrBeam(1));
+		figFaceBeam.addMainO(ctrBeam(-1));
+		figFaceBeam.addMainO(ctrBeam(1));
 		const ctrLeg = function (side: number): tContour {
 			const rCtr = contour(faceMid + side * buttressW2, param.H1)
 				.addSegStrokeR(side * legFootPrint, 0)
@@ -186,15 +187,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figFaceLeg
 		figFaceLeg.addSecond(ctrBeam(-1));
 		figFaceLeg.addSecond(ctrBeam(1));
-		figFaceLeg.addMain(ctrLeg(-1));
-		figFaceLeg.addMain(ctrLeg(1));
+		figFaceLeg.addMainO(ctrLeg(-1));
+		figFaceLeg.addMainO(ctrLeg(1));
 		figFaceLeg.addSecond(ctrButtress);
 		// figFaceButtress
 		figFaceButtress.addSecond(ctrBeam(-1));
 		figFaceButtress.addSecond(ctrBeam(1));
 		figFaceButtress.addSecond(ctrLeg(-1));
 		figFaceButtress.addSecond(ctrLeg(1));
-		figFaceButtress.addMain(ctrButtress);
+		figFaceButtress.addMainO(ctrButtress);
 		// figSide
 		figSide.addSecond(ctrRectangle(0, param.H1 + param.T1, paramB, param.T1));
 		for (let i = 0; i < param.N2; i++) {
@@ -203,8 +204,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			);
 		}
 		figSide.addSecond(ctrRectangle(0, param.H1 - param.H3, paramB, param.H2));
-		figSide.addMain(ctrRectangle(param.S1, 0, param.S2, param.H1));
-		figSide.addMain(ctrRectangle(paramB - param.S1 - param.S2, 0, param.S2, param.H1));
+		figSide.addMainO(ctrRectangle(param.S1, 0, param.S2, param.H1));
+		figSide.addMainO(ctrRectangle(paramB - param.S1 - param.S2, 0, param.S2, param.H1));
 		// final figure list
 		rGeome.fig = {
 			facePlancherTop: figPlancherTop,

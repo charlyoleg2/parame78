@@ -4,6 +4,7 @@
 // step-1 : import from geometrix
 import type {
 	tContour,
+	//tOuterInner,
 	tParamDef,
 	tParamVal,
 	tGeom,
@@ -234,7 +235,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeA(-param.RCyb, param.W1 / 2 + param.RCx)
 			.addCornerRounded(param.RoR)
 			.closeSegStroke();
-		figTop.addMain(ctrRoof);
+		figTop.addMainO(ctrRoof);
 		const ctrRoofSub = ctrRectangle(
 			0,
 			-param.RLx + param.RLe,
@@ -304,15 +305,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeA(RIRx - dFWHxR, RIRz + dFWHzR)
 			.addSegStrokeA(param.W1 - dFWLxR, wall_z0)
 			.closeSegStroke();
-		figFaceFront.addMain(ctrFaceF);
+		figFaceFront.addMainO(ctrFaceF);
 		figFaceFront.addSecond(ctrFaceWindow);
 		figFaceFront.addSecond(ctrFaceRoof);
 		figFaceFront.addSecond(ctrFaceL);
 		figFaceFront.addSecond(ctrFaceR);
 		// figFaceBack
 		figFaceBack.mergeFigure(plancherGeom.fig.faceBeam, true);
-		figFaceBack.addMain(ctrFaceB);
-		figFaceBack.addMain(ctrFaceWindow);
+		figFaceBack.addMainO(ctrFaceB);
+		figFaceBack.addMainO(ctrFaceWindow);
 		figFaceBack.addSecond(ctrFaceRoof);
 		figFaceBack.addSecond(ctrFaceL);
 		figFaceBack.addSecond(ctrFaceR);
@@ -320,7 +321,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figFaceRoof.mergeFigure(plancherGeom.fig.faceBeam, true);
 		figFaceRoof.addSecond(ctrFaceF);
 		figFaceRoof.addSecond(ctrFaceWindow);
-		figFaceRoof.addMain(ctrFaceRoof);
+		figFaceRoof.addMainO(ctrFaceRoof);
 		figFaceRoof.addSecond(ctrFaceL);
 		figFaceRoof.addSecond(ctrFaceR);
 		// figFaceSide
@@ -328,8 +329,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figFaceSide.addSecond(ctrFaceF);
 		figFaceSide.addSecond(ctrFaceWindow);
 		figFaceSide.addSecond(ctrFaceRoof);
-		figFaceSide.addMain(ctrFaceL);
-		figFaceSide.addMain(ctrFaceR);
+		figFaceSide.addMainO(ctrFaceL);
+		figFaceSide.addMainO(ctrFaceR);
 		// figSide
 		figSide.mergeFigure(plancherGeom.fig.faceSide, true);
 		const ctrSideCB = contour(0, wall_z0)
@@ -366,8 +367,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSide.addSecond(ctrSideCB);
 		figSide.addSecond(ctrSideR);
 		figSide.addSecond(ctrSideRoofR);
-		figSide.addMain(ctrSideL);
-		figSide.addMain(ctrSideRoofL);
+		figSide.addMainO(ctrSideL);
+		figSide.addMainO(ctrSideRoofL);
 		// final figure list
 		rGeome.fig = {
 			faceTop: figTop,

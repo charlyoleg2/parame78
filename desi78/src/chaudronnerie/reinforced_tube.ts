@@ -4,6 +4,7 @@
 // step-1 : import from geometrix
 import type {
 	//tContour,
+	//tOuterInner,
 	tParamDef,
 	tParamVal,
 	tGeom,
@@ -183,8 +184,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `D3: ${ffix(2 * R3i)} mm, R3i: ${ffix(R3i)} mm, R3e: ${ffix(R3e)} mm\n`;
 		// step-7 : drawing of the figures
 		// figTopExt
-		figTopExt.addMain(contourCircle(0, 0, param.D1L / 2));
-		figTopExt.addMain(contourCircle(0, 0, param.D1L / 2 - param.E1));
+		figTopExt.addMainOI([
+			contourCircle(0, 0, param.D1L / 2),
+			contourCircle(0, 0, param.D1L / 2 - param.E1)
+		]);
 		// figTopWave
 		const ctrWi = contour(R1Li - param.E2, 0);
 		const ctrWe = contour(R1Li, 0);
@@ -253,12 +256,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `info253: Wave-internal length: ${ffix(ctrWiLen)} mm\n`;
 		rGeome.logstr += `info254: Wave-external length: ${ffix(ctrWeLen)} mm\n`;
 		rGeome.logstr += `info255: Wave-average length: ${ffix((ctrWeLen + ctrWiLen) / 2)} mm, diff: ${ffix(ctrWeLen - ctrWiLen)} mm\n`;
-		figTopWave.addMain(ctrWi);
-		figTopWave.addMain(ctrWe);
+		figTopWave.addMainOI([ctrWi, ctrWe]);
 		// figTopInt
 		if (param.internal_cylinder === 1) {
-			figTopInt.addMain(contourCircle(0, 0, R1Li - param.S23L));
-			figTopInt.addMain(contourCircle(0, 0, R1Li - param.S23L - param.E4));
+			figTopInt.addMainOI([
+				contourCircle(0, 0, R1Li - param.S23L),
+				contourCircle(0, 0, R1Li - param.S23L - param.E4)
+			]);
 		}
 		// complete figTopExt, figTopWave and figTopInt
 		figTopExt.mergeFigure(figTopInt, true);
@@ -269,13 +273,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTopInt.addSecond(ctrWi);
 		figTopInt.addSecond(ctrWe);
 		// figSide
-		figSide.addMain(ctrRectangle(-R1Li - param.E1, 0, param.E1, param.H1));
-		figSide.addMain(ctrRectangle(R1Li, 0, param.E1, param.H1));
+		figSide.addMainO(ctrRectangle(-R1Li - param.E1, 0, param.E1, param.H1));
+		figSide.addMainO(ctrRectangle(R1Li, 0, param.E1, param.H1));
 		figSide.addSecond(ctrRectangle(-R1Li, 0, param.S23L, param.H1));
 		figSide.addSecond(ctrRectangle(R1Li - param.S23L, 0, param.S23L, param.H1));
 		if (param.internal_cylinder === 1) {
-			figSide.addMain(ctrRectangle(-R1Li + param.S23L, 0, param.E4, param.H1));
-			figSide.addMain(ctrRectangle(R1Li - param.S23L - param.E4, 0, param.E4, param.H1));
+			figSide.addMainO(ctrRectangle(-R1Li + param.S23L, 0, param.E4, param.H1));
+			figSide.addMainO(ctrRectangle(R1Li - param.S23L - param.E4, 0, param.E4, param.H1));
 		}
 		// final figure list
 		rGeome.fig = {

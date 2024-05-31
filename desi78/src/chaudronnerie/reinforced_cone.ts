@@ -4,6 +4,7 @@
 // step-1 : import from geometrix
 import type {
 	//tContour,
+	//tOuterInner,
 	tParamDef,
 	tParamVal,
 	tGeom,
@@ -176,7 +177,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figTopWave
 		figTopWave.mergeFigure(reinTubeGeom.fig.faceTopWave);
 		// figSideExt
-		figSideExt.addMain(
+		figSideExt.addMainO(
 			ctrRectangle(R1L - param.E1, 0, param.E1, cyl1Len).rotate(R1L, 0, cyl1A)
 		);
 		figSideExt.addSecond(ctrRectangle(-R1L, 0, param.E1, cyl1Len).rotate(-R1L, 0, -cyl1A));
@@ -189,7 +190,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figSideInt
 		figSideInt.mergeFigure(figSideExt, true);
 		if (param.internal_cylinder === 1) {
-			figSideInt.addMain(
+			figSideInt.addMainO(
 				ctrRectangle(R4L - param.E4, 0, param.E4, cyl4Len).rotate(R4L, 0, cyl4A)
 			);
 		}
