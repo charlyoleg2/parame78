@@ -256,7 +256,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `info253: Wave-internal length: ${ffix(ctrWiLen)} mm\n`;
 		rGeome.logstr += `info254: Wave-external length: ${ffix(ctrWeLen)} mm\n`;
 		rGeome.logstr += `info255: Wave-average length: ${ffix((ctrWeLen + ctrWiLen) / 2)} mm, diff: ${ffix(ctrWeLen - ctrWiLen)} mm\n`;
-		figTopWave.addMainOI([ctrWi, ctrWe]);
+		figTopWave.addMainOI([ctrWe, ctrWi]);
 		// figTopInt
 		if (param.internal_cylinder === 1) {
 			figTopInt.addMainOI([
