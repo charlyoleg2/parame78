@@ -1,6 +1,6 @@
 {
 	"name": "desi78",
-	"version": "0.5.15",
+	"version": "0.5.16",
 	"description": "A collection of designs for architecture",
 	"private": false,
 	"repository": {
@@ -57,7 +57,7 @@
 		"clean": "shx rm -fr dist dist2 node_modules"
 	},
 	"dependencies": {
-		"geometrix": "^0.5.39"
+		"geometrix": "^0.5.40"
 	},
 	"devDependencies": {
 		"@types/node": "^20.13.0",
