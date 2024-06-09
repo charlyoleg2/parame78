@@ -28,15 +28,27 @@ Links
 - [pkg-uis](https://www.npmjs.com/package/desi78-uis) : desi78-uis as npm-package
 
 
-Prerequisite
-------------
+Usage for Makers
+----------------
 
-- [node](https://nodejs.org) version 20.10.0 or higher
-- [npm](https://docs.npmjs.com/cli/v7/commands/npm) version 10.5.0 or higher
+Parametrize and generate your 3D-files with the online-app:
 
+[https://charlyoleg2.github.io/parame78/](https://charlyoleg2.github.io/parame78/)
 
-Getting started
----------------
+Or use the UI locally:
+
+```bash
+npx desi78-uis
+```
+
+Or use the command-line-interface (CLI):
+
+```bash
+npx desi78-uis
+```
+
+Getting started for Dev
+-----------------------
 
 ```bash
 git clone https://github.com/charlyoleg2/parame78
@@ -58,6 +70,12 @@ npm -w desi78 run check
 npm -w desi78 run build
 npm -w desiXY-ui run dev
 ```
+
+Prerequisite
+------------
+
+- [node](https://nodejs.org) version 20.10.0 or higher
+- [npm](https://docs.npmjs.com/cli/v7/commands/npm) version 10.5.0 or higher
 
 Publish a new release
 ---------------------
