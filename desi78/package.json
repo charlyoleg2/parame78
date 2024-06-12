@@ -57,7 +57,7 @@
 		"clean": "shx rm -fr dist dist2 node_modules"
 	},
 	"dependencies": {
-		"geometrix": "^0.5.44"
+		"geometrix": "^0.5.45"
 	},
 	"devDependencies": {
 		"@types/node": "^20.14.2",
