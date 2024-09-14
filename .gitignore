@@ -1,4 +1,3 @@
 # .gitignore of parame_root
-/node_modules/
-/output/
-/paxApps/
+node_modules/
+output/

@@ -32,21 +32,19 @@ jobs:
             - name: clean and install
               run: |
                   npm ci
-                  npm run install_paxApps
-                  npm i
 
             - name: Build and check
               env:
                   BASE_PATH: ${{ github.event.repository.name }}
               run: |
                   npm run ci
-                  npm -w desiXY-ui run github-pages-fix
+                  npm -w desi78-ui run github-pages-fix
 
             - name: Deploy to GitHub pages
               uses: crazy-max/ghaction-github-pages@v4
               with:
                   target_branch: gh-pages
-                  build_dir: paxApps/desiXY-ui/build
+                  build_dir: pkg/desi78-ui/build
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

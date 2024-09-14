@@ -34,3 +34,8 @@ npm -w desi78 install
 npm -w desi78 run ci
 ```
 
+Dependencies
+------------
+
+*Desi78* runtime depends only on *Geometrix*. Use *desi78-ui* WebUI or *desi78-cli* CLI to visualize and export the designs in different formats like dxf, svg, gltf, stl, brep, step and others.
+

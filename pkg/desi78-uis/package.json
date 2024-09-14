@@ -1,0 +1,95 @@
+{
+	"name": "desi78-uis",
+	"description": "mini-server for the web-app desi78-ui",
+	"version": "0.1.0",
+	"private": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/MYNAME/parame78.git"
+	},
+	"homepage": "https://MYNAME.github.io/parame78/",
+	"author": "MYNAME",
+	"license": "ISC",
+	"keywords": [
+		"parametrix",
+		"3D",
+		"CAD"
+	],
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/desi78-uis.d.ts",
+			"default": "./dist/desi78-uis.js"
+		}
+	},
+	"bin": "dist/desi78-uis.js",
+	"files": [
+		"dist/",
+		"!dist/**/*.d.ts",
+		"!dist/**/*.map",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
+	"engines": {
+		"node": ">=20.10.0"
+	},
+	"tsup": {
+		"entry": [
+			"src/desi78-uis.ts"
+		],
+		"format": "esm",
+		"splitting": false,
+		"dts": false,
+		"sourcemap": false,
+		"clean": true
+	},
+	"prettier": {
+		"useTabs": true,
+		"singleQuote": true,
+		"trailingComma": "none",
+		"printWidth": 100,
+		"plugins": [],
+		"overrides": []
+	},
+	"scripts": {
+		"dev": "tsup --watch",
+		"build": "tsup",
+		"check": "tsc --noEmit",
+		"pretty": "prettier --check .",
+		"format": "prettier --write .",
+		"lint": "eslint .",
+		"test:unit": "vitest",
+		"test:unit:once": "vitest --run",
+		"clean_public": "shx rm -fr dist/public",
+		"copy_ui": "shx cp -r ../desi78-ui/build dist/public",
+		"checkCopy": "ls -l dist/public/index.html",
+		"copy_public": "run-s clean_public copy_ui checkCopy",
+		"ci": "run-s check build pretty lint test:unit:once copy_public",
+		"run": "node dist/desi78-uis.js",
+		"run-help": "node dist/desi78-uis.js --help",
+		"clean": "shx rm -fr node_modules build dist tmp"
+	},
+	"dependencies": {
+		"express": "^4.21.0",
+		"fs-extra": "^11.2.0",
+		"get-port": "^7.1.0",
+		"open": "^10.1.0",
+		"yargs": "^17.7.2"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.10.0",
+		"@types/eslint__js": "^8.42.3",
+		"@types/express": "^4.17.21",
+		"@types/fs-extra": "^11.0.4",
+		"@types/yargs": "^17.0.33",
+		"eslint": "^9.10.0",
+		"eslint-config-prettier": "^9.1.0",
+		"npm-run-all": "^4.1.5",
+		"prettier": "^3.3.3",
+		"shx": "^0.3.4",
+		"tsup": "^8.2.4",
+		"typescript": "^5.6.2",
+		"typescript-eslint": "^8.5.0",
+		"vitest": "^2.1.1"
+	}
+}
