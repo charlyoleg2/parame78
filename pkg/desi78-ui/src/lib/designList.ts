@@ -1,7 +1,7 @@
 // designList.ts
 
 import type { tAllPageDef } from 'geometrix';
-import { doorDef, cabane_plancherDef, cabaneDef, reinforced_tubeDef, reinforced_coneDef } from 'desi78';
+import { doorDef, cabanePlancherDef, cabaneDef, reinforcedTubeDef, reinforcedConeDef } from 'desi78';
 
 const designList: tAllPageDef = {
 	'desi78/facade/door': doorDef,
