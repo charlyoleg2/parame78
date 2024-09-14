@@ -5,10 +5,10 @@
 	"private": true,
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/MYNAME/parame78.git"
+		"url": "git+https://github.com/charlyoleg2/parame78.git"
 	},
-	"homepage": "https://MYNAME.github.io/parame78/",
-	"author": "MYNAME",
+	"homepage": "https://charlyoleg2.github.io/parame78/",
+	"author": "charlyoleg2",
 	"license": "ISC",
 	"keywords": [
 		"parametrix",
