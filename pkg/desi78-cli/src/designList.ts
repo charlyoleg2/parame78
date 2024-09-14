@@ -7,8 +7,8 @@ const designList: tAllPageDef = {
 	'desi78/facade/door': doorDef,
 	'desi78/menuiserie/cabane_plancher': cabanePlancherDef,
 	'desi78/menuiserie/cabane': cabaneDef,
-	'desi78/chaudronnerie/reinforced_tube': reinforced_tubeDef,
-	'desi78/chaudronnerie/reinforced_cone': reinforced_coneDef
+	'desi78/chaudronnerie/reinforced_tube': reinforcedTubeDef,
+	'desi78/chaudronnerie/reinforced_cone': reinforcedConeDef
 };
 
 export { designList };
