@@ -57,7 +57,7 @@
 		"clean": "shx rm -fr dist dist2 node_modules"
 	},
 	"dependencies": {
-		"geometrix": "^0.5.48"
+		"geometrix": "^0.5.49"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.10.0",
