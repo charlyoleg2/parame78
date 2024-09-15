@@ -10,11 +10,11 @@ import {
 } from 'desi78';
 
 const designList: tAllPageDef = {
-	'desi78/facade/door': doorDef,
-	'desi78/menuiserie/cabane_plancher': cabanePlancherDef,
-	'desi78/menuiserie/cabane': cabaneDef,
-	'desi78/chaudronnerie/reinforced_tube': reinforcedTubeDef,
-	'desi78/chaudronnerie/reinforced_cone': reinforcedConeDef
+	'desi78/door': doorDef,
+	'desi78/cabane_plancher': cabanePlancherDef,
+	'desi78/cabane': cabaneDef,
+	'desi78/reinforced_tube': reinforcedTubeDef,
+	'desi78/reinforced_cone': reinforcedConeDef
 };
 
 export { designList };
