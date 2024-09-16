@@ -49,10 +49,10 @@
 		font-family: 'Courier New', 'Helvetica', 'Arial', 'Verdana';
 		margin: 0;
 		padding: 0;
-		background-color: DarkCyan;
+		background-color: SeaGreen;
 	}
 	h1 {
-		color: aquamarine;
+		color: Orange;
 		margin: 1rem;
 		margin-bottom: 0.2rem;
 	}
