@@ -138,12 +138,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrLens = ctrHalfLens(1, false);
 		// second half of the lens
 		if (param.TypeL !== 1) {
-			ctrLens.addPointA(-E1h + E1pL, -Dr2).addSegArc3(-Math.PI / 2, true);
+			ctrLens.addPointA(-E1h + E1pL, -Dl2).addSegArc3(-Math.PI / 2, true);
 		}
 		ctrLens.addSegStrokeA(-E1h + E1pL, -D1h).addSegStrokeA(E1h - E1pR, -D1h);
 		if (param.TypeR !== 1) {
 			ctrLens
-				.addSegStrokeA(E1h - E1pR, -Dl2)
+				.addSegStrokeA(E1h - E1pR, -Dr2)
 				.addPointA(E1h, 0)
 				.addSegArc3(-Math.PI / 2, false);
 		} else {
