@@ -3,6 +3,7 @@
 
 // step-1 : import from geometrix
 import type {
+	Contour,
 	//tContour,
 	//tOuterInner,
 	tParamDef,
@@ -90,7 +91,8 @@ function e1plus(aRcurve: number, aDiameter: number, aType: number): number {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figLens = figure();
+	const figLensSim = figure();
+	const figLens3D = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -114,28 +116,47 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-6 : any logs
 		rGeome.logstr += `E2: ${ffix(E2)} mm\n`;
 		// step-7 : drawing of the figures
-		// figLens
-		const ctrLens = contour(E1h - E1pR, D1h).addSegStrokeA(-E1h + E1pL, D1h);
+		// figLensSim
+		function ctrHalfLens(aYS: number, aClose: boolean): Contour {
+			const rCtr = contour(E1h, 0);
+			if (param.TypeR !== 1) {
+				rCtr.addPointA(E1h - E1pR, aYS * Dr2).addSegArc3((aYS * Math.PI) / 2, true);
+			}
+			rCtr.addSegStrokeA(E1h - E1pR, aYS * D1h).addSegStrokeA(-E1h + E1pL, aYS * D1h);
+			if (param.TypeL !== 1) {
+				rCtr.addSegStrokeA(-E1h + E1pL, aYS * Dl2)
+					.addPointA(-E1h, 0)
+					.addSegArc3((aYS * Math.PI) / 2, false);
+			} else {
+				rCtr.addSegStrokeA(-E1h, 0);
+			}
+			if (aClose) {
+				rCtr.closeSegStroke();
+			}
+			return rCtr;
+		}
+		const ctrLens = ctrHalfLens(1, false);
+		// second half of the lens
 		if (param.TypeL !== 1) {
-			ctrLens
-				.addSegStrokeA(-E1h + E1pL, Dl2)
-				.addPointA(-E1h, 0)
-				.addPointA(-E1h + E1pL, -Dl2)
-				.addSegArc2();
+			ctrLens.addPointA(-E1h + E1pL, -Dr2).addSegArc3(-Math.PI / 2, true);
 		}
 		ctrLens.addSegStrokeA(-E1h + E1pL, -D1h).addSegStrokeA(E1h - E1pR, -D1h);
 		if (param.TypeR !== 1) {
 			ctrLens
-				.addSegStrokeA(E1h - E1pR, -Dr2)
+				.addSegStrokeA(E1h - E1pR, -Dl2)
 				.addPointA(E1h, 0)
-				.addPointA(E1h - E1pR, Dr2)
-				.addSegArc2();
+				.addSegArc3(-Math.PI / 2, false);
+		} else {
+			ctrLens.addSegStrokeA(E1h, 0);
 		}
-		ctrLens.closeSegStroke();
-		figLens.addMainO(ctrLens);
+		figLensSim.addMainO(ctrLens);
+		// figLens3D
+		figLens3D.addMainO(ctrHalfLens(1, true).rotate(0, 0, Math.PI / 2));
+		figLens3D.addSecond(ctrHalfLens(-1, true).rotate(0, 0, Math.PI / 2));
 		// final figure list
 		rGeome.fig = {
-			faceLens: figLens
+			faceLensSim: figLensSim,
+			faceLens3D: figLens3D
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -143,9 +164,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			extrudes: [
 				{
 					outName: `subpax_${designName}`,
-					face: `${designName}_faceLens`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: 1.0,
+					face: `${designName}_faceLens3D`,
+					extrudeMethod: EExtrude.eRotate,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
 				}
