@@ -7,7 +7,8 @@ import {
 	cabaneDef,
 	reinforcedTubeDef,
 	reinforcedConeDef,
-	lensX1Def
+	lensX1Def,
+	railDef
 } from 'desi78';
 
 const designList: tAllPageDef = {
@@ -16,7 +17,8 @@ const designList: tAllPageDef = {
 	'desi78/cabane': cabaneDef,
 	'desi78/reinforced_tube': reinforcedTubeDef,
 	'desi78/reinforced_cone': reinforcedConeDef,
-	'desi78/lens_x1': lensX1Def
+	'desi78/lens_x1': lensX1Def,
+	'desi78/rail': railDef
 };
 
 export { designList };
