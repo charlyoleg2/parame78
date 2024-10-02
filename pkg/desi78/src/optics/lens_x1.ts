@@ -123,6 +123,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const E2 = param.E1 - E1pL - E1pR;
 		const E1h = param.E1 / 2;
 		const D1h = param.D1 / 2;
+		const x1 = -E1h + E1pL;
+		const x2 = E1h - E1pR;
 		const ray1A1 = degToRad(param.ray1Angle);
 		//const ray2A1 = degToRad(param.ray2Angle);
 		// step-5 : checks on the parameter values
@@ -137,16 +139,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `E2: ${ffix(E2)} mm\n`;
+		rGeome.logstr += `x1: ${ffix(x1)}, x2: ${ffix(x2)} mm\n`;
 		// step-7 : drawing of the figures
 		// figLensSim
 		function ctrHalfLens(aYS: number, aClose: boolean): Contour {
 			const rCtr = contour(E1h, 0);
 			if (param.TypeR !== 1) {
-				rCtr.addPointA(E1h - E1pR, aYS * Dr2).addSegArc3((aYS * Math.PI) / 2, true);
+				rCtr.addPointA(x2, aYS * Dr2).addSegArc3((aYS * Math.PI) / 2, true);
 			}
-			rCtr.addSegStrokeA(E1h - E1pR, aYS * D1h).addSegStrokeA(-E1h + E1pL, aYS * D1h);
+			rCtr.addSegStrokeA(x2, aYS * D1h).addSegStrokeA(x1, aYS * D1h);
 			if (param.TypeL !== 1) {
-				rCtr.addSegStrokeA(-E1h + E1pL, aYS * Dl2)
+				rCtr.addSegStrokeA(x1, aYS * Dl2)
 					.addPointA(-E1h, 0)
 					.addSegArc3((aYS * Math.PI) / 2, false);
 			} else {
