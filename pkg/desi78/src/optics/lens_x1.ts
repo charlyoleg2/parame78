@@ -15,11 +15,11 @@ import type {
 	//tSubDesign
 } from 'geometrix';
 import {
-	point,
+	//point,
 	//Point,
-	ShapePoint,
-	line,
-	vector,
+	//ShapePoint,
+	//line,
+	//vector,
 	contour,
 	//contourCircle,
 	//ctrRectangle,
@@ -174,13 +174,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figLensSim.addMainO(ctrLens);
 		// simulation
 		if (param.simType === c_simOne) {
-			figLensSim.addVector(
-				vector(ray1A1, Math.abs(param.objectPx), point(param.objectPx, param.objectPy))
-			);
-			figLensSim.addPoint(point(param.objectPx, param.objectPy, ShapePoint.eBigSquare));
-			figLensSim.addLine(line(param.objectPx, param.objectPy, ray1A1));
-			const ctrRay1 = contour(param.objectPx, param.objectPy, 'yellow')
-				.addSegStrokeRP(ray1A1,	Math.abs(param.objectPx));
+			//figLensSim.addVector(
+			//	vector(ray1A1, Math.abs(param.objectPx), point(param.objectPx, param.objectPy))
+			//);
+			//figLensSim.addPoint(point(param.objectPx, param.objectPy, ShapePoint.eBigSquare));
+			//figLensSim.addLine(line(param.objectPx, param.objectPy, ray1A1));
+			const ctrRay1 = contour(param.objectPx, param.objectPy, 'yellow');
+			ctrRay1.addSegStrokeRP(ray1A1, Math.abs(param.objectPx));
 			figLensSim.addDynamics(ctrRay1);
 		}
 		// figLens3D
