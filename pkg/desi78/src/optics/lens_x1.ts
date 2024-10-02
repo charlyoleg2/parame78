@@ -15,15 +15,16 @@ import type {
 	//tSubDesign
 } from 'geometrix';
 import {
-	//point,
+	point,
 	//Point,
-	//ShapePoint,
-	//vector,
+	ShapePoint,
+	line,
+	vector,
 	contour,
 	//contourCircle,
 	//ctrRectangle,
 	figure,
-	//degToRad,
+	degToRad,
 	//radToDeg,
 	ffix,
 	pNumber,
@@ -53,7 +54,14 @@ const pDef: tParamDef = {
 		pDropdown('TypeR', ['convex', 'planar', 'concave']),
 		pSectionSeparator('index of refraction'),
 		pNumber('ni', 'no-unit', 1.6, 1, 3, 0.01),
-		pNumber('ne', 'no-unit', 1.0, 1, 3, 0.01)
+		pNumber('ne', 'no-unit', 1.0, 1, 3, 0.01),
+		pSectionSeparator('Simulation'),
+		pNumber('objectPx', 'mm', -40, -500, 0, 1),
+		pNumber('objectPy', 'mm', 0, -500, 500, 1),
+		pNumber('ray1Angle', 'degree', 0, -60, 60, 1),
+		pNumber('ray2Angle', 'degree', 0, -60, 60, 1),
+		pNumber('rayNb', 'rays', 3, 1, 100, 1),
+		pDropdown('simType', ['off', 'oneRay', 'twoRays', 'parallel', 'object'])
 	],
 	paramSvg: {
 		D1: 'lens_profile.svg',
@@ -65,7 +73,13 @@ const pDef: tParamDef = {
 		Rr: 'lens_profile.svg',
 		TypeR: 'lens_profile.svg',
 		ni: 'lens_profile.svg',
-		ne: 'lens_profile.svg'
+		ne: 'lens_profile.svg',
+		objectPx: 'lens_profile.svg',
+		objectPy: 'lens_profile.svg',
+		ray1Angle: 'lens_profile.svg',
+		ray2Angle: 'lens_profile.svg',
+		rayNb: 'lens_profile.svg',
+		simType: 'lens_profile.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -73,6 +87,12 @@ const pDef: tParamDef = {
 		tUpdate: 500 // every 0.5 second
 	}
 };
+
+//const c_simOff = 0;
+const c_simOne = 1;
+//const c_simTwo = 2;
+//const c_simParallel = 3;
+//const c_simObject = 4;
 
 // sub-functions
 function e1plus(aRcurve: number, aDiameter: number, aType: number): number {
@@ -103,6 +123,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const E2 = param.E1 - E1pL - E1pR;
 		const E1h = param.E1 / 2;
 		const D1h = param.D1 / 2;
+		const ray1A1 = degToRad(param.ray1Angle);
+		//const ray2A1 = degToRad(param.ray2Angle);
 		// step-5 : checks on the parameter values
 		if (param.Dr > param.D1) {
 			throw `err390: Dr ${param.Dr} is larger than D1 ${param.D1}`;
@@ -150,6 +172,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			ctrLens.addSegStrokeA(E1h, 0);
 		}
 		figLensSim.addMainO(ctrLens);
+		// simulation
+		if (param.simType === c_simOne) {
+			figLensSim.addVector(
+				vector(ray1A1, Math.abs(param.objectPx), point(param.objectPx, param.objectPy))
+			);
+			figLensSim.addPoint(point(param.objectPx, param.objectPy, ShapePoint.eBigSquare));
+			figLensSim.addLine(line(param.objectPx, param.objectPy, ray1A1));
+			const ctrRay1 = contour(param.objectPx, param.objectPy, 'yellow')
+				.addSegStrokeRP(ray1A1,	Math.abs(param.objectPx));
+			figLensSim.addDynamics(ctrRay1);
+		}
 		// figLens3D
 		figLens3D.addMainO(ctrHalfLens(1, true).rotate(0, 0, Math.PI / 2));
 		figLens3D.addSecond(ctrHalfLens(-1, true).rotate(0, 0, Math.PI / 2));
