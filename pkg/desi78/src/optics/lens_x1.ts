@@ -24,7 +24,7 @@ import {
 	//contourCircle,
 	//ctrRectangle,
 	figure,
-	degToRad,
+	//degToRad,
 	//radToDeg,
 	ffix,
 	pNumber,
@@ -35,6 +35,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
+import { rayTrace } from './optic_sim';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -90,8 +91,7 @@ const pDef: tParamDef = {
 	}
 };
 
-//const c_simOff = 0;
-const c_simOne = 0;
+//const c_simOne = 0;
 //const c_simTwo = 1;
 //const c_simParallel = 2;
 //const c_simObject = 3;
@@ -127,7 +127,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const D1h = param.D1 / 2;
 		const x1 = -E1h + E1pL;
 		const x2 = E1h - E1pR;
-		const ray1A1 = degToRad(param.ray1Angle);
+		//const ray1A1 = degToRad(param.ray1Angle);
 		//const ray2A1 = degToRad(param.ray2Angle);
 		// step-5 : checks on the parameter values
 		if (param.Dr > param.D1) {
@@ -184,16 +184,35 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrImage = contour(param.imagePx, -D1h, 'green');
 		ctrImage.addSegStrokeA(param.imagePx, D1h);
 		figLensSim.addDynamics(ctrImage);
-		if (param.simType === c_simOne) {
-			//figLensSim.addVector(
-			//	vector(ray1A1, Math.abs(param.objectPx), point(param.objectPx, param.objectPy))
-			//);
-			//figLensSim.addPoint(point(param.objectPx, param.objectPy, ShapePoint.eBigSquare));
-			//figLensSim.addLine(line(param.objectPx, param.objectPy, ray1A1));
-			const ctrRay1 = contour(param.objectPx, param.objectPy, 'yellow');
-			ctrRay1.addSegStrokeRP(ray1A1, Math.abs(param.objectPx));
-			figLensSim.addDynamics(ctrRay1);
+		//if (param.simType === c_simOne) {
+		//	//figLensSim.addVector(
+		//	//	vector(ray1A1, Math.abs(param.objectPx), point(param.objectPx, param.objectPy))
+		//	//);
+		//	//figLensSim.addPoint(point(param.objectPx, param.objectPy, ShapePoint.eBigSquare));
+		//	//figLensSim.addLine(line(param.objectPx, param.objectPy, ray1A1));
+		//	const ctrRay1 = contour(param.objectPx, param.objectPy, 'yellow');
+		//	ctrRay1.addSegStrokeRP(ray1A1, Math.abs(param.objectPx));
+		//	figLensSim.addDynamics(ctrRay1);
+		//}
+		const [rays, logSim] = rayTrace(
+			param.objectPx,
+			param.objectPy,
+			param.ray1Angle,
+			param.ray2Angle,
+			param.rayNb,
+			param.simType,
+			param.E1,
+			param.Dl,
+			param.Rl,
+			param.TypeL,
+			param.Dr,
+			param.Rr,
+			param.TypeR
+		);
+		for (const ray of rays) {
+			figLensSim.addDynamics(ray);
 		}
+		rGeome.logstr += logSim;
 		// figLens3D
 		figLens3D.addMainO(ctrHalfLens(1, true).rotate(0, 0, Math.PI / 2));
 		figLens3D.addSecond(ctrHalfLens(-1, true).rotate(0, 0, Math.PI / 2));
