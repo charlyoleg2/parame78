@@ -61,7 +61,8 @@ const pDef: tParamDef = {
 		pNumber('ray1Angle', 'degree', 0, -60, 60, 1),
 		pNumber('ray2Angle', 'degree', 0, -60, 60, 1),
 		pNumber('rayNb', 'rays', 3, 1, 100, 1),
-		pDropdown('simType', ['off', 'oneRay', 'twoRays', 'parallel', 'object'])
+		pNumber('imagePx', 'mm', 120, 0, 2000, 1),
+		pDropdown('simType', ['oneRay', 'twoRays', 'parallel', 'object'])
 	],
 	paramSvg: {
 		D1: 'lens_profile.svg',
@@ -79,6 +80,7 @@ const pDef: tParamDef = {
 		ray1Angle: 'lens_profile.svg',
 		ray2Angle: 'lens_profile.svg',
 		rayNb: 'lens_profile.svg',
+		imagePx: 'lens_profile.svg',
 		simType: 'lens_profile.svg'
 	},
 	sim: {
@@ -89,10 +91,10 @@ const pDef: tParamDef = {
 };
 
 //const c_simOff = 0;
-const c_simOne = 1;
-//const c_simTwo = 2;
-//const c_simParallel = 3;
-//const c_simObject = 4;
+const c_simOne = 0;
+//const c_simTwo = 1;
+//const c_simParallel = 2;
+//const c_simObject = 3;
 
 // sub-functions
 function e1plus(aRcurve: number, aDiameter: number, aType: number): number {
@@ -176,6 +178,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		figLensSim.addMainO(ctrLens);
 		// simulation
+		const ctrObject = contour(param.objectPx, param.objectPy, 'green');
+		ctrObject.addSegStrokeA(param.objectPx, 0);
+		figLensSim.addDynamics(ctrObject);
+		const ctrImage = contour(param.imagePx, -D1h, 'green');
+		ctrImage.addSegStrokeA(param.imagePx, D1h);
+		figLensSim.addDynamics(ctrImage);
 		if (param.simType === c_simOne) {
 			//figLensSim.addVector(
 			//	vector(ray1A1, Math.abs(param.objectPx), point(param.objectPx, param.objectPy))
