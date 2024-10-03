@@ -19,14 +19,33 @@ import {
 	ffix
 } from 'geometrix';
 
-//const c_simOne = 0;
+const c_simOne = 0;
 //const c_simTwo = 1;
 //const c_simParallel = 2;
 //const c_simObject = 3;
 
+function traceOneRay(
+	objPx: number,
+	objPy: number,
+	rayAngle1: number,
+	E1: number,
+	Dl: number,
+	Rl: number,
+	TypeL: number,
+	Dr: number,
+	Rr: number,
+	TypeR: number,
+	imgPx: number
+) {
+	const rCtrRay1 = contour(objPx, objPy, 'yellow');
+	rCtrRay1.addSegStrokeRP(rayAngle1, Math.abs(objPx));
+	console.log(E1, Dl, Rl, TypeL, Dr, Rr, TypeR, imgPx); //dbg
+	return rCtrRay1;
+}
+
 function rayTrace(
-	objectPx: number,
-	objectPy: number,
+	objPx: number,
+	objPy: number,
 	ray1Angle: number,
 	ray2Angle: number,
 	rayNb: number,
@@ -37,15 +56,17 @@ function rayTrace(
 	TypeL: number,
 	Dr: number,
 	Rr: number,
-	TypeR: number
+	TypeR: number,
+	imgPx: number
 ): [tContour[], string] {
 	const rays: tContour[] = [];
 	let logSim = 'Optic simulator:\n';
 	const ray1A1 = degToRad(ray1Angle);
 	const ray2A1 = degToRad(ray2Angle);
-	const ctrRay1 = contour(objectPx, objectPy, 'yellow');
-	ctrRay1.addSegStrokeRP(ray1A1, Math.abs(objectPx));
-	rays.push(ctrRay1);
+	if (simType === c_simOne) {
+		const ctrRay1 = traceOneRay(objPx, objPy, ray1A1, E1, Dl, Rl, TypeL, Dr, Rr, TypeR, imgPx);
+		rays.push(ctrRay1);
+	}
 	logSim += `ray1-angle1: ${ffix(radToDeg(ray1A1))}
 ray2-angle1: ${ffix(radToDeg(ray2A1))}
 rayNb: ${rayNb}

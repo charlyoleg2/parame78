@@ -207,7 +207,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			param.TypeL,
 			param.Dr,
 			param.Rr,
-			param.TypeR
+			param.TypeR,
+			param.imagePx
 		);
 		for (const ray of rays) {
 			figLensSim.addDynamics(ray);
