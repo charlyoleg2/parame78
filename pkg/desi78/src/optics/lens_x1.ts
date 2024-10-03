@@ -15,11 +15,11 @@ import type {
 	//tSubDesign
 } from 'geometrix';
 import {
-	//point,
+	point,
 	//Point,
 	//ShapePoint,
 	//line,
-	//vector,
+	vector,
 	contour,
 	//contourCircle,
 	//ctrRectangle,
@@ -35,6 +35,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
+import type { tLens } from './optic_sim';
 import { rayTrace } from './optic_sim';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
@@ -184,6 +185,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrImage = contour(param.imagePx, -D1h, 'green');
 		ctrImage.addSegStrokeA(param.imagePx, D1h);
 		figLensSim.addDynamics(ctrImage);
+		const axisOxLen = 1.2 * param.imagePx - param.objectPx;
+		figLensSim.addVector(vector(0, axisOxLen, point(param.objectPx, 0)));
+		const ctrAxisOx = contour(param.objectPx, 0, 'grey').addSegStrokeR(axisOxLen, 0);
+		figLensSim.addDynamics(ctrAxisOx);
 		//if (param.simType === c_simOne) {
 		//	//figLensSim.addVector(
 		//	//	vector(ray1A1, Math.abs(param.objectPx), point(param.objectPx, param.objectPy))
@@ -194,6 +199,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//	ctrRay1.addSegStrokeRP(ray1A1, Math.abs(param.objectPx));
 		//	figLensSim.addDynamics(ctrRay1);
 		//}
+		const lens1: tLens = {
+			E1: param.E1,
+			Dl: param.Dl,
+			Rl: param.Rl,
+			TypeL: param.TypeL,
+			Dr: param.Dr,
+			Rr: param.Rr,
+			TypeR: param.TypeR,
+			ni: param.ni,
+			PosX: 0
+		};
 		const [rays, logSim] = rayTrace(
 			param.objectPx,
 			param.objectPy,
@@ -201,13 +217,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			param.ray2Angle,
 			param.rayNb,
 			param.simType,
-			param.E1,
-			param.Dl,
-			param.Rl,
-			param.TypeL,
-			param.Dr,
-			param.Rr,
-			param.TypeR,
+			param.ne,
+			[lens1],
 			param.imagePx
 		);
 		for (const ray of rays) {
