@@ -8,6 +8,7 @@ import type {
 	tContour
 } from 'geometrix';
 import {
+	withinHPiHPi,
 	//point,
 	//Point,
 	//ShapePoint,
@@ -57,18 +58,71 @@ interface tRaySeg {
 	aa: number;
 }
 
+interface tInterX {
+	ix: number;
+	iy: number;
+	refR: number;
+}
+
 const c_simOne = 0;
 //const c_simTwo = 1;
 //const c_simParallel = 2;
 //const c_simObject = 3;
 
+// quadratic equation
+function lineXcircle(
+	x0: number,
+	y0: number,
+	a0: number,
+	cx: number,
+	radius: number,
+	signe: number,
+	angle: number
+): tInterX {
+	// y = y1+(x-x1)*tan(a1)
+	// y**2 = cr**2-(x-cx)**2
+	// ta = tan(a1)
+	// y = y1+(x-x1)*ta = x*ta + y1-x1*ta
+	// y**2 = x**2*ta**2 + x*2*ta*(y1-x1*ta) + (y1-x1*ta)**2
+	// y**2 = -x**2 + x*2*cx + cr**2-cx**2
+	// 0 = A*x**2 + B*x + C
+	// A = ta**2+1
+	// B = 2*ta*(y1-x1*ta)-2*cx
+	// C = (y1-x1*ta)**2-cr**2-cx**2
+	// D = B**2-4*A*C
+	const ta = Math.tan(a0);
+	const A = ta ** 2 + 1;
+	const B = 2 * ta * (y0 - x0 * ta) - 2 * cx;
+	const C = (y0 - x0 * ta) ** 2 - radius ** 2 - cx ** 2;
+	const D = B ** 2 - 4 * A * C;
+	if (D < 0) {
+		throw `err090: D ${D} < 0. The ray is out of the circle`;
+	}
+	const ix = (-B - signe * Math.sqrt(D)) / (2 * A); // select opening or closing with signe
+	const iy = y0 + (ix - x0) * ta;
+	const refR = withinHPiHPi(Math.atan2(iy, ix - cx));
+	if (Math.abs(a0 - refR) > angle) {
+		throw `err097: refR ${refR} out of lens-angle ${angle}`;
+	}
+	const rInterX: tInterX = { ix: ix, iy: iy, refR: refR };
+	return rInterX;
+}
+
 // a single ray, one dioptre
-function traceDioptre(x0: number, y0: number, a0: number, dioptre: tDioptre): tRaySeg {
-	const rRaySeg: tRaySeg = {
-		xx: dioptre.cx - dioptre.signe * dioptre.radius,
-		yy: y0 + x0 * 0.1,
-		aa: a0
-	};
+function traceDioptre(x0: number, y0: number, a0: number, diop: tDioptre): tRaySeg {
+	const rRaySeg: tRaySeg = { xx: 0, yy: 0, aa: 0 };
+	if (diop.signe === 0) {
+		// stroke
+		rRaySeg.xx = diop.cx;
+		rRaySeg.yy = y0 + (diop.cx - x0) * Math.tan(a0);
+		rRaySeg.aa = Math.asin((Math.sin(a0) * diop.n0) / diop.n1);
+	} else {
+		// opening circle and closing circle
+		const interX = lineXcircle(x0, y0, a0, diop.cx, diop.radius, diop.signe, diop.angle);
+		rRaySeg.xx = interX.ix;
+		rRaySeg.yy = interX.iy;
+		rRaySeg.aa = interX.refR + Math.asin((Math.sin(a0 - interX.refR) * diop.n0) / diop.n1);
+	}
 	return rRaySeg;
 }
 
