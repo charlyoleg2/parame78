@@ -81,9 +81,9 @@ const pDef: tParamDef = {
 		objectPy: 'lens_simOneRay.svg',
 		ray1Angle: 'lens_simOneRay.svg',
 		ray2Angle: 'lens_simTwoRays.svg',
-		rayNb: 'lens_simOneRay.svg',
+		rayNb: 'lens_simParallel.svg',
 		imagePx: 'lens_simOneRay.svg',
-		simType: 'lens_simOneRay.svg'
+		simType: 'lens_simObject.svg'
 	},
 	sim: {
 		tMax: 100,
