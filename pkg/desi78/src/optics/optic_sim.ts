@@ -59,7 +59,7 @@ interface tInterX {
 const c_simOne = 0;
 const c_simTwo = 1;
 const c_simParallel = 2;
-//const c_simObject = 3;
+const c_simObject = 3;
 
 // line intersection
 function lineXline(rs1: tRaySeg, rs2: tRaySeg): tInterX {
@@ -246,6 +246,23 @@ simType: ${simType}\n`;
 				const objPyS = DlUsed / (rayNb - 1);
 				for (let idx = 0; idx < rayNb; idx++) {
 					const obj: tRaySeg = { xx: objPx, yy: objPy2 + idx * objPyS, aa: ray1A1 };
+					const [ctrRay, rs] = traceOneRay(obj, n0, lenss, imgPx);
+					rays.push(ctrRay);
+					rss.push(rs);
+				}
+			}
+		} else if (simType === c_simObject) {
+			if (rayNb < 2) {
+				const objA2 = withinHPiHPi(Math.atan2(objPy, objPx));
+				const obj: tRaySeg = { xx: objPx, yy: objPy, aa: objA2 };
+				const [ctrRay1] = traceOneRay(obj, n0, lenss, imgPx);
+				rays.push(ctrRay1);
+			} else {
+				const objA2 = withinHPiHPi(Math.atan2(objPy + DlUsed / 2, objPx));
+				const objA3 = withinHPiHPi(Math.atan2(objPy - DlUsed / 2, objPx));
+				const objAS = (objA3 - objA2) / (rayNb - 1);
+				for (let idx = 0; idx < rayNb; idx++) {
+					const obj: tRaySeg = { xx: objPx, yy: objPy, aa: objA2 + idx * objAS };
 					const [ctrRay, rs] = traceOneRay(obj, n0, lenss, imgPx);
 					rays.push(ctrRay);
 					rss.push(rs);
