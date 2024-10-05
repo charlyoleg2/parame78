@@ -105,14 +105,16 @@ function otherHalfLens(ctrLens: Contour, pl: tPL, Px: number) {
 	if (pl.TypeL !== 1) {
 		ctrLens.addPointA(Px - pl.E1h + pl.E1pL, -pl.Dlh).addSegArc3(-Math.PI / 2, true);
 	}
-	ctrLens.addSegStrokeA(Px - pl.E1h + pl.E1pL, -pl.D1h).addSegStrokeA(pl.E1h - pl.E1pR, -pl.D1h);
+	ctrLens
+		.addSegStrokeA(Px - pl.E1h + pl.E1pL, -pl.D1h)
+		.addSegStrokeA(Px + pl.E1h - pl.E1pR, -pl.D1h);
 	if (pl.TypeR !== 1) {
 		ctrLens
-			.addSegStrokeA(pl.E1h - pl.E1pR, -pl.Drh)
-			.addPointA(pl.E1h, 0)
+			.addSegStrokeA(Px + pl.E1h - pl.E1pR, -pl.Drh)
+			.addPointA(Px + pl.E1h, 0)
 			.addSegArc3(-Math.PI / 2, false);
 	} else {
-		ctrLens.addSegStrokeA(pl.E1h, 0);
+		ctrLens.addSegStrokeA(Px + pl.E1h, 0);
 	}
 }
 
