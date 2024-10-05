@@ -58,7 +58,7 @@ interface tInterX {
 
 const c_simOne = 0;
 const c_simTwo = 1;
-//const c_simParallel = 2;
+const c_simParallel = 2;
 //const c_simObject = 3;
 
 // line intersection
@@ -176,16 +176,9 @@ function lineXwall(rs: tRaySeg, wx: number): number {
 }
 
 // a single ray, full path
-function traceOneRay(
-	objPx: number,
-	objPy: number,
-	rayAngle1: number,
-	n0: number,
-	lenss: tLens[],
-	imgPx: number
-): [tContour, tRaySeg] {
-	const rCtrRay1 = contour(objPx, objPy, 'yellow');
-	const rs0: tRaySeg = { xx: objPx, yy: objPy, aa: rayAngle1 };
+function traceOneRay(obj: tRaySeg, n0: number, lenss: tLens[], imgPx: number): [tContour, tRaySeg] {
+	const rCtrRay1 = contour(obj.xx, obj.yy, 'yellow');
+	const rs0: tRaySeg = { xx: obj.xx, yy: obj.yy, aa: obj.aa };
 	for (const lens of lenss) {
 		const [rs1, rs2] = traceOneRayInLens(rs0, n0, lens);
 		rCtrRay1.addSegStrokeA(rs1.xx, rs1.yy).addSegStrokeA(rs2.xx, rs2.yy);
@@ -228,15 +221,50 @@ simType: ${simType}\n`;
   Position-X: ${lenss[idx].PosX} mm\n`;
 	}
 	logSim += `index of refraction of the environment: n0: ${n0}\n`;
+	const obj1: tRaySeg = { xx: objPx, yy: objPy, aa: ray1A1 };
+	const obj2: tRaySeg = { xx: objPx, yy: objPy, aa: ray2A1 };
 	if (simType === c_simOne) {
-		const [ctrRay1] = traceOneRay(objPx, objPy, ray1A1, n0, lenss, imgPx);
+		const [ctrRay1] = traceOneRay(obj1, n0, lenss, imgPx);
 		rays.push(ctrRay1);
 	} else if (simType === c_simTwo) {
-		const [ctrRay1, rs1] = traceOneRay(objPx, objPy, ray1A1, n0, lenss, imgPx);
-		const [ctrRay2, rs2] = traceOneRay(objPx, objPy, ray2A1, n0, lenss, imgPx);
+		const [ctrRay1, rs1] = traceOneRay(obj1, n0, lenss, imgPx);
+		const [ctrRay2, rs2] = traceOneRay(obj2, n0, lenss, imgPx);
 		rays.push(ctrRay1, ctrRay2);
 		const pi = lineXline(rs1, rs2);
 		logSim += `ray intersection:  ix: ${ffix(pi.ix)}, iy: ${ffix(pi.iy)}\n`;
+	} else if (simType === c_simParallel) {
+		if (rayNb < 2) {
+			const objPy2 = objPx * Math.tan(ray1A1);
+			const obj: tRaySeg = { xx: objPx, yy: objPy2, aa: ray1A1 };
+			const [ctrRay1] = traceOneRay(obj, n0, lenss, imgPx);
+			rays.push(ctrRay1);
+		} else {
+			const DlUsed = lenss[0].Dl * 0.98;
+			const objPy2 = objPx * Math.tan(ray1A1) - DlUsed / 2;
+			const objPyS = DlUsed / (rayNb - 1);
+			const rss: tRaySeg[] = [];
+			for (let idx = 0; idx < rayNb; idx++) {
+				const obj: tRaySeg = { xx: objPx, yy: objPy2 + idx * objPyS, aa: ray1A1 };
+				const [ctrRay, rs] = traceOneRay(obj, n0, lenss, imgPx);
+				rays.push(ctrRay);
+				rss.push(rs);
+			}
+			const pi1 = lineXline(rss[0], rss[1]);
+			logSim += `ray intersection:  ix: ${ffix(pi1.ix)}, iy: ${ffix(pi1.iy)}\n`;
+			if (rayNb > 2) {
+				const pi2 = lineXline(rss.slice(-2)[0], rss.slice(-1)[0]);
+				const pi3 = lineXline(rss[0], rss.slice(-1)[0]);
+				const dx12 = Math.abs(pi2.ix - pi1.ix);
+				const dx32 = Math.abs(pi3.ix - pi2.ix);
+				const dx31 = Math.abs(pi3.ix - pi1.ix);
+				const dy12 = Math.abs(pi2.iy - pi1.iy);
+				const dy32 = Math.abs(pi3.iy - pi2.iy);
+				const dy31 = Math.abs(pi3.iy - pi1.iy);
+				const aberX = Math.max(dx12, dx32, dx31);
+				const aberY = Math.max(dy12, dy32, dy31);
+				logSim += `aberration:  aberX: ${ffix(aberX)}, aberY: ${ffix(aberY)}\n`;
+			}
+		}
 	}
 	logSim += `End of simulator\n`;
 	return [rays, logSim];
