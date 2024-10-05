@@ -223,6 +223,7 @@ simType: ${simType}\n`;
 	logSim += `index of refraction of the environment: n0: ${n0}\n`;
 	const obj1: tRaySeg = { xx: objPx, yy: objPy, aa: ray1A1 };
 	const obj2: tRaySeg = { xx: objPx, yy: objPy, aa: ray2A1 };
+	const DlUsed = lenss[0].Dl * 0.98;
 	if (simType === c_simOne) {
 		const [ctrRay1] = traceOneRay(obj1, n0, lenss, imgPx);
 		rays.push(ctrRay1);
@@ -232,23 +233,26 @@ simType: ${simType}\n`;
 		rays.push(ctrRay1, ctrRay2);
 		const pi = lineXline(rs1, rs2);
 		logSim += `ray intersection:  ix: ${ffix(pi.ix)}, iy: ${ffix(pi.iy)}\n`;
-	} else if (simType === c_simParallel) {
-		if (rayNb < 2) {
-			const objPy2 = objPx * Math.tan(ray1A1);
-			const obj: tRaySeg = { xx: objPx, yy: objPy2, aa: ray1A1 };
-			const [ctrRay1] = traceOneRay(obj, n0, lenss, imgPx);
-			rays.push(ctrRay1);
-		} else {
-			const DlUsed = lenss[0].Dl * 0.98;
-			const objPy2 = objPx * Math.tan(ray1A1) - DlUsed / 2;
-			const objPyS = DlUsed / (rayNb - 1);
-			const rss: tRaySeg[] = [];
-			for (let idx = 0; idx < rayNb; idx++) {
-				const obj: tRaySeg = { xx: objPx, yy: objPy2 + idx * objPyS, aa: ray1A1 };
-				const [ctrRay, rs] = traceOneRay(obj, n0, lenss, imgPx);
-				rays.push(ctrRay);
-				rss.push(rs);
+	} else {
+		const rss: tRaySeg[] = [];
+		if (simType === c_simParallel) {
+			if (rayNb < 2) {
+				const objPy2 = objPx * Math.tan(ray1A1);
+				const obj: tRaySeg = { xx: objPx, yy: objPy2, aa: ray1A1 };
+				const [ctrRay1] = traceOneRay(obj, n0, lenss, imgPx);
+				rays.push(ctrRay1);
+			} else {
+				const objPy2 = objPx * Math.tan(ray1A1) - DlUsed / 2;
+				const objPyS = DlUsed / (rayNb - 1);
+				for (let idx = 0; idx < rayNb; idx++) {
+					const obj: tRaySeg = { xx: objPx, yy: objPy2 + idx * objPyS, aa: ray1A1 };
+					const [ctrRay, rs] = traceOneRay(obj, n0, lenss, imgPx);
+					rays.push(ctrRay);
+					rss.push(rs);
+				}
 			}
+		}
+		if (rayNb > 1) {
 			const pi1 = lineXline(rss[0], rss[1]);
 			logSim += `ray intersection:  ix: ${ffix(pi1.ix)}, iy: ${ffix(pi1.iy)}\n`;
 			if (rayNb > 2) {
