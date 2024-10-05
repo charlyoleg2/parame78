@@ -77,13 +77,13 @@ const pDef: tParamDef = {
 		TypeR: 'lens_profile.svg',
 		ni: 'lens_profile.svg',
 		ne: 'lens_profile.svg',
-		objectPx: 'lens_profile.svg',
-		objectPy: 'lens_profile.svg',
-		ray1Angle: 'lens_profile.svg',
-		ray2Angle: 'lens_profile.svg',
-		rayNb: 'lens_profile.svg',
-		imagePx: 'lens_profile.svg',
-		simType: 'lens_profile.svg'
+		objectPx: 'lens_simOneRay.svg',
+		objectPy: 'lens_simOneRay.svg',
+		ray1Angle: 'lens_simOneRay.svg',
+		ray2Angle: 'lens_simTwoRays.svg',
+		rayNb: 'lens_simOneRay.svg',
+		imagePx: 'lens_simOneRay.svg',
+		simType: 'lens_simOneRay.svg'
 	},
 	sim: {
 		tMax: 100,

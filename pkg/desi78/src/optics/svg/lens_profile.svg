@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="1.5785915"
-     inkscape:cx="233.11921"
-     inkscape:cy="298.36725"
+     inkscape:zoom="2.2324655"
+     inkscape:cx="254.87516"
+     inkscape:cy="787.91811"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -256,7 +256,10 @@
        width="112.59277"
        height="96.64193"
        x="2.6581457"
-       y="26.361473" />
+       y="26.361473"
+       inkscape:export-filename="lens_profile.svg"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <path
        style="fill:#ffffff;stroke:#000000;stroke-width:0.264583"
        d="M 47.216671,52.465641 V 41.810294 h 17.861687 v 5.80359"
@@ -496,5 +499,19 @@
        d="M 63.718673,51.161191 92.620151,34.594111"
        id="path13-6-4-8"
        sodipodi:nodetypes="cc" />
+    <ellipse
+       style="fill:none;stroke:#0000ff;stroke-width:0.264582"
+       id="path15"
+       cx="54.840488"
+       cy="93.879883"
+       rx="3.1336348"
+       ry="3.0237837" />
+    <ellipse
+       style="fill:none;stroke:#0000ff;stroke-width:0.264582"
+       id="path15-5"
+       cx="23.848413"
+       cy="94.615417"
+       rx="3.1336348"
+       ry="3.0237837" />
   </g>
 </svg>
