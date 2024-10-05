@@ -167,25 +167,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figLensSim.addVector(vector(0, axisOxLen, point(param.objectPx, 0)));
 		const ctrAxisOx = contour(param.objectPx, 0, 'grey').addSegStrokeR(axisOxLen, 0);
 		figLensSim.addDynamics(ctrAxisOx);
-		//if (param.simType === c_simOne) {
-		//	//figLensSim.addVector(
-		//	//	vector(ray1A1, Math.abs(param.objectPx), point(param.objectPx, param.objectPy))
-		//	//);
-		//	//figLensSim.addPoint(point(param.objectPx, param.objectPy, ShapePoint.eBigSquare));
-		//	//figLensSim.addLine(line(param.objectPx, param.objectPy, ray1A1));
-		//	const ctrRay1 = contour(param.objectPx, param.objectPy, 'yellow');
-		//	ctrRay1.addSegStrokeRP(ray1A1, Math.abs(param.objectPx));
-		//	figLensSim.addDynamics(ctrRay1);
-		//}
 		const lens1: tLens = {
-			E1: param.E1,
-			Dl: param.Dl,
-			Rl: param.Rl,
-			TypeL: param.TypeL,
-			Dr: param.Dr,
-			Rr: param.Rr,
-			TypeR: param.TypeR,
-			ni: param.ni,
+			E1: pl1.E1,
+			Dl: pl1.Dl,
+			Rl: pl1.Rl,
+			TypeL: pl1.TypeL,
+			Dr: pl1.Dr,
+			Rr: pl1.Rr,
+			TypeR: pl1.TypeR,
+			ni: param.l1ni,
 			PosX: 0
 		};
 		const [rays, logSim] = rayTrace(
