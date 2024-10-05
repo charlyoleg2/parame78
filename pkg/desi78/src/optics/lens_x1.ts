@@ -58,10 +58,10 @@ const pDef: tParamDef = {
 		pNumber('ni', 'no-unit', 1.6, 1, 3, 0.01),
 		pNumber('ne', 'no-unit', 1.0, 1, 3, 0.01),
 		pSectionSeparator('Simulation'),
-		pNumber('objectPx', 'mm', -40, -500, 0, 1),
-		pNumber('objectPy', 'mm', 0, -500, 500, 1),
+		pNumber('objectPx', 'mm', -50, -500, 0, 1),
+		pNumber('objectPy', 'mm', 8, -500, 500, 1),
 		pNumber('ray1Angle', 'degree', 0, -60, 60, 1),
-		pNumber('ray2Angle', 'degree', 0, -60, 60, 1),
+		pNumber('ray2Angle', 'degree', -2, -60, 60, 1),
 		pNumber('rayNb', 'rays', 3, 1, 100, 1),
 		pNumber('imagePx', 'mm', 120, 0, 2000, 1),
 		pDropdown('simType', ['oneRay', 'twoRays', 'parallel', 'object'])
