@@ -45,7 +45,7 @@ const pDef: tParamDef = {
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('D1', 'mm', 40, 1, 500, 1),
-		pNumber('E1', 'mm', 6, 0.5, 200, 0.5),
+		pNumber('E1', 'mm', 8, 0.5, 200, 0.5),
 		pSectionSeparator('Dioptre left'),
 		pNumber('Dl', 'mm', 30, 1, 500, 1),
 		pNumber('Rl', 'mm', 35, 1, 5000, 0.1),
@@ -100,7 +100,8 @@ const pDef: tParamDef = {
 // sub-functions
 function e1plus(aRcurve: number, aDiameter: number, aType: number): number {
 	let rPlus = 0; // planar case
-	const delta = aDiameter * (1 - Math.sqrt(1 - (aDiameter / (2 * aRcurve)) ** 2));
+	const diamH = aDiameter / 2;
+	const delta = aRcurve * (1 - Math.sqrt(1 - (diamH / aRcurve) ** 2));
 	if (aType === 0) {
 		// convex case
 		rPlus = delta;

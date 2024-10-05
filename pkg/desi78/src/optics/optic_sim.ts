@@ -88,21 +88,21 @@ function lineXcircle(
 	// 0 = A*x**2 + B*x + C
 	// A = ta**2+1
 	// B = 2*ta*(y1-x1*ta)-2*cx
-	// C = (y1-x1*ta)**2-cr**2-cx**2
+	// C = (y1-x1*ta)**2-cr**2+cx**2
 	// D = B**2-4*A*C
 	const ta = Math.tan(a0);
-	const A = ta ** 2 + 1;
-	const B = 2 * ta * (y0 - x0 * ta) - 2 * cx;
-	const C = (y0 - x0 * ta) ** 2 - radius ** 2 - cx ** 2;
-	const D = B ** 2 - 4 * A * C;
-	if (D < 0) {
-		throw `err090: D ${D} < 0. The ray is out of the circle`;
+	const AA = ta ** 2 + 1;
+	const BB = 2 * ta * (y0 - x0 * ta) - 2 * cx;
+	const CC = (y0 - x0 * ta) ** 2 - radius ** 2 + cx ** 2;
+	const DD = BB ** 2 - 4 * AA * CC;
+	if (DD < 0) {
+		throw `err090: D ${ffix(DD)} < 0. The ray is out of the circle`;
 	}
-	const ix = (-B - signe * Math.sqrt(D)) / (2 * A); // select opening or closing with signe
+	const ix = (-BB - signe * Math.sqrt(DD)) / (2 * AA); // select opening or closing with signe
 	const iy = y0 + (ix - x0) * ta;
 	const refR = withinHPiHPi(Math.atan2(iy, ix - cx));
-	if (Math.abs(a0 - refR) > angle) {
-		throw `err097: refR ${refR} out of lens-angle ${angle}`;
+	if (Math.abs(refR) > angle) {
+		throw `err097: refR ${ffix(refR)} out of lens-angle ${ffix(angle)}`;
 	}
 	const rInterX: tInterX = { ix: ix, iy: iy, refR: refR };
 	return rInterX;
