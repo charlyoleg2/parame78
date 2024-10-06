@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="600"
+   height="3000"
+   viewBox="0 0 158.75 793.75"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (1:1.3.2+202404261509+091e20ef0f)"
+   sodipodi:docname="src_pulley.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="0.78929574"
+     inkscape:cx="396.55605"
+     inkscape:cy="561.25984"
+     inkscape:window-width="1854"
+     inkscape:window-height="1131"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="17.925395"
+       y="24.507607"
+       width="261.0367"
+       height="68.306542"
+       id="rect1" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,1.6354799,-1.7742796)"
+       id="text1"
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:start;text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect1);fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"
+       x="-60.385555"
+       y="0"><tspan
+         x="17.925781"
+         y="37.557914"
+         id="tspan1">src_pulley.svg</tspan></text>
+    <circle
+       style="fill:none;stroke:#008080;stroke-width:0.264583"
+       id="path2"
+       cx="79.174118"
+       cy="111.10722"
+       r="59.662277" />
+    <circle
+       style="fill:none;stroke:#008080;stroke-width:0.264583"
+       id="path2-5"
+       cx="79.174118"
+       cy="111.10722"
+       r="51.867233" />
+    <path
+       style="fill:none;stroke:#808080;stroke-width:0.264583"
+       d="M 52.942931,45.278828 79.174117,111.10722 97.074698,44.460435"
+       id="path3" />
+  </g>
+</svg>
