@@ -9,6 +9,7 @@ import {
 	reinforcedConeDef,
 	lensX1Def,
 	lensX3Def,
+	pulleyDef,
 	railDef
 } from 'desi78';
 
@@ -20,6 +21,7 @@ const designList: tAllPageDef = {
 	'desi78/reinforced_cone': reinforcedConeDef,
 	'desi78/lens_x1': lensX1Def,
 	'desi78/lens_x3': lensX3Def,
+	'desi78/pulley': pulleyDef,
 	'desi78/rail': railDef
 };
 
