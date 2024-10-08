@@ -24,7 +24,7 @@ import {
 	contourCircle,
 	ctrRectangle,
 	figure,
-	//degToRad,
+	degToRad,
 	//radToDeg,
 	ffix,
 	pNumber,
@@ -102,17 +102,44 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const apd = ap - apa;
 		const rimR = R2 + param.rimPlus;
 		const wheelWh = param.wheelW / 2;
+		const apdh = apd / 2;
+		const aha = degToRad(param.ha);
+		const tmpA = aha - apdh;
+		const lAB = (R2 * Math.sin(tmpA)) / Math.sin(aha);
+		const lBC = R3 - lAB;
+		const pegR = lBC * Math.sin(aha); // lCD
+		const lBD = lBC * Math.cos(aha);
+		const aAD = Math.PI - aha;
+		const lAD = Math.sqrt(lAB ** 2 + lBD ** 2 - 2 * lAB * lBD * Math.cos(aAD)); // law of cosines
+		const aBD = Math.asin((lBD * Math.sin(aAD)) / lAD);
 		// step-5 : checks on the parameter values
+		if (tmpA <= 0) {
+			throw `err109: tmpA ${tmpA} is negative`;
+		}
+		if (lBC <= 0) {
+			throw `err114: lBC ${lBC} is negative. R3 ${R3}, lAB ${lAB}`;
+		}
+		if (R4 <= 0) {
+			throw `err123: R4 ${R4} is negative`;
+		}
+		if (R3 - pegR <= R4) {
+			throw `err126: R3 ${R3} is too small compare to pegR ${pegR} and R4 ${R4}`;
+		}
+		if (rimR <= R4) {
+			throw `err129: rimR ${rimR} smaller than R4 ${R4}`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `R1: ${ffix(R1)} mm\n`;
 		rGeome.logstr += `R2: ${ffix(R2)} mm\n`;
 		rGeome.logstr += `R3: ${ffix(R3)} mm\n`;
 		rGeome.logstr += `R4: ${ffix(R4)} mm\n`;
+		rGeome.logstr += `pegR: ${ffix(pegR)} mm\n`;
 		// step-7 : drawing of the figures
 		// figPulleyProfile
 		const ctrP = contour(R2, 0);
 		for (let idx = 0; idx < param.zn; idx++) {
 			const idxA = idx * ap;
+			const idxAp = idxA + apa + apd / 2;
 			if (param.addendum === 0) {
 				// stroke
 				ctrP.addSegStrokeAP(idxA + apa, R2);
@@ -122,10 +149,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					.addSegArc2();
 			}
 			ctrP.addCornerRounded(param.ra);
-			ctrP.addSegStrokeAP(idxA + apa + apd / 2, R3).addSegStrokeAP(idxA + ap, R2);
+			ctrP.addSegStrokeAP(idxAp - aBD, lAD);
+			ctrP.addPointAP(idxAp, R3 - pegR)
+				.addPointAP(idxAp + aBD, lAD)
+				.addSegArc2();
+			//ctrP.addSegStrokeAP(idxAp, R3 - pegR).addSegStrokeAP(idxAp + aBD, lAD);
+			ctrP.addSegStrokeAP(idxA + ap, R2);
 			ctrP.addCornerRounded(param.ra);
 		}
 		figPulleyProfile.addMainOI([ctrP, contourCircle(0, 0, R4)]);
+		figPulleyProfile.addSecond(contourCircle(0, 0, R1));
+		figPulleyProfile.addSecond(contourCircle(0, 0, R2));
+		figPulleyProfile.addSecond(contourCircle(0, 0, R3));
 		// figPulleyRim
 		figPulleyRim.addMainOI([contourCircle(0, 0, rimR), contourCircle(0, 0, R4)]);
 		figPulleyRim.addSecond(ctrP);
