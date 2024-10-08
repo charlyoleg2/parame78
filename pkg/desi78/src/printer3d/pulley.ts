@@ -20,13 +20,13 @@ import {
 	//ShapePoint,
 	//line,
 	//vector,
-	//contour,
+	contour,
 	contourCircle,
-	//ctrRectangle,
+	ctrRectangle,
 	figure,
 	//degToRad,
 	//radToDeg,
-	//ffix,
+	ffix,
 	pNumber,
 	//pCheckbox,
 	pDropdown,
@@ -50,6 +50,7 @@ const pDef: tParamDef = {
 		pNumber('nw', 'mm', 0.4, 0.1, 3, 0.01),
 		pDropdown('addendum', ['stroke', 'arc']),
 		pNumber('ha', 'degree', 5, -20, 20, 1),
+		pNumber('ra', 'mm', 0, 0, 3, 0.1),
 		pSectionSeparator('Inner hollow'),
 		pNumber('rw', 'mm', 2, 0.5, 10, 0.1),
 		pSectionSeparator('Rim'),
@@ -65,6 +66,7 @@ const pDef: tParamDef = {
 		bw: 'pulley_peg.svg',
 		nw: 'pulley_peg.svg',
 		ha: 'pulley_peg.svg',
+		ra: 'pulley_peg.svg',
 		rw: 'pulley_peg.svg',
 		rimPlus: 'pulley_rim.svg',
 		wheelW: 'pulley_rim.svg',
@@ -85,44 +87,85 @@ const pDef: tParamDef = {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
+	const figPulleyProfile = figure();
 	const figPulleyRim = figure();
+	const figPulleyWidth = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
+		const R1 = (param.zn * param.pim) / Math.PI;
+		const R2 = R1 - param.bw;
+		const R3 = R2 - param.nw;
+		const R4 = R2 - param.rw;
+		const ap = (2 * Math.PI) / param.zn;
+		const apa = (ap * 2 * param.pil) / param.pim;
+		const apd = ap - apa;
+		const rimR = R2 + param.rimPlus;
+		const wheelWh = param.wheelW / 2;
 		// step-5 : checks on the parameter values
 		// step-6 : any logs
-		rGeome.logstr += `R1\n`;
+		rGeome.logstr += `R1: ${ffix(R1)} mm\n`;
+		rGeome.logstr += `R2: ${ffix(R2)} mm\n`;
+		rGeome.logstr += `R3: ${ffix(R3)} mm\n`;
+		rGeome.logstr += `R4: ${ffix(R4)} mm\n`;
 		// step-7 : drawing of the figures
+		// figPulleyProfile
+		const ctrP = contour(R2, 0);
+		for (let idx = 0; idx < param.zn; idx++) {
+			const idxA = idx * ap;
+			if (param.addendum === 0) {
+				// stroke
+				ctrP.addSegStrokeAP(idxA + apa, R2);
+			} else {
+				ctrP.addPointAP(idxA + apa / 2, R2)
+					.addPointAP(idxA + apa, R2)
+					.addSegArc2();
+			}
+			ctrP.addCornerRounded(param.ra);
+			ctrP.addSegStrokeAP(idxA + apa + apd / 2, R3).addSegStrokeAP(idxA + ap, R2);
+			ctrP.addCornerRounded(param.ra);
+		}
+		figPulleyProfile.addMainOI([ctrP, contourCircle(0, 0, R4)]);
 		// figPulleyRim
-		figPulleyRim.addMainO(contourCircle(0, 0, 10));
+		figPulleyRim.addMainOI([contourCircle(0, 0, rimR), contourCircle(0, 0, R4)]);
+		figPulleyRim.addSecond(ctrP);
+		// figPulleyWidth
+		figPulleyWidth.addMainO(ctrRectangle(-wheelWh, -R2, param.wheelW, 2 * R2));
+		figPulleyWidth.addMainO(ctrRectangle(-wheelWh - param.rimW, -rimR, param.rimW, 2 * rimR));
+		figPulleyWidth.addMainO(ctrRectangle(wheelWh, -rimR, param.rimW, 2 * rimR));
 		// final figure list
 		rGeome.fig = {
-			facePulleyRim: figPulleyRim
+			facePulleyProfile: figPulleyProfile,
+			facePulleyRim: figPulleyRim,
+			facePulleyWidth: figPulleyWidth
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
 		rGeome.vol = {
 			extrudes: [
 				{
-					outName: `subpax_${designName}_lens1`,
-					face: `${designName}_faceLens1`,
-					extrudeMethod: EExtrude.eRotate,
+					outName: `subpax_${designName}_wheel`,
+					face: `${designName}_facePulleyProfile`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.wheelW,
+					rotate: [0, 0, 0],
+					translate: [0, 0, param.rimW]
+				},
+				{
+					outName: `subpax_${designName}_rim1`,
+					face: `${designName}_facePulleyRim`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.rimW,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
 				},
 				{
-					outName: `subpax_${designName}_lens2`,
-					face: `${designName}_faceLens2`,
-					extrudeMethod: EExtrude.eRotate,
+					outName: `subpax_${designName}_rim2`,
+					face: `${designName}_facePulleyRim`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: param.rimW,
 					rotate: [0, 0, 0],
-					translate: [0, 0, param.l2Px]
-				},
-				{
-					outName: `subpax_${designName}_lens3`,
-					face: `${designName}_faceLens3`,
-					extrudeMethod: EExtrude.eRotate,
-					rotate: [0, 0, 0],
-					translate: [0, 0, param.l3Px]
+					translate: [0, 0, param.wheelW + param.rimW]
 				}
 			],
 			volumes: [
@@ -130,9 +173,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
 					inList: [
-						`subpax_${designName}_lens1`,
-						`subpax_${designName}_lens2`,
-						`subpax_${designName}_lens3`
+						`subpax_${designName}_rim1`,
+						`subpax_${designName}_wheel`,
+						`subpax_${designName}_rim2`
 					]
 				}
 			]
