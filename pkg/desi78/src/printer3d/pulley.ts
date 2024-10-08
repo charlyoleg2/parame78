@@ -49,7 +49,7 @@ const pDef: tParamDef = {
 		pNumber('bw', 'mm', 0.45, 0.1, 3, 0.01),
 		pNumber('nw', 'mm', 0.4, 0.1, 3, 0.01),
 		pDropdown('addendum', ['stroke', 'arc']),
-		pNumber('ha', 'degree', 5, -20, 20, 1),
+		pNumber('ha', 'degree', 5, -40, 40, 1),
 		pNumber('ra', 'mm', 0, 0, 3, 0.1),
 		pSectionSeparator('Inner hollow'),
 		pNumber('rw', 'mm', 2, 0.5, 10, 0.1),
