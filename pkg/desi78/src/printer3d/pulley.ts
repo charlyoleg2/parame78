@@ -28,7 +28,7 @@ import {
 	//radToDeg,
 	ffix,
 	pNumber,
-	//pCheckbox,
+	pCheckbox,
 	pDropdown,
 	pSectionSeparator,
 	initGeom,
@@ -49,12 +49,14 @@ const pDef: tParamDef = {
 		pNumber('bw', 'mm', 0.45, 0.1, 3, 0.01),
 		pNumber('nw', 'mm', 0.4, 0.1, 3, 0.01),
 		pDropdown('addendum', ['stroke', 'arc']),
-		pNumber('ha', 'degree', 5, -40, 40, 1),
+		pNumber('ha', 'degree', 5, 0.5, 40, 0.5),
 		pNumber('ra', 'mm', 0, 0, 3, 0.1),
 		pSectionSeparator('Inner hollow'),
 		pNumber('rw', 'mm', 2, 0.5, 10, 0.1),
 		pSectionSeparator('Rim'),
 		pNumber('rimPlus', 'mm', 1.5, -2, 4, 0.5),
+		pCheckbox('rimLeft', true),
+		pCheckbox('rimRight', true),
 		pSectionSeparator('Widths'),
 		pNumber('wheelW', 'mm', 7, 1, 10, 0.1),
 		pNumber('rimW', 'mm', 1.2, 0.5, 5, 0.1)
@@ -69,6 +71,8 @@ const pDef: tParamDef = {
 		ra: 'pulley_peg.svg',
 		rw: 'pulley_peg.svg',
 		rimPlus: 'pulley_rim.svg',
+		rimLeft: 'pulley_rim.svg',
+		rimRight: 'pulley_rim.svg',
 		wheelW: 'pulley_rim.svg',
 		rimW: 'pulley_rim.svg'
 	},
@@ -176,6 +180,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
+		const preInList: string[] = [];
+		if (param.rimLeft) {
+			preInList.push(`subpax_${designName}_rim1`);
+		}
+		preInList.push(`subpax_${designName}_wheel`);
+		if (param.rimRight) {
+			preInList.push(`subpax_${designName}_rim2`);
+		}
 		rGeome.vol = {
 			extrudes: [
 				{
@@ -207,11 +219,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [
-						`subpax_${designName}_rim1`,
-						`subpax_${designName}_wheel`,
-						`subpax_${designName}_rim2`
-					]
+					inList: preInList
 				}
 			]
 		};
