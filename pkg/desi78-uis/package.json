@@ -72,7 +72,7 @@
 		"clean": "shx rm -fr node_modules build dist tmp"
 	},
 	"dependencies": {
-		"express": "^4.21.0",
+		"express": "^4.21.1",
 		"fs-extra": "^11.2.0",
 		"get-port": "^7.1.0",
 		"open": "^10.1.0",
@@ -90,7 +90,7 @@
 		"prettier": "^3.3.3",
 		"shx": "^0.3.4",
 		"tsup": "^8.3.0",
-		"typescript": "^5.6.2",
+		"typescript": "^5.6.3",
 		"typescript-eslint": "^8.8.1",
 		"vitest": "^2.1.2"
 	}
