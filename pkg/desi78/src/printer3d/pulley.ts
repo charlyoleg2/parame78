@@ -29,7 +29,7 @@ import {
 	ffix,
 	pNumber,
 	pCheckbox,
-	pDropdown,
+	//pDropdown,
 	pSectionSeparator,
 	initGeom,
 	EExtrude,
@@ -42,14 +42,13 @@ const pDef: tParamDef = {
 	partName: 'pulley',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('zn', 'peg', 100, 9, 300, 1),
+		pNumber('zn', 'peg', 100, 3, 300, 1),
 		pNumber('pim', 'mm', 2, 0.5, 20, 0.05),
-		pNumber('pil', 'mm', 0.4, 0.1, 20, 0.05),
 		pSectionSeparator('Profile details'),
 		pNumber('bw', 'mm', 0.45, 0.1, 3, 0.01),
 		pNumber('nw', 'mm', 0.4, 0.1, 3, 0.01),
-		pDropdown('addendum', ['stroke', 'arc']),
-		pNumber('ha', 'degree', 5, 0.5, 40, 0.5),
+		pNumber('pegR', 'mm', 0.2, 0.05, 2, 0.01),
+		pNumber('ha', 'degree', 5, -40, 40, 1),
 		pNumber('ra', 'mm', 0, 0, 3, 0.1),
 		pSectionSeparator('Inner hollow'),
 		pNumber('rw', 'mm', 2, 0.5, 10, 0.1),
@@ -64,9 +63,9 @@ const pDef: tParamDef = {
 	paramSvg: {
 		zn: 'pulley_peg.svg',
 		pim: 'pulley_peg.svg',
-		pil: 'pulley_peg.svg',
 		bw: 'pulley_peg.svg',
 		nw: 'pulley_peg.svg',
+		pegR: 'pulley_peg.svg',
 		ha: 'pulley_peg.svg',
 		ra: 'pulley_peg.svg',
 		rw: 'pulley_peg.svg',
@@ -102,32 +101,55 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R3 = R2 - param.nw;
 		const R4 = R2 - param.rw;
 		const ap = (2 * Math.PI) / param.zn;
-		const apa = (ap * 2 * param.pil) / param.pim;
-		const apd = ap - apa;
+		const lAC = R3 + param.pegR;
+		const aACD = Math.PI / 2 - degToRad(param.ha);
+		const lCD = param.pegR;
+		const lAD = Math.sqrt(lAC ** 2 + lCD ** 2 - 2 * lAC * lCD * Math.cos(aACD));
+		//const aCDA = Math.asin((Math.sin(aACD) * lAC) / lAD); // law of sines
+		const aCDA = Math.acos((lCD ** 2 + lAD ** 2 - lAC ** 2) / (2 * lCD * lAD)); // law of cosines
+		const aCAD = Math.asin((Math.sin(aACD) * lCD) / lAD);
+		const aADF = aCDA + Math.PI / 2;
+		//const sign = aCDA < Math.PI / 2 ? -1 : 1;
+		//rGeome.logstr += `dbg789: aCDA: ${aCDA}, sign: ${sign}\n`;
+		const eqA = 1;
+		const eqB = -2 * lAD * Math.cos(aADF);
+		const eqC = lAD ** 2 - R2 ** 2;
+		const eqD = eqB ** 2 - 4 * eqA * eqC;
+		if (eqD < 0) {
+			throw `err116: discriminant ${eqD} of quadratic equation is negatif`;
+		}
+		const x1 = (-eqB + Math.sqrt(eqD)) / (2 * eqA);
+		const x2 = (-eqB - Math.sqrt(eqD)) / (2 * eqA);
+		const lDF = Math.min(Math.abs(x1), Math.abs(x2));
+		const aDAF = Math.asin((Math.sin(aADF) * lDF) / R2);
+		const aCAF = aCAD - aDAF;
+		rGeome.logstr += `dbg783: aCAD: ${aCAD}, aDAF: ${aDAF}, aCAF: ${aCAF}rad\n`;
+		const apd = 2 * aCAF;
+		const apa = ap - apd;
+		//rGeome.logstr += `dbg785: ap: ${ap}, apd: ${apd}, apa: ${apa}\n`;
 		const rimR = R2 + param.rimPlus;
 		const wheelWh = param.wheelW / 2;
-		const apdh = apd / 2;
-		const aha = degToRad(param.ha);
-		const tmpA = aha - apdh;
-		const lAB = (R2 * Math.sin(tmpA)) / Math.sin(aha);
-		const lBC = R3 - lAB;
-		const pegR = lBC * Math.sin(aha); // lCD
-		const lBD = lBC * Math.cos(aha);
-		const aAD = Math.PI - aha;
-		const lAD = Math.sqrt(lAB ** 2 + lBD ** 2 - 2 * lAB * lBD * Math.cos(aAD)); // law of cosines
-		const aBD = Math.asin((lBD * Math.sin(aAD)) / lAD);
 		// step-5 : checks on the parameter values
-		if (tmpA <= 0) {
-			throw `err109: tmpA ${tmpA} is negative`;
+		//if (x1 <= 0) {
+		//	throw `err109: x1 ${x1} is negative`;
+		//}
+		//if (x2 <= 0) {
+		//	throw `err114: x2 ${x2} is negative`;
+		//}
+		if (lAD > R2) {
+			throw `err332: lAD ${lAD} is larger than R2 ${R2}`;
 		}
-		if (lBC <= 0) {
-			throw `err114: lBC ${lBC} is negative. R3 ${R3}, lAB ${lAB}`;
+		if (apa <= 0) {
+			throw `err115: apa ${apa} is negative`;
+		}
+		if (apd <= 0) {
+			throw `err116: apd ${apd} is negative`;
 		}
 		if (R4 <= 0) {
 			throw `err123: R4 ${R4} is negative`;
 		}
-		if (R3 - pegR <= R4) {
-			throw `err126: R3 ${R3} is too small compare to pegR ${pegR} and R4 ${R4}`;
+		if (R3 <= R4) {
+			throw `err126: R3 ${R3} is too small compare to R4 ${R4}`;
 		}
 		if (rimR <= R4) {
 			throw `err129: rimR ${rimR} smaller than R4 ${R4}`;
@@ -137,25 +159,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `R2: ${ffix(R2)} mm\n`;
 		rGeome.logstr += `R3: ${ffix(R3)} mm\n`;
 		rGeome.logstr += `R4: ${ffix(R4)} mm\n`;
-		rGeome.logstr += `pegR: ${ffix(pegR)} mm\n`;
+		rGeome.logstr += `addendum length: ${ffix(apa * R2)} mm\n`;
 		// step-7 : drawing of the figures
 		// figPulleyProfile
 		const ctrP = contour(R2, 0);
 		for (let idx = 0; idx < param.zn; idx++) {
 			const idxA = idx * ap;
 			const idxAp = idxA + apa + apd / 2;
-			if (param.addendum === 0) {
-				// stroke
-				ctrP.addSegStrokeAP(idxA + apa, R2);
-			} else {
-				ctrP.addPointAP(idxA + apa / 2, R2)
-					.addPointAP(idxA + apa, R2)
-					.addSegArc2();
-			}
+			ctrP.addPointAP(idxA + apa / 2, R2)
+				.addPointAP(idxA + apa, R2)
+				.addSegArc2();
 			ctrP.addCornerRounded(param.ra);
-			ctrP.addSegStrokeAP(idxAp - aBD, lAD);
-			ctrP.addPointAP(idxAp, R3 - pegR)
-				.addPointAP(idxAp + aBD, lAD)
+			ctrP.addSegStrokeAP(idxAp - aCAD, lAD);
+			ctrP.addPointAP(idxAp, R3)
+				.addPointAP(idxAp + aCAD, lAD)
 				.addSegArc2();
 			//ctrP.addSegStrokeAP(idxAp, R3 - pegR).addSegStrokeAP(idxAp + aBD, lAD);
 			ctrP.addSegStrokeAP(idxA + ap, R2);
