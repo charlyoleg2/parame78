@@ -46,8 +46,8 @@ const pDef: tParamDef = {
 		pNumber('pim', 'mm', 2, 0.5, 20, 0.05),
 		pSectionSeparator('Profile details'),
 		pNumber('bw', 'mm', 0.45, 0.1, 3, 0.01),
-		pNumber('nw', 'mm', 0.4, 0.1, 3, 0.01),
-		pNumber('pegR', 'mm', 0.2, 0.05, 2, 0.01),
+		pNumber('nw', 'mm', 0.9, 0.1, 3, 0.01),
+		pNumber('pegR', 'mm', 0.55, 0.05, 2, 0.01),
 		pNumber('ha', 'degree', 5, -40, 40, 1),
 		pNumber('ra', 'mm', 0, 0, 3, 0.1),
 		pSectionSeparator('Inner hollow'),
@@ -96,7 +96,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const R1 = (param.zn * param.pim) / Math.PI;
+		const D1 = (param.zn * param.pim) / Math.PI;
+		const R1 = D1 / 2;
 		const R2 = R1 - param.bw;
 		const R3 = R2 - param.nw;
 		const R4 = R2 - param.rw;
@@ -123,7 +124,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const lDF = Math.min(Math.abs(x1), Math.abs(x2));
 		const aDAF = Math.asin((Math.sin(aADF) * lDF) / R2);
 		const aCAF = aCAD - aDAF;
-		rGeome.logstr += `dbg783: aCAD: ${aCAD}, aDAF: ${aDAF}, aCAF: ${aCAF}rad\n`;
+		//rGeome.logstr += `dbg783: aCAD: ${aCAD}, aDAF: ${aDAF}, aCAF: ${aCAF}rad\n`;
 		const apd = 2 * aCAF;
 		const apa = ap - apd;
 		//rGeome.logstr += `dbg785: ap: ${ap}, apd: ${apd}, apa: ${apa}\n`;
@@ -159,7 +160,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `R2: ${ffix(R2)} mm\n`;
 		rGeome.logstr += `R3: ${ffix(R3)} mm\n`;
 		rGeome.logstr += `R4: ${ffix(R4)} mm\n`;
+		rGeome.logstr += `pitch length at R2: ${ffix(ap * R2)} mm\n`;
 		rGeome.logstr += `addendum length: ${ffix(apa * R2)} mm\n`;
+		rGeome.logstr += `dedendum length: ${ffix(apd * R2)} mm\n`;
 		// step-7 : drawing of the figures
 		// figPulleyProfile
 		const ctrP = contour(R2, 0);
