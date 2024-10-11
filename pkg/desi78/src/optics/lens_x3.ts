@@ -15,6 +15,9 @@ import type {
 	//tSubDesign
 } from 'geometrix';
 import {
+	designParam,
+	checkGeom,
+	prefixLog,
 	point,
 	//Point,
 	//ShapePoint,
@@ -39,6 +42,8 @@ import {
 import { initPL, e1plus, checkLensParam, logLens, ctrHalfLens, otherHalfLens } from './lens_helper';
 import type { tLens } from './optic_sim';
 import { rayTrace } from './optic_sim';
+// design import for sub-design
+import { lensX1Def } from './lens_x1';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -356,7 +361,84 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		// step-9 : optional sub-design parameter export
 		// sub-design
-		rGeome.sub = {};
+		// lensX1_1 preparation
+		const lensX1Param_1 = designParam(lensX1Def.pDef);
+		lensX1Param_1.setVal('D1', param.l1D1);
+		lensX1Param_1.setVal('E1', param.l1E1);
+		lensX1Param_1.setVal('Dl', param.l1Dl);
+		lensX1Param_1.setVal('Rl', param.l1Rl);
+		lensX1Param_1.setVal('TypeL', param.l1TypeL);
+		lensX1Param_1.setVal('Dr', param.l1Dr);
+		lensX1Param_1.setVal('Rr', param.l1Rr);
+		lensX1Param_1.setVal('TypeR', param.l1TypeR);
+		lensX1Param_1.setVal('ni', param.l1ni);
+		lensX1Param_1.setVal('ne', param.ne);
+		const lensX1Geom_1 = lensX1Def.pGeom(
+			0,
+			lensX1Param_1.getParamVal(),
+			lensX1Param_1.getSuffix()
+		);
+		checkGeom(lensX1Geom_1);
+		rGeome.logstr += prefixLog(lensX1Geom_1.logstr, lensX1Param_1.getPartNameSuffix());
+		// lensX1_2
+		const lensX1Param_2 = designParam(lensX1Def.pDef);
+		lensX1Param_2.setVal('D1', param.l2D1);
+		lensX1Param_2.setVal('E1', param.l2E1);
+		lensX1Param_2.setVal('Dl', param.l2Dl);
+		lensX1Param_2.setVal('Rl', param.l2Rl);
+		lensX1Param_2.setVal('TypeL', param.l2TypeL);
+		lensX1Param_2.setVal('Dr', param.l2Dr);
+		lensX1Param_2.setVal('Rr', param.l2Rr);
+		lensX1Param_2.setVal('TypeR', param.l2TypeR);
+		lensX1Param_2.setVal('ni', param.l2ni);
+		lensX1Param_2.setVal('ne', param.ne);
+		const lensX1Geom_2 = lensX1Def.pGeom(
+			0,
+			lensX1Param_2.getParamVal(),
+			lensX1Param_2.getSuffix()
+		);
+		checkGeom(lensX1Geom_2);
+		rGeome.logstr += prefixLog(lensX1Geom_2.logstr, lensX1Param_2.getPartNameSuffix());
+		// lensX1_3
+		const lensX1Param_3 = designParam(lensX1Def.pDef);
+		lensX1Param_3.setVal('D1', param.l3D1);
+		lensX1Param_3.setVal('E1', param.l3E1);
+		lensX1Param_3.setVal('Dl', param.l3Dl);
+		lensX1Param_3.setVal('Rl', param.l3Rl);
+		lensX1Param_3.setVal('TypeL', param.l3TypeL);
+		lensX1Param_3.setVal('Dr', param.l3Dr);
+		lensX1Param_3.setVal('Rr', param.l3Rr);
+		lensX1Param_3.setVal('TypeR', param.l3TypeR);
+		lensX1Param_3.setVal('ni', param.l3ni);
+		lensX1Param_3.setVal('ne', param.ne);
+		const lensX1Geom_3 = lensX1Def.pGeom(
+			0,
+			lensX1Param_3.getParamVal(),
+			lensX1Param_3.getSuffix()
+		);
+		checkGeom(lensX1Geom_1);
+		rGeome.logstr += prefixLog(lensX1Geom_3.logstr, lensX1Param_3.getPartNameSuffix());
+		// sub-design
+		rGeome.sub = {
+			lens_1: {
+				partName: lensX1Param_1.getPartName(),
+				dparam: lensX1Param_1.getDesignParamList(),
+				orientation: [0, 0, 0],
+				position: [0, 0, 0]
+			},
+			lens_2: {
+				partName: lensX1Param_2.getPartName(),
+				dparam: lensX1Param_2.getDesignParamList(),
+				orientation: [0, 0, 0],
+				position: [0, 0, 0]
+			},
+			lens_3: {
+				partName: lensX1Param_3.getPartName(),
+				dparam: lensX1Param_3.getDesignParamList(),
+				orientation: [0, 0, 0],
+				position: [0, 0, 0]
+			}
+		};
 		// step-10 : final log message
 		// finalize
 		rGeome.logstr += 'lens_x3 drawn successfully!\n';
