@@ -156,10 +156,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err129: rimR ${rimR} smaller than R4 ${R4}`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `R1: ${ffix(R1)} mm\n`;
-		rGeome.logstr += `R2: ${ffix(R2)} mm\n`;
-		rGeome.logstr += `R3: ${ffix(R3)} mm\n`;
-		rGeome.logstr += `R4: ${ffix(R4)} mm\n`;
+		rGeome.logstr += `R1: ${ffix(R1)}  D1: ${ffix(2 * R1)} mm\n`;
+		rGeome.logstr += `R2: ${ffix(R2)}  D2: ${ffix(2 * R2)} mm\n`;
+		rGeome.logstr += `R3: ${ffix(R3)}  D3: ${ffix(2 * R3)} mm\n`;
+		rGeome.logstr += `R4: ${ffix(R4)}  D4: ${ffix(2 * R4)} mm\n`;
 		rGeome.logstr += `pitch length at R2: ${ffix(ap * R2)} mm\n`;
 		rGeome.logstr += `addendum length: ${ffix(apa * R2)} mm\n`;
 		rGeome.logstr += `dedendum length: ${ffix(apd * R2)} mm\n`;
