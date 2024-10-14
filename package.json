@@ -20,6 +20,11 @@
 		"pkg/*"
 	],
 	"scripts": {
+		"triangule:dev": "npm -w triangule run dev",
+		"triangule:ci": "npm -w triangule run ci",
+		"triangule:clean": "npm -w triangule run clean",
+		"triangule:version": "npm -w triangule version patch",
+		"triangule:publish": "npm -w triangule publish --provenance",
 		"desi78:dev": "npm -w desi78 run dev",
 		"desi78:ci": "npm -w desi78 run ci",
 		"desi78:svgo": "npm -w desi78 run svgo",
@@ -43,7 +48,7 @@
 		"desi78-uis:version": "npm -w desi78-uis version patch",
 		"desi78-uis:publish": "npm -w desi78-uis publish --provenance",
 		"dev": "run-p desi78:dev desi78-ui:dev",
-		"ci": "run-s desi78:ci desi78-ui:ci desi78-cli:ci desi78-uis:ci",
+		"ci": "run-s triangule:ci desi78:ci desi78-ui:ci desi78-cli:ci desi78-uis:ci",
 		"ci2": "run-s desi78:ci desi78-ui:ci",
 		"ci3": "run-s desi78:ci desi78-cli:ci",
 		"svgo": "run-s desi78:svgo",

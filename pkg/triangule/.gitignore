@@ -1,0 +1,5 @@
+# .gitignore for geometrix-design-library
+dist/
+dist2/
+# vitest creates node_modules for the results.json
+node_modules/
