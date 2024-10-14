@@ -53,12 +53,12 @@
 		"ci3": "run-s desi78:ci desi78-cli:ci",
 		"svgo": "run-s desi78:svgo",
 		"clean-root": "shx rm -fr tmp output output2",
-		"clean": "run-s clean-root desi78:clean desi78-ui:clean desi78-cli:clean desi78-uis:clean",
+		"clean": "run-s clean-root triangule:clean desi78:clean desi78-ui:clean desi78-cli:clean desi78-uis:clean",
 		"preview": "run-s desi78-ui:preview",
 		"run-uis": "run-s desi78-uis:run",
 		"run-cli": "run-s desi78-cli:run",
-		"versions": "run-s desi78:version desi78-ui:version desi78-cli:version desi78-uis:version",
-		"gh-publish": "run-s desi78:publish desi78-cli:publish desi78-uis:publish",
+		"versions": "run-s triangule:version desi78:version desi78-ui:version desi78-cli:version desi78-uis:version",
+		"gh-publish": "run-s triangule:publish desi78:publish desi78-cli:publish desi78-uis:publish",
 		"ls-workspaces": "npm -ws exec -c pwd"
 	},
 	"devDependencies": {
