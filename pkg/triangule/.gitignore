@@ -1,4 +1,4 @@
-# .gitignore for geometrix-design-library
+# .gitignore of triangule
 dist/
 dist2/
 # vitest creates node_modules for the results.json

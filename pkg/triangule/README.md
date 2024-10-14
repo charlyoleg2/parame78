@@ -1,27 +1,25 @@
-Desi78
-======
+Triangule
+=========
 
 
 Presentation
 ------------
 
-*Desi78* is a *design library* based on [parametrix](https://charlyoleg2.github.io/parametrix/).
+*Triangule* is a *typescript library* for computing angles and length of triangles.
 
-It contains the following 3D-shapes:
+It solves analytically common triangle problems of Euclidian geometry.
 
-- door : an hyperbolic vault
-- cabane : an hut for kids
-- cabane\_plancher : the floor of the hut
+It uses particularly the [law of cosines](https://en.wikipedia.org/wiki/Law_of_cosines) and the [law of sines](https://en.wikipedia.org/wiki/Law_of_sines).
+
+*Triangule* doesn't have any dependency.
 
 
 Links
 -----
 
-- [desi78-ui](https://charlyoleg2.github.io/parame78/) : public instance of the UI
-- [sources](https://github.com/charlyoleg2/parame78) : git-repository
-- [pkg](https://www.npmjs.com/package/desi78) : desi78 as npm-package
-- [pkg-cli](https://www.npmjs.com/package/desi78-cli) : desi78-cli as npm-package
-- [pkg-uis](https://www.npmjs.com/package/desi78-uis) : desi78-uis as npm-package
+- [pkg](https://www.npmjs.com/package/triangule) : triangule as npm-package
+- [sources](https://github.com/charlyoleg2/parame78/pkg/triangule) : git-repository
+- [API](https://charlyoleg2.github.io/parame78/) : public instance of the UI
 
 
 Getting started
@@ -30,12 +28,7 @@ Getting started
 ```bash
 git clone https://github.com/charlyoleg2/parame78
 cd parame78
-npm -w desi78 install
-npm -w desi78 run ci
+npm -w triangule install
+npm -w triangule run ci
 ```
-
-Dependencies
-------------
-
-*Desi78* runtime depends only on *Geometrix*. Use *desi78-ui* WebUI or *desi78-cli* CLI to visualize and export the designs in different formats like dxf, svg, gltf, stl, brep, step and others.
 
