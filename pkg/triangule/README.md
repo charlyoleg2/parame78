@@ -18,12 +18,30 @@ Links
 -----
 
 - [pkg](https://www.npmjs.com/package/triangule) : triangule as npm-package
-- [sources](https://github.com/charlyoleg2/parame78/pkg/triangule) : git-repository
+- [sources](https://github.com/charlyoleg2/parame78/tree/main/pkg/triangule) : git-repository
 - [API](https://charlyoleg2.github.io/parame78/) : public instance of the UI
 
 
-Getting started
----------------
+Installation
+------------
+
+```bash
+npm install triangule
+```
+
+
+Usage
+-----
+
+```bash
+import { triAArA } from 'triangule';
+
+const a3 = triAArA(1.0, 2.0); // expect 0.14159
+```
+
+
+Development
+-----------
 
 ```bash
 git clone https://github.com/charlyoleg2/parame78
