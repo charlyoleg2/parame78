@@ -17,7 +17,7 @@
 	],
 	"type": "module",
 	"scripts": {
-		"cp_pgdsvg": "fse copy ../../node_modules/desi78/dist/pgdsvg static/",
+		"cp_pgdsvg": "fse copy ../../node_modules/desi78/dist/pgdsvg static/pgdsvg",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
