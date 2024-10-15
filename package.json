@@ -52,7 +52,7 @@
 		"ci2": "run-s desi78:ci desi78-ui:ci",
 		"ci3": "run-s desi78:ci desi78-cli:ci",
 		"svgo": "run-s desi78:svgo",
-		"clean-root": "fse remove tmp output output2",
+		"clean-root": "rimraf tmp output output2",
 		"clean": "run-s clean-root triangule:clean desi78:clean desi78-ui:clean desi78-cli:clean desi78-uis:clean",
 		"preview": "run-s desi78-ui:preview",
 		"run-uis": "run-s desi78-uis:run",
@@ -62,7 +62,7 @@
 		"ls-workspaces": "npm -ws exec -c pwd"
 	},
 	"devDependencies": {
-		"@atao60/fse-cli": "^0.1.9",
-		"npm-run-all2": "^6.2.3"
+		"npm-run-all2": "^6.2.3",
+		"rimraf": "^6.0.1"
 	}
 }

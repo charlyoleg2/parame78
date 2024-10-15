@@ -29,7 +29,7 @@
 		"ci": "run-s cp_pgdsvg build lint check test:unit:once",
 		"format": "prettier --write .",
 		"github-pages-fix": "touch build/.nojekyll",
-		"clean": "fse remove .svelte-kit build node_modules static/pgdsvg"
+		"clean": "rimraf .svelte-kit build node_modules static/pgdsvg"
 	},
 	"dependencies": {
 		"desi78": "^0.5.26",
@@ -50,6 +50,7 @@
 		"npm-run-all2": "^6.2.3",
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.2.7",
+		"rimraf": "^6.0.1",
 		"sass": "^1.79.5",
 		"svelte": "^4.2.19",
 		"svelte-check": "^4.0.5",
