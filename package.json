@@ -52,7 +52,7 @@
 		"ci2": "run-s desi78:ci desi78-ui:ci",
 		"ci3": "run-s desi78:ci desi78-cli:ci",
 		"svgo": "run-s desi78:svgo",
-		"clean-root": "shx rm -fr tmp output output2",
+		"clean-root": "fse remove tmp output output2",
 		"clean": "run-s clean-root triangule:clean desi78:clean desi78-ui:clean desi78-cli:clean desi78-uis:clean",
 		"preview": "run-s desi78-ui:preview",
 		"run-uis": "run-s desi78-uis:run",

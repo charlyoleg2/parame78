@@ -17,7 +17,7 @@
 	],
 	"type": "module",
 	"scripts": {
-		"cp_pgdsvg": "shx cp -r ../../node_modules/desi78/dist/pgdsvg static/",
+		"cp_pgdsvg": "fse copy ../../node_modules/desi78/dist/pgdsvg static/",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
@@ -29,7 +29,7 @@
 		"ci": "run-s cp_pgdsvg build lint check test:unit:once",
 		"format": "prettier --write .",
 		"github-pages-fix": "touch build/.nojekyll",
-		"clean": "shx rm -fr .svelte-kit build node_modules static/pgdsvg"
+		"clean": "fse remove .svelte-kit build node_modules static/pgdsvg"
 	},
 	"dependencies": {
 		"desi78": "^0.5.26",

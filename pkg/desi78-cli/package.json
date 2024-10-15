@@ -54,7 +54,7 @@
 		"test:bats": "bats test/test1.bats",
 		"ci": "run-s check build pretty lint test:unit:once test:bats",
 		"run": "dist/desi78-cli.js",
-		"clean": "shx rm -fr build dist node_modules"
+		"clean": "fse remove build dist node_modules"
 	},
 	"dependencies": {
 		"desi78": "^0.5.26",

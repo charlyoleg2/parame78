@@ -62,14 +62,14 @@
 		"lint": "eslint .",
 		"test:unit": "vitest",
 		"test:unit:once": "vitest --run",
-		"clean_public": "shx rm -fr dist/public",
-		"copy_ui": "shx cp -r ../desi78-ui/build dist/public",
+		"clean_public": "fse remove dist/public",
+		"copy_ui": "fse copy ../desi78-ui/build dist/public",
 		"checkCopy": "ls -l dist/public/index.html",
 		"copy_public": "run-s clean_public copy_ui checkCopy",
 		"ci": "run-s check build pretty lint test:unit:once copy_public",
 		"run": "node dist/desi78-uis.js",
 		"run-help": "node dist/desi78-uis.js --help",
-		"clean": "shx rm -fr node_modules build dist tmp"
+		"clean": "fse remove node_modules build dist tmp"
 	},
 	"dependencies": {
 		"express": "^4.21.1",
