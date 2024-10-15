@@ -62,7 +62,7 @@
 		"ls-workspaces": "npm -ws exec -c pwd"
 	},
 	"devDependencies": {
-		"npm-run-all2": "^6.2.3",
-		"shx": "^0.3.4"
+		"@atao60/fse-cli": "^0.1.9",
+		"npm-run-all2": "^6.2.3"
 	}
 }
