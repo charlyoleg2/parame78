@@ -27,8 +27,8 @@ import {
 	//contourCircle,
 	//ctrRectangle,
 	figure,
-	degToRad,
-	radToDeg,
+	//degToRad,
+	//radToDeg,
 	ffix,
 	pNumber,
 	//pCheckbox,
@@ -38,6 +38,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
+import { triDegRad, triRadDeg, triAArA } from 'triangule';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -80,43 +81,38 @@ const pDef: tParamDef = {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figExample1 = figure();
+	const figTriangles = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const a3 = degToRad(param.a3);
-		const a4 = degToRad(param.a4);
-		const a5 = degToRad(param.a5);
-		const sumAngles = a3 + a4 + a5;
+		const aA = triDegRad(param.aCAB);
+		const aB = triDegRad(param.aABC);
+		const aC = triAArA(aA, aB);
+		const sumAngles = aA + aB + aC;
 		// step-5 : checks on the parameter values
-		if (param.L2 < param.L3) {
-			throw `err639: L2 ${ffix(param.L2)} is smaller than L3 ${ffix(param.L3)}}`;
+		if (param.lAB < 0) {
+			throw `err639: lAB ${ffix(param.lAB)} is negative`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `sum of angles: ${ffix(radToDeg(sumAngles))} degree`;
+		rGeome.logstr += `sum of angles: ${ffix(triRadDeg(sumAngles))} degree\n`;
 		// step-7 : drawing of the figures
-		// figExample1
-		const ctr1 = contour(0, 0)
-			.addSegStrokeR(param.L2, 0)
-			.addSegStrokeRP(a3, param.L3)
-			.addPointAP(a4, param.L4)
-			.addSegArc(param.R34, true, true)
-			.addCornerRounded(param.R4)
-			.addPointA(0, param.L5)
-			.addSegArc3(a5, false)
+		// figTriangles
+		const ctr1 = contour(param.Ax, param.Ay)
+			.addSegStrokeRP(triDegRad(param.aAB), param.lAB)
+			.addSegStrokeA(100, -20)
 			.closeSegStroke();
-		figExample1.addMainO(ctr1);
+		figTriangles.addMainO(ctr1);
 		// final figure list
 		rGeome.fig = {
-			faceExample1: figExample1
+			faceTriangles: figTriangles
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
 		rGeome.vol = {
 			extrudes: [
 				{
-					outName: `subpax_${designName}_example1`,
-					face: `${designName}_faceExample1`,
+					outName: `subpax_${designName}_triangles`,
+					face: `${designName}_faceTriangles`,
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: param.T1,
 					rotate: [0, 0, 0],
@@ -127,7 +123,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eIdentity,
-					inList: [`subpax_${designName}_example1`]
+					inList: [`subpax_${designName}_triangles`]
 				}
 			]
 		};
