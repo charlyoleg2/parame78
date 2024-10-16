@@ -11,6 +11,7 @@ import {
 	lensX3Def,
 	pulleyDef,
 	codeExample1Def,
+	demoTrianguleDef,
 	railDef
 } from 'desi78';
 
@@ -24,6 +25,7 @@ const designList: tAllPageDef = {
 	'desi78/lens_x3': lensX3Def,
 	'desi78/pulley': pulleyDef,
 	'desi78/codeExample1': codeExample1Def,
+	'desi78/demoTriangule': demoTrianguleDef,
 	'desi78/rail': railDef
 };
 

@@ -10,3 +10,4 @@ export * from './optics/lens_x3';
 export * from './printer3d/pulley';
 export * from './train/rail';
 export * from './codeExample/codeExample1';
+export * from './codeExample/demoTriangule';
