@@ -26,4 +26,14 @@ describe('triangule under tests', () => {
 	it('triangle angles', () => {
 		expect(dut.triAArA(1, 2, dut.EAngleCheck.eError)).toBeCloseTo(0.14159, 4);
 	});
+	it('triangle angles', () => {
+		expect(dut.triAArA(-1, -2)).toBeCloseTo(-0.14159, 4);
+	});
+	// triALArLL
+	it('triALArLL', () => {
+		expect(dut.triALArLL(Math.PI / 3, 100, Math.PI / 3)).toEqual([
+			expect.closeTo(100, 4),
+			expect.closeTo(100, 4)
+		]);
+	});
 });
