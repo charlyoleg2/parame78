@@ -36,4 +36,8 @@ describe('triangule under tests', () => {
 			expect.closeTo(100, 4)
 		]);
 	});
+	// triLALrL
+	it('triLALrL', () => {
+		expect(dut.triLALrL(100, Math.PI / 3, 100)).toBeCloseTo(100, 4);
+	});
 });

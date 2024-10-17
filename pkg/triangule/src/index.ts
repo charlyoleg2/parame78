@@ -154,13 +154,12 @@ function triALArLL(
 	let rl23 = 0;
 	let rl31 = 0;
 	if (triIsZero(a3)) {
-		const logstr = `flat triangle with a1 ${ffix(a1)}, a2 ${ffix(a2)} and a3 ${ffix(a3)}`;
+		const logstr = `triALArLL : flat triangle with a1 ${ffix(a1)}, a2 ${ffix(a2)} and a3 ${ffix(a3)}`;
 		if (checkLevel === EAngleCheck.eError) {
 			throw `err390: ${logstr}`;
 		} else if (checkLevel === EAngleCheck.eWarn) {
 			console.log(`warn391: ${logstr}`);
 		}
-		console.log();
 		if (triIsZero(a1)) {
 			rl23 = 0; // length can not be defined
 			rl31 = l12; // minimal length
@@ -176,6 +175,28 @@ function triALArLL(
 	return [rl23, rl31];
 }
 
+/**
+ * Calculate the last length of a triangle from l1, a12 and l2
+ *
+ *  @param l1 the first length of the triangle
+ *  @param a12 the angle between l1 and l2 in radian
+ *  @param l2 the second length of the triangle
+ *  @param checkLevel the level of check on the input angle
+ *  @returns the length l3 of the triangle
+ */
+function triLALrL(l1: number, a12: number, l2: number, checkLevel = EAngleCheck.eError): number {
+	if (a12 < 0) {
+		const logstr = `triLALrL a12 ${ffix(a12)}`;
+		if (checkLevel === EAngleCheck.eError) {
+			throw `err490: ${logstr}`;
+		} else if (checkLevel === EAngleCheck.eWarn) {
+			console.log(`warn491: ${logstr}`);
+		}
+	}
+	const rl3 = Math.sqrt(l1 ** 2 + l2 ** 2 - 2 * l1 * l2 * Math.cos(a12));
+	return rl3;
+}
+
 export {
 	triDegRad,
 	triRadDeg,
@@ -185,5 +206,6 @@ export {
 	triAPihPih,
 	EAngleCheck,
 	triAArA,
-	triALArLL
+	triALArLL,
+	triLALrL
 };
