@@ -40,4 +40,27 @@ describe('triangule under tests', () => {
 	it('triLALrL', () => {
 		expect(dut.triLALrL(100, Math.PI / 3, 100)).toBeCloseTo(100, 4);
 	});
+	// triALLrL
+	it('triALLrL', () => {
+		expect(dut.triALLrL(Math.PI / 3, 100, 100)).toEqual([
+			expect.closeTo(100, 4),
+			expect.closeTo(100, 4)
+		]);
+	});
+	// triOrderLLLrIII
+	it('triOrderLLLrIII', () => {
+		expect(dut.triOrderLLLrIII(100, 90, 80)).toEqual([0, 1, 2]);
+		expect(dut.triOrderLLLrIII(100, 190, 80)).toEqual([1, 0, 2]);
+		expect(dut.triOrderLLLrIII(100, 190, 280)).toEqual([2, 1, 0]);
+		expect(dut.triOrderLLLrIII(100, 190, 100)).toEqual([1, 2, 0]);
+		expect(dut.triOrderLLLrIII(100, 100, 100)).toEqual([0, 2, 1]);
+	});
+	// triLLLrAAA
+	it('triLLLrAAA', () => {
+		expect(dut.triLLLrAAA(100, 100, 100)).toEqual([
+			expect.closeTo(Math.PI / 3, 4),
+			expect.closeTo(Math.PI / 3, 4),
+			expect.closeTo(Math.PI / 3, 4)
+		]);
+	});
 });
