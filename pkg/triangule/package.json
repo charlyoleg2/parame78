@@ -29,6 +29,7 @@
 	},
 	"files": [
 		"dist",
+		"svg",
 		"!dist/**/*.map",
 		"!dist/**/*.test.*",
 		"!dist/**/*.spec.*"
