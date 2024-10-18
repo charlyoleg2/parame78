@@ -85,3 +85,11 @@ npm version patch
 git push
 git push origin v0.5.6
 ```
+
+
+Implementation details
+----------------------
+
+![triangule\_angle\_sign.svg](./svg/triangule_angle_sign.svg)
+
+Either all angles of a triangle are positive or they are all negative.

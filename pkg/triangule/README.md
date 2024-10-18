@@ -5,9 +5,9 @@ Triangule
 Presentation
 ------------
 
-*Triangule* is a *typescript library* for computing angles and length of triangles.
+*Triangule* is a *typescript library* for computing angles and lengths of triangles.
 
-It solves analytically common triangle problems of Euclidian geometry.
+It solves analytically common triangle problems in Euclidian geometry. It's based only on lengths and angles. On purpose, it doesn't use Cartesian coordinates.
 
 It uses particularly the [law of cosines](https://en.wikipedia.org/wiki/Law_of_cosines) and the [law of sines](https://en.wikipedia.org/wiki/Law_of_sines).
 
