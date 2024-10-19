@@ -58,7 +58,9 @@
 				>
 			</li>
 			<li>
-				<a href="https://charlyoleg2.github.io/parame78" rel="external">Triangule in use</a>
+				<a href="https://charlyoleg2.github.io/parame78/desi78/demoTriangule" rel="external"
+					>Triangule in use</a
+				>
 			</li>
 		</ol>
 	</article>
