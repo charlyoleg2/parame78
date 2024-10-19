@@ -54,6 +54,6 @@ npm -w triangule run ci
 Implementation details
 ----------------------
 
-![triangule\_angle\_sign.svg](./svg/triangule_angle_sign.svg)
+![triangule\_angle\_sign.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_angle_sign.svg)
 
 Either all angles of a triangle are positive or they are all negative.
