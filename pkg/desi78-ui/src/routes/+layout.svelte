@@ -42,6 +42,26 @@
 			{/each}
 		</code>
 	</article>
+	<article>
+		<h3>Triangule</h3>
+		<pre>A companion library for basic calculations of triangulation</pre>
+		<ol>
+			<li>
+				<a href="https://www.npmjs.com/package/triangule" rel="external"
+					>Triangule package</a
+				>
+			</li>
+			<li><a href="{base}/apidoc/" rel="external">Triangule API</a></li>
+			<li>
+				<a href="https://www.github.com/charlyoleg2/parame78" rel="external"
+					>Triangule sources</a
+				>
+			</li>
+			<li>
+				<a href="https://charlyoleg2.github.io/parame78" rel="external">Triangule in use</a>
+			</li>
+		</ol>
+	</article>
 </footer>
 
 <style lang="scss">

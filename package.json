@@ -48,7 +48,7 @@
 		"desi78-uis:version": "npm -w desi78-uis version patch",
 		"desi78-uis:publish": "npm -w desi78-uis publish --provenance",
 		"dev": "run-p desi78:dev desi78-ui:dev",
-		"ci": "run-s triangule:ci desi78:ci desi78-ui:ci desi78-cli:ci desi78-uis:ci",
+		"ci": "run-s triangule:ci desi78:ci desi78-ui:ci desi78-cli:ci desi78-uis:ci apidoc",
 		"ci2": "run-s desi78:ci desi78-ui:ci",
 		"ci3": "run-s desi78:ci desi78-cli:ci",
 		"ci4": "run-s triangule:ci desi78:ci desi78-ui:ci",
@@ -60,10 +60,18 @@
 		"run-cli": "run-s desi78-cli:run",
 		"versions": "run-s triangule:version desi78:version desi78-ui:version desi78-cli:version desi78-uis:version",
 		"gh-publish": "run-s triangule:publish desi78:publish desi78-cli:publish desi78-uis:publish",
+		"gen_apidoc": "typedoc",
+		"cp_apidoc": "fse copy build/apidoc pkg/desi78-ui/build/apidoc",
+		"apidoc": "run-s gen_apidoc cp_apidoc",
+		"serve_apidoc": "serve build/apidoc",
+		"serve_ui": "serve pkg/desi78-ui/build",
 		"ls-workspaces": "npm -ws exec -c pwd"
 	},
 	"devDependencies": {
+		"@atao60/fse-cli": "^0.1.9",
 		"npm-run-all2": "^6.2.4",
-		"rimraf": "^6.0.1"
+		"rimraf": "^6.0.1",
+		"serve": "^14.2.4",
+		"typedoc": "^0.26.10"
 	}
 }

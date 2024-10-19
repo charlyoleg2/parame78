@@ -1,0 +1,13 @@
+{
+	"entryPoints": ["pkg/triangule"],
+	"name": "Triangule & Co",
+	"entryPointStrategy": "packages",
+	"out": "build/apidoc",
+	"navigationLinks": {
+		"Triangule pkg": "https://www.npmjs.com/package/triangule",
+		"Sources": "https://github.com/charlyoleg2/parame78",
+		"API": "https://charlyoleg2.github.io/parame78/apidoc/",
+		"Examples": "https://charlyoleg2.github.io/parame78/"
+	},
+	"includeVersion": false
+}

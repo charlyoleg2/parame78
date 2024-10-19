@@ -19,7 +19,8 @@ Links
 
 - [pkg](https://www.npmjs.com/package/triangule) : triangule as npm-package
 - [sources](https://github.com/charlyoleg2/parame78/tree/main/pkg/triangule) : git-repository
-- [API](https://charlyoleg2.github.io/parame78/) : public instance of the UI
+- [API](https://charlyoleg2.github.io/parame78/apidoc/) : public instance of the UI
+- [in use](https://charlyoleg2.github.io/parame78/desi78/triangule) : public instance of the UI
 
 
 Installation
