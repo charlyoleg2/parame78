@@ -29,16 +29,25 @@ describe('triangule under tests', () => {
 	it('triangle angles', () => {
 		expect(dut.triAArA(-1, -2)).toBeCloseTo(-0.14159, 4);
 	});
-	// triALArLL
-	it('triALArLL', () => {
-		expect(dut.triALArLL(Math.PI / 3, 100, Math.PI / 3)).toEqual([
+	// triALArLAL
+	it('triALArLAL', () => {
+		expect(dut.triALArLAL(Math.PI / 3, 100, Math.PI / 3)).toEqual([
 			expect.closeTo(100, 4),
+			expect.closeTo(Math.PI / 3, 4),
 			expect.closeTo(100, 4)
 		]);
 	});
 	// triLALrL
 	it('triLALrL', () => {
 		expect(dut.triLALrL(100, Math.PI / 3, 100)).toBeCloseTo(100, 4);
+	});
+	// triLALrALA
+	it('triLALrALA', () => {
+		expect(dut.triLALrALA(100, Math.PI / 3, 100)).toEqual([
+			expect.closeTo(Math.PI / 3, 4),
+			expect.closeTo(100, 4),
+			expect.closeTo(Math.PI / 3, 4)
+		]);
 	});
 	// triALLrL
 	it('triALLrL', () => {

@@ -131,30 +131,31 @@ function triAArA(a1: number, a2: number, checkLevel = EAngleCheck.eError): numbe
 			throw `err628: the signs of a1 ${ffix(a1)} and a2 ${ffix(a2)} differ`;
 		}
 	}
+	// TODO
 	const rA = triAPiPi(Math.PI - a1 - a2);
 	return rA;
 }
 
 /**
- * Calculate the two last lengths of a triangle from the first length and two angles
+ * Calculate the two last lengths and one anmgle of a triangle from the first length and two angles
  *
  *  @param a1 the first angle of the triangle in radian
  *  @param l12 the length between the angles a1 and a2 in radian
  *  @param a2 the second angle of the triangle in radian
  *  @param checkLevel the level of check on the input angles
- *  @returns the two lengths l23 and l31 of the triangle
+ *  @returns the two lengths and one angle of the triangle : l23, a3, l31
  */
-function triALArLL(
+function triALArLAL(
 	a1: number,
 	l12: number,
 	a2: number,
 	checkLevel = EAngleCheck.eError
-): [number, number] {
-	const a3 = triAArA(a1, a2, checkLevel);
+): [number, number, number] {
+	const ra3 = triAArA(a1, a2, checkLevel);
 	let rl23 = 0;
 	let rl31 = 0;
-	if (triIsZero(a3)) {
-		const logstr = `triALArLL : flat triangle with a1 ${ffix(a1)}, a2 ${ffix(a2)} and a3 ${ffix(a3)}`;
+	if (triIsZero(ra3)) {
+		const logstr = `triALArLAL : flat triangle with a1 ${ffix(a1)}, a2 ${ffix(a2)} and ra3 ${ffix(ra3)}`;
 		if (checkLevel === EAngleCheck.eError) {
 			throw `err390: ${logstr}`;
 		} else if (checkLevel === EAngleCheck.eWarn) {
@@ -169,10 +170,10 @@ function triALArLL(
 		}
 	} else {
 		// law of sines
-		rl23 = (l12 * Math.sin(a1)) / Math.sin(a3);
-		rl31 = (l12 * Math.sin(a2)) / Math.sin(a3);
+		rl23 = (l12 * Math.sin(a1)) / Math.sin(ra3);
+		rl31 = (l12 * Math.sin(a2)) / Math.sin(ra3);
 	}
-	return [rl23, rl31];
+	return [rl23, ra3, rl31];
 }
 
 /**
@@ -195,6 +196,35 @@ function triLALrL(l1: number, a12: number, l2: number, checkLevel = EAngleCheck.
 	}
 	const rl3 = Math.sqrt(l1 ** 2 + l2 ** 2 - 2 * l1 * l2 * Math.cos(a12));
 	return rl3;
+}
+
+/**
+ * Calculate one length and two angles of a triangle from l1, a12 and l2
+ *
+ *  @param l1 the first length of the triangle
+ *  @param a12 the angle between l1 and l2 in radian
+ *  @param l2 the second length of the triangle
+ *  @param checkLevel the level of check on the input angle
+ *  @returns one length and two angles of the triangle: a23, l3, a31
+ */
+function triLALrALA(
+	l1: number,
+	a12: number,
+	l2: number,
+	checkLevel = EAngleCheck.eIgnore
+): [number, number, number] {
+	const rl3 = triLALrL(l1, a12, l2, checkLevel);
+	if (rl3 <= 0) {
+		const logstr = `triLALrALA rl3 ${ffix(rl3)} is null or negative`;
+		if (checkLevel === EAngleCheck.eError) {
+			throw `err498: ${logstr}`;
+		} else if (checkLevel === EAngleCheck.eWarn) {
+			console.log(`warn499: ${logstr}`);
+		}
+	}
+	const ra23 = Math.asin((Math.sin(a12) * l1) / rl3);
+	const ra31 = Math.asin((Math.sin(a12) * l2) / rl3);
+	return [ra23, rl3, ra31];
 }
 
 /**
@@ -320,8 +350,9 @@ export {
 	triAPihPih,
 	EAngleCheck,
 	triAArA,
-	triALArLL,
+	triALArLAL,
 	triLALrL,
+	triLALrALA,
 	triALLrL,
 	triOrderLLLrIII,
 	triLLLrAAA
