@@ -323,6 +323,7 @@ function triLLLrAAA(
 	const tl1 = triLenghts[tl1Idx];
 	const tl2 = triLenghts[tl2Idx];
 	const tl3 = triLenghts[tl3Idx];
+	//console.log(`dbg326: tl1 ${ffix(tl1)}, tl2 ${ffix(tl2)}, tl3 ${ffix(tl3)}`);
 	const tl23 = tl2 + tl3;
 	// check the length condition tl1 < tl2 + tl3
 	if (tl23 < tl1) {
@@ -333,12 +334,37 @@ function triLLLrAAA(
 			console.log(`warn691: ${logstr}`);
 		}
 	}
+	// lAB and LBC
+	const lAB = (tl2 ** 2 - tl3 ** 2 + tl1 ** 2) / (2 * tl1);
+	const lBC = tl1 - lAB;
+	//console.log(`dbg340: lAB ${ffix(lAB)}, lBC ${ffix(lBC)}`);
 	// angle calculation
-	// TODO
-	const ra12 = Math.PI / 3;
-	const ra23 = Math.PI / 3;
-	const ra31 = Math.PI / 3;
-	return [ra12, ra23, ra31];
+	if (tl2 < Math.abs(lAB)) {
+		const logstr = `triLLLrAAA tl2 ${ffix(tl2)} is smaller than lAB ${ffix(lAB)}`;
+		if (checkLevel === EAngleCheck.eError) {
+			throw `err390: ${logstr}`;
+		} else if (checkLevel === EAngleCheck.eWarn) {
+			console.log(`warn391: ${logstr}`);
+		}
+	}
+	if (tl3 < Math.abs(lBC)) {
+		const logstr = `triLLLrAAA tl3 ${ffix(tl3)} is smaller than lBC ${ffix(lBC)}`;
+		if (checkLevel === EAngleCheck.eError) {
+			throw `err392: ${logstr}`;
+		} else if (checkLevel === EAngleCheck.eWarn) {
+			console.log(`warn393: ${logstr}`);
+		}
+	}
+	const ta12 = Math.acos(lAB / tl2);
+	const ta23 = Math.acos(lBC / tl3);
+	const ta31 = triAArA(ta12, ta23);
+	//console.log(`dbg343: ta12 ${ffix(ta12)}, ta23 ${ffix(ta23)}, ta31 ${ffix(ta31)}`);
+	// reordering of the angles
+	const rAAA: [number, number, number] = [0, 0, 0];
+	rAAA[tl1Idx] = ta12;
+	rAAA[tl2Idx] = ta23;
+	rAAA[tl3Idx] = ta31;
+	return rAAA;
 }
 
 export {
