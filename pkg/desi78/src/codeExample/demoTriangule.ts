@@ -18,7 +18,7 @@ import {
 	//designParam,
 	//checkGeom,
 	//prefixLog,
-	point,
+	//point,
 	//Point,
 	//ShapePoint,
 	//line,
@@ -29,6 +29,7 @@ import {
 	figure,
 	degToRad,
 	radToDeg,
+	pointCoord,
 	ffix,
 	pNumber,
 	//pCheckbox,
@@ -104,8 +105,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeRP(a0A + Math.PI + aB, tr1lBC)
 			.closeSegStroke();
 		figTriangles.addMainO(ctr1);
-		const ptC = point(param.Ax, param.Ay).translatePolar(a0A - aA, tr1lCA);
-		const [tr1Cx, tr1Cy] = [ptC.cx, ptC.cy];
+		const [tr1Cx, tr1Cy] = pointCoord(param.Ax, param.Ay, a0A - aA, tr1lCA);
 		figTriangles.addSecond(contourCircle(tr1Cx, tr1Cy, tr1lCA));
 		figTriangles.addSecond(contourCircle(tr1Cx, tr1Cy, tr1lBC));
 		// final figure list
