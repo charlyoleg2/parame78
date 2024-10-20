@@ -4,7 +4,7 @@
  * Prepare a float for printing log
  * @internal
  *
- *  @param ifloat the floaf to be printed
+ *  @param ifloat - the floaf to be printed
  *  @returns the string ready for printing
  */
 function ffix(ifloat: number): string {
@@ -14,7 +14,7 @@ function ffix(ifloat: number): string {
 /**
  * Converts an angle in degree into radian
  *
- *  @param aDeg the angle in degree
+ *  @param aDeg - the angle in degree
  *  @returns the angle in radian
  */
 function triDegRad(aDeg: number): number {
@@ -25,7 +25,7 @@ function triDegRad(aDeg: number): number {
 /**
  * Converts an angle in radian into degree
  *
- *  @param aRad the angle in radian
+ *  @param aRad - the angle in radian
  *  @returns the angle in degree
  */
 function triRadDeg(aRad: number): number {
@@ -36,7 +36,7 @@ function triRadDeg(aRad: number): number {
 /**
  * Translate the angle in the range [-Pi, Pi]
  *
- *  @param aRad the input angle in radian
+ *  @param aRad - the input angle in radian
  *  @returns the translated angle
  */
 function triAPiPi(aRad: number): number {
@@ -53,7 +53,7 @@ function triAPiPi(aRad: number): number {
 /**
  * Translate the angle in the range [0, 2*Pi]
  *
- *  @param aRad the input angle in radian
+ *  @param aRad - the input angle in radian
  *  @returns the translated angle
  */
 function triA02Pi(aRad: number): number {
@@ -67,7 +67,7 @@ function triA02Pi(aRad: number): number {
 /**
  * Translate the angle in the range [0, Pi]
  *
- *  @param aRad the input angle in radian
+ *  @param aRad - the input angle in radian
  *  @returns the translated angle
  */
 function triA0Pi(aRad: number): number {
@@ -81,7 +81,7 @@ function triA0Pi(aRad: number): number {
 /**
  * Translate the angle in the range [-Pi/2, Pi/2]
  *
- *  @param aRad the input angle in radian
+ *  @param aRad - the input angle in radian
  *  @returns the translated angle
  */
 function triAPihPih(aRad: number): number {
@@ -99,7 +99,7 @@ function triAPihPih(aRad: number): number {
  * Check if a float is zero or quasi-zero
  * @internal
  *
- *  @param the float under test
+ *  @param aFloat - the float under test
  *  @returns true if the float is very closed to zero
  */
 function triIsZero(aFloat: number): boolean {
@@ -120,8 +120,9 @@ enum ECheck {
 /**
  * Actions of the check
  *
- *  @param strID an ID for identifying the context
- *  @param msg the error/warning message to be displayed
+ *  @param strID - an ID for identifying the context
+ *  @param msg - the error/warning message to be displayed
+ *  @param checkLevel - the level of check
  */
 function triCheckAction(strID: string, msg: string, checkLevel: ECheck) {
 	if (checkLevel === ECheck.eError) {
@@ -134,9 +135,9 @@ function triCheckAction(strID: string, msg: string, checkLevel: ECheck) {
 /**
  * Check if the angle is zero or negative
  *
- *  @param a1 an angle in radian
- *  @param ctx a string to give an hint of the context of the check
- *  @param checkLevel the level of check on the input angles
+ *  @param a1 - an angle in radian
+ *  @param ctx - a string to give an hint of the context of the check
+ *  @param checkLevel - the level of check on the input angles
  */
 function triCheckA(a1: number, ctx: string, checkLevel = ECheck.eError) {
 	const a1b = triAPiPi(a1);
@@ -149,9 +150,9 @@ function triCheckA(a1: number, ctx: string, checkLevel = ECheck.eError) {
 /**
  * Check if the length is zero or negative
  *
- *  @param l1 a length
- *  @param ctx a string to give an hint of the context of the check
- *  @param checkLevel the level of check on the input length
+ *  @param l1 - a length
+ *  @param ctx - a string to give an hint of the context of the check
+ *  @param checkLevel - the level of check on the input length
  */
 function triCheckL(l1: number, ctx: string, checkLevel = ECheck.eError) {
 	if (l1 <= 0 || triIsZero(l1)) {
@@ -163,9 +164,9 @@ function triCheckL(l1: number, ctx: string, checkLevel = ECheck.eError) {
 /**
  * Calculate the third angle of a triangle from the first two angles
  *
- *  @param a1 the first angle of the triangle in radian
- *  @param a2 the second angle of the triangle in radian
- *  @param checkLevel the level of check on the input angles
+ *  @param a1 - the first angle of the triangle in radian
+ *  @param a2 - the second angle of the triangle in radian
+ *  @param checkLevel - the level of check on the input angles
  *  @returns the third angle of the triangle in radian
  */
 function triAArA(a1: number, a2: number, checkLevel = ECheck.eError): number {
@@ -188,10 +189,10 @@ function triAArA(a1: number, a2: number, checkLevel = ECheck.eError): number {
 /**
  * Calculate the two last lengths and one anmgle of a triangle from the first length and two angles
  *
- *  @param a1 the first angle of the triangle in radian
- *  @param l12 the length between the angles a1 and a2 in radian
- *  @param a2 the second angle of the triangle in radian
- *  @param checkLevel the level of check on the input angles
+ *  @param a1 - the first angle of the triangle in radian
+ *  @param l12 - the length between the angles a1 and a2 in radian
+ *  @param a2 - the second angle of the triangle in radian
+ *  @param checkLevel - the level of check
  *  @returns the two lengths of the triangle : l23, l31
  */
 function triALArLL(
@@ -225,10 +226,10 @@ function triALArLL(
 /**
  * Calculate the length l3 of a triangle from l1, a12 and l2
  *
- *  @param l1 the first length of the triangle
- *  @param a12 the angle between l1 and l2 in radian
- *  @param l2 the second length of the triangle
- *  @param checkLevel the level of check on the input angle
+ *  @param l1 - the first length of the triangle
+ *  @param a12 - the angle between l1 and l2 in radian
+ *  @param l2 - the second length of the triangle
+ *  @param checkLevel - the level of check
  *  @returns the length l3 of the triangle
  */
 function triLALrL(l1: number, a12: number, l2: number, checkLevel = ECheck.eError): number {
@@ -247,10 +248,10 @@ function triLALrL(l1: number, a12: number, l2: number, checkLevel = ECheck.eErro
 /**
  * Calculate the length l3 of a triangle from a31, l1 and l2
  *
- *  @param a31 the angle between l3 and l1 in radian
- *  @param l1 the first length of the triangle
- *  @param l2 the second length of the triangle
- *  @param checkLevel the level of check on the input angle
+ *  @param a31 - the angle between l3 and l1 in radian
+ *  @param l1 - the first length of the triangle
+ *  @param l2 - the second length of the triangle
+ *  @param checkLevel - the level of check
  *  @returns the two possible lengths of l3 of the triangle
  */
 function triALLrL(
@@ -280,10 +281,10 @@ function triALLrL(
 /**
  * Calculate one angle of a triangle from l1, l2, l3
  *
- *  @param l1 the first length of the triangle
- *  @param l2 the second length of the triangle
- *  @param l3 the third length of the triangle
- *  @param checkLevel the level of check on the input length
+ *  @param l1 - the first length of the triangle
+ *  @param l2 - the second length of the triangle
+ *  @param l3 - the third length of the triangle
+ *  @param checkLevel - the level of check
  *  @returns one angles of the triangle: a31
  */
 function triLLLrA(l1: number, l2: number, l3: number, checkLevel = ECheck.eError): number {
@@ -302,10 +303,10 @@ function triLLLrA(l1: number, l2: number, l3: number, checkLevel = ECheck.eError
 /**
  * Calculate the angles a12, a23, a31 of a triangle from the lengths l1, l2 and l3
  *
- *  @param l1 the first length of the triangle
- *  @param l2 the second length of the triangle
- *  @param l3 the third length of the triangle
- *  @param checkLevel the level of check on the input lengths
+ *  @param l1 - the first length of the triangle
+ *  @param l2 - the second length of the triangle
+ *  @param l3 - the third length of the triangle
+ *  @param checkLevel - the level of check
  *  @returns the three angles a12, a23, a31 of the triangle
  */
 function triLLLrAAA(
