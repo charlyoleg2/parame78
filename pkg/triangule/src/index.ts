@@ -126,7 +126,7 @@ enum ECheck {
  */
 function triCheckA(a1: number, ctx: string, checkLevel = ECheck.eError) {
 	const a1b = triAPiPi(a1);
-	if (a1b <= 0) {
+	if (a1b <= 0 || triIsZero(a1b)) {
 		const logstr = `${ctx} : a1 ${ffix(a1)}, a1b ${ffix(a1b)} is null or negative`;
 		if (checkLevel === ECheck.eError) {
 			throw `err120: ${logstr}`;
@@ -144,7 +144,7 @@ function triCheckA(a1: number, ctx: string, checkLevel = ECheck.eError) {
  *  @param checkLevel the level of check on the input length
  */
 function triCheckL(l1: number, ctx: string, checkLevel = ECheck.eError) {
-	if (l1 <= 0) {
+	if (l1 <= 0 || triIsZero(l1)) {
 		const logstr = `${ctx} : l1 ${ffix(l1)} is null or negative`;
 		if (checkLevel === ECheck.eError) {
 			throw `err130: ${logstr}`;
@@ -194,20 +194,20 @@ function triAArA(a1: number, a2: number, checkLevel = ECheck.eError): number {
  *  @param l12 the length between the angles a1 and a2 in radian
  *  @param a2 the second angle of the triangle in radian
  *  @param checkLevel the level of check on the input angles
- *  @returns the two lengths and one angle of the triangle : l23, a3, l31
+ *  @returns the two lengths of the triangle : l23, l31
  */
-function triALArLAL(
+function triALArLL(
 	a1: number,
 	l12: number,
 	a2: number,
 	checkLevel = ECheck.eError
-): [number, number, number] {
-	const ra3 = triAArA(a1, a2, checkLevel);
-	triCheckL(l12, 'triALArLAL', checkLevel);
+): [number, number] {
+	const a3 = triAArA(a1, a2, checkLevel);
+	triCheckL(l12, 'triALArLL', checkLevel);
 	let rl23 = 0;
 	let rl31 = 0;
-	if (triIsZero(ra3)) {
-		const logstr = `triALArLAL : flat triangle with a1 ${ffix(a1)}, a2 ${ffix(a2)} and ra3 ${ffix(ra3)}`;
+	if (triIsZero(a3)) {
+		const logstr = `triALArLL : flat triangle with a1 ${ffix(a1)}, a2 ${ffix(a2)} and a3 ${ffix(a3)}`;
 		if (checkLevel === ECheck.eError) {
 			throw `err390: ${logstr}`;
 		} else if (checkLevel === ECheck.eWarn) {
@@ -222,10 +222,10 @@ function triALArLAL(
 		}
 	} else {
 		// law of sines
-		rl23 = (l12 * Math.sin(a1)) / Math.sin(ra3);
-		rl31 = (l12 * Math.sin(a2)) / Math.sin(ra3);
+		rl23 = (l12 * Math.sin(a1)) / Math.sin(a3);
+		rl31 = (l12 * Math.sin(a2)) / Math.sin(a3);
 	}
-	return [rl23, ra3, rl31];
+	return [rl23, rl31];
 }
 
 /**
@@ -238,45 +238,11 @@ function triALArLAL(
  *  @returns the length l3 of the triangle
  */
 function triLALrL(l1: number, a12: number, l2: number, checkLevel = ECheck.eIgnore): number {
-	if (a12 < 0) {
-		const logstr = `triLALrL a12 ${ffix(a12)} is negative`;
-		if (checkLevel === ECheck.eError) {
-			throw `err490: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn491: ${logstr}`);
-		}
-	}
+	triCheckL(l1, 'triLALrL', checkLevel);
+	triCheckA(a12, 'triLALrL', checkLevel);
+	triCheckL(l2, 'triLALrL', checkLevel);
 	const rl3 = Math.sqrt(l1 ** 2 + l2 ** 2 - 2 * l1 * l2 * Math.cos(a12));
 	return rl3;
-}
-
-/**
- * Calculate one length and two angles of a triangle from l1, a12 and l2
- *
- *  @param l1 the first length of the triangle
- *  @param a12 the angle between l1 and l2 in radian
- *  @param l2 the second length of the triangle
- *  @param checkLevel the level of check on the input angle
- *  @returns one length and two angles of the triangle: a23, l3, a31
- */
-function triLALrALA(
-	l1: number,
-	a12: number,
-	l2: number,
-	checkLevel = ECheck.eIgnore
-): [number, number, number] {
-	const rl3 = triLALrL(l1, a12, l2, checkLevel);
-	if (rl3 <= 0) {
-		const logstr = `triLALrALA rl3 ${ffix(rl3)} is null or negative`;
-		if (checkLevel === ECheck.eError) {
-			throw `err498: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn499: ${logstr}`);
-		}
-	}
-	const ra23 = Math.asin((Math.sin(a12) * l1) / rl3);
-	const ra31 = Math.asin((Math.sin(a12) * l2) / rl3);
-	return [ra23, rl3, ra31];
 }
 
 /**
@@ -294,14 +260,9 @@ function triALLrL(
 	l2: number,
 	checkLevel = ECheck.eIgnore
 ): [number, number] {
-	if (a31 < 0) {
-		const logstr = `triALLrL a31 ${ffix(a31)} is negative`;
-		if (checkLevel === ECheck.eError) {
-			throw `err590: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn591: ${logstr}`);
-		}
-	}
+	triCheckA(a31, 'triALLrL', checkLevel);
+	triCheckL(l1, 'triALLrL', checkLevel);
+	triCheckL(l2, 'triALLrL', checkLevel);
 	// TODO
 	const rl3a = 100;
 	const rl3b = 100;
@@ -309,50 +270,29 @@ function triALLrL(
 }
 
 /**
- * Order the lengths l1, l2 and l3\
- * @internal
+ * Calculate one angle of a triangle from l1, l2, l3
  *
- *  @param l1 a positive length-value
- *  @param l2 a positive length-value
- *  @param l3 a positive length-value
- *  @param checkLevel the level of check on the input lengths
- *  @returns [index of the max-value, index of middle-value, index of min-value]
+ *  @param l1 the first length of the triangle
+ *  @param l2 the second length of the triangle
+ *  @param l3 the third length of the triangle
+ *  @param checkLevel the level of check on the input length
+ *  @returns one angles of the triangle: a31
  */
-function triOrderLLLrIII(
-	l1: number,
-	l2: number,
-	l3: number,
-	checkLevel = ECheck.eError
-): [number, number, number] {
-	// check that the 3 lengths are positive
-	if (l1 <= 0 || l2 <= 0 || l3 <= 0) {
-		const logstr = `triLLLrAAA some lengths are null or negative: l1 ${ffix(l1)}, l2 ${ffix(l2)}, l3 ${ffix(l3)}`;
+function triLLLrA(l1: number, l2: number, l3: number, checkLevel = ECheck.eIgnore): number {
+	triCheckL(l1, 'triLLLrA', checkLevel);
+	triCheckL(l2, 'triLLLrA', checkLevel);
+	triCheckL(l3, 'triLLLrA', checkLevel);
+	const cosA31 = (l3 ** 2 + l1 ** 2 - l2 ** 2) / (2 * l3 * l1);
+	if (Math.abs(cosA31) > 1) {
+		const logstr = `triLLLrA : cosA31 ${ffix(cosA31)} is bigger than 1`;
 		if (checkLevel === ECheck.eError) {
-			throw `err694: ${logstr}`;
+			throw `err181: ${logstr}`;
 		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn695: ${logstr}`);
+			console.log(`warn182: ${logstr}`);
 		}
 	}
-	// order the 3 lengths
-	const triLenghts = [l1, l2, l3];
-	const tl1 = Math.max(...triLenghts);
-	const tl3 = Math.min(...triLenghts);
-	const tl1idx = triLenghts.indexOf(tl1);
-	let tl3idx = triLenghts.indexOf(tl3);
-	if (tl3idx === tl1idx) {
-		tl3idx += 1; // tl1idx should be 0
-	}
-	//console.log(`dbg291: tl1 ${tl1} tl3 ${tl3}`);
-	//console.log(`dbg292: tl1idx ${tl1idx} tl3idx ${tl3idx}`);
-	const tl2 = Math.max(...triLenghts.toSpliced(tl1idx, 1));
-	let tl2idx = triLenghts.indexOf(tl2);
-	for (let idx = 0; idx < 2; idx++) {
-		if (tl2idx === tl1idx || tl2idx === tl3idx) {
-			tl2idx += 1;
-		}
-	}
-	//console.log(`dbg293: tl1idx ${tl1idx} tl2idx ${tl2idx} tl3idx ${tl3idx}`);
-	return [tl1idx, tl2idx, tl3idx];
+	const ra31 = Math.acos(cosA31);
+	return ra31;
 }
 
 /**
@@ -370,53 +310,10 @@ function triLLLrAAA(
 	l3: number,
 	checkLevel = ECheck.eError
 ): [number, number, number] {
-	const triLenghts = [l1, l2, l3];
-	const [tl1Idx, tl2Idx, tl3Idx] = triOrderLLLrIII(l1, l2, l3, checkLevel);
-	const tl1 = triLenghts[tl1Idx];
-	const tl2 = triLenghts[tl2Idx];
-	const tl3 = triLenghts[tl3Idx];
-	//console.log(`dbg326: tl1 ${ffix(tl1)}, tl2 ${ffix(tl2)}, tl3 ${ffix(tl3)}`);
-	const tl23 = tl2 + tl3;
-	// check the length condition tl1 < tl2 + tl3
-	if (tl23 < tl1) {
-		const logstr = `triLLLrAAA tl1 ${ffix(tl1)} is bigger than tl2+tl3 ${ffix(tl23)}, tl2 ${ffix(tl2)}, tl3 ${ffix(tl3)}`;
-		if (checkLevel === ECheck.eError) {
-			throw `err690: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn691: ${logstr}`);
-		}
-	}
-	// lAB and LBC
-	const lAB = (tl2 ** 2 - tl3 ** 2 + tl1 ** 2) / (2 * tl1);
-	const lBC = tl1 - lAB;
-	//console.log(`dbg340: lAB ${ffix(lAB)}, lBC ${ffix(lBC)}`);
-	// angle calculation
-	if (tl2 < Math.abs(lAB)) {
-		const logstr = `triLLLrAAA tl2 ${ffix(tl2)} is smaller than lAB ${ffix(lAB)}`;
-		if (checkLevel === ECheck.eError) {
-			throw `err390: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn391: ${logstr}`);
-		}
-	}
-	if (tl3 < Math.abs(lBC)) {
-		const logstr = `triLLLrAAA tl3 ${ffix(tl3)} is smaller than lBC ${ffix(lBC)}`;
-		if (checkLevel === ECheck.eError) {
-			throw `err392: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn393: ${logstr}`);
-		}
-	}
-	const ta12 = Math.acos(lAB / tl2);
-	const ta23 = Math.acos(lBC / tl3);
-	const ta31 = triAArA(ta12, ta23);
-	//console.log(`dbg343: ta12 ${ffix(ta12)}, ta23 ${ffix(ta23)}, ta31 ${ffix(ta31)}`);
-	// reordering of the angles
-	const rAAA: [number, number, number] = [0, 0, 0];
-	rAAA[tl1Idx] = ta12;
-	rAAA[tl2Idx] = ta23;
-	rAAA[tl3Idx] = ta31;
-	return rAAA;
+	const ra31 = triLLLrA(l1, l2, l3, checkLevel);
+	const ra12 = triLLLrA(l2, l3, l1, checkLevel);
+	const ra23 = triAArA(ra31, ra12, checkLevel);
+	return [ra31, ra12, ra23];
 }
 
 export {
@@ -428,10 +325,9 @@ export {
 	triAPihPih,
 	ECheck,
 	triAArA,
-	triALArLAL,
+	triALArLL,
 	triLALrL,
-	triLALrALA,
 	triALLrL,
-	triOrderLLLrIII,
+	triLLLrA,
 	triLLLrAAA
 };
