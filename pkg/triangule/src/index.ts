@@ -111,10 +111,47 @@ function triIsZero(aFloat: number): boolean {
 	return rb;
 }
 
-enum EAngleCheck {
+enum ECheck {
 	eError,
 	eWarn,
 	eIgnore
+}
+
+/**
+ * Check if the angle is zero or neagtive
+ *
+ *  @param a1 an angle in radian
+ *  @param ctx a string to give an hint of the context of the check
+ *  @param checkLevel the level of check on the input angles
+ */
+function triCheckA(a1: number, ctx: string, checkLevel = ECheck.eError) {
+	const a1b = triAPiPi(a1);
+	if (a1b <= 0) {
+		const logstr = `${ctx} : a1 ${ffix(a1)}, a1b ${ffix(a1b)} is null or negative`;
+		if (checkLevel === ECheck.eError) {
+			throw `err120: ${logstr}`;
+		} else if (checkLevel === ECheck.eWarn) {
+			console.log(`warn121: ${logstr}`);
+		}
+	}
+}
+
+/**
+ * Check if the length is zero or neagtive
+ *
+ *  @param l1 a length
+ *  @param ctx a string to give an hint of the context of the check
+ *  @param checkLevel the level of check on the input length
+ */
+function triCheckL(l1: number, ctx: string, checkLevel = ECheck.eError) {
+	if (l1 <= 0) {
+		const logstr = `${ctx} : l1 ${ffix(l1)} is null or negative`;
+		if (checkLevel === ECheck.eError) {
+			throw `err130: ${logstr}`;
+		} else if (checkLevel === ECheck.eWarn) {
+			console.log(`warn131: ${logstr}`);
+		}
+	}
 }
 
 /**
@@ -125,13 +162,27 @@ enum EAngleCheck {
  *  @param checkLevel the level of check on the input angles
  *  @returns the third angle of the triangle in radian
  */
-function triAArA(a1: number, a2: number, checkLevel = EAngleCheck.eError): number {
+function triAArA(a1: number, a2: number, checkLevel = ECheck.eError): number {
+	const a1b = triAPiPi(a1);
+	const a2b = triAPiPi(a2);
+	triCheckA(a1b, 'triAArA', ECheck.eWarn);
+	triCheckA(a2b, 'triAArA', ECheck.eWarn);
 	if (Math.sign(a1) * Math.sign(a2) < 0) {
-		if (checkLevel === EAngleCheck.eError) {
-			throw `err628: the signs of a1 ${ffix(a1)} and a2 ${ffix(a2)} differ`;
+		const logstr = `triAArA : the signs of a1 ${ffix(a1)} and a2 ${ffix(a2)} differ`;
+		if (checkLevel === ECheck.eError) {
+			throw `err628: ${logstr}`;
+		} else if (checkLevel === ECheck.eWarn) {
+			console.log(`warn629: ${logstr}`);
 		}
 	}
-	// TODO
+	if (Math.abs(a1b) + Math.abs(a2b) >= Math.PI) {
+		const logstr = `triAArA : a1 ${ffix(a1)} plus a2 ${ffix(a2)} are bigger than Pi`;
+		if (checkLevel === ECheck.eError) {
+			throw `err141: ${logstr}`;
+		} else if (checkLevel === ECheck.eWarn) {
+			console.log(`warn142: ${logstr}`);
+		}
+	}
 	const rA = triAPiPi(Math.PI - a1 - a2);
 	return rA;
 }
@@ -149,16 +200,17 @@ function triALArLAL(
 	a1: number,
 	l12: number,
 	a2: number,
-	checkLevel = EAngleCheck.eError
+	checkLevel = ECheck.eError
 ): [number, number, number] {
 	const ra3 = triAArA(a1, a2, checkLevel);
+	triCheckL(l12, 'triALArLAL', checkLevel);
 	let rl23 = 0;
 	let rl31 = 0;
 	if (triIsZero(ra3)) {
 		const logstr = `triALArLAL : flat triangle with a1 ${ffix(a1)}, a2 ${ffix(a2)} and ra3 ${ffix(ra3)}`;
-		if (checkLevel === EAngleCheck.eError) {
+		if (checkLevel === ECheck.eError) {
 			throw `err390: ${logstr}`;
-		} else if (checkLevel === EAngleCheck.eWarn) {
+		} else if (checkLevel === ECheck.eWarn) {
 			console.log(`warn391: ${logstr}`);
 		}
 		if (triIsZero(a1)) {
@@ -185,12 +237,12 @@ function triALArLAL(
  *  @param checkLevel the level of check on the input angle
  *  @returns the length l3 of the triangle
  */
-function triLALrL(l1: number, a12: number, l2: number, checkLevel = EAngleCheck.eIgnore): number {
+function triLALrL(l1: number, a12: number, l2: number, checkLevel = ECheck.eIgnore): number {
 	if (a12 < 0) {
 		const logstr = `triLALrL a12 ${ffix(a12)} is negative`;
-		if (checkLevel === EAngleCheck.eError) {
+		if (checkLevel === ECheck.eError) {
 			throw `err490: ${logstr}`;
-		} else if (checkLevel === EAngleCheck.eWarn) {
+		} else if (checkLevel === ECheck.eWarn) {
 			console.log(`warn491: ${logstr}`);
 		}
 	}
@@ -211,14 +263,14 @@ function triLALrALA(
 	l1: number,
 	a12: number,
 	l2: number,
-	checkLevel = EAngleCheck.eIgnore
+	checkLevel = ECheck.eIgnore
 ): [number, number, number] {
 	const rl3 = triLALrL(l1, a12, l2, checkLevel);
 	if (rl3 <= 0) {
 		const logstr = `triLALrALA rl3 ${ffix(rl3)} is null or negative`;
-		if (checkLevel === EAngleCheck.eError) {
+		if (checkLevel === ECheck.eError) {
 			throw `err498: ${logstr}`;
-		} else if (checkLevel === EAngleCheck.eWarn) {
+		} else if (checkLevel === ECheck.eWarn) {
 			console.log(`warn499: ${logstr}`);
 		}
 	}
@@ -240,13 +292,13 @@ function triALLrL(
 	a31: number,
 	l1: number,
 	l2: number,
-	checkLevel = EAngleCheck.eIgnore
+	checkLevel = ECheck.eIgnore
 ): [number, number] {
 	if (a31 < 0) {
 		const logstr = `triALLrL a31 ${ffix(a31)} is negative`;
-		if (checkLevel === EAngleCheck.eError) {
+		if (checkLevel === ECheck.eError) {
 			throw `err590: ${logstr}`;
-		} else if (checkLevel === EAngleCheck.eWarn) {
+		} else if (checkLevel === ECheck.eWarn) {
 			console.log(`warn591: ${logstr}`);
 		}
 	}
@@ -270,14 +322,14 @@ function triOrderLLLrIII(
 	l1: number,
 	l2: number,
 	l3: number,
-	checkLevel = EAngleCheck.eError
+	checkLevel = ECheck.eError
 ): [number, number, number] {
 	// check that the 3 lengths are positive
 	if (l1 <= 0 || l2 <= 0 || l3 <= 0) {
 		const logstr = `triLLLrAAA some lengths are null or negative: l1 ${ffix(l1)}, l2 ${ffix(l2)}, l3 ${ffix(l3)}`;
-		if (checkLevel === EAngleCheck.eError) {
+		if (checkLevel === ECheck.eError) {
 			throw `err694: ${logstr}`;
-		} else if (checkLevel === EAngleCheck.eWarn) {
+		} else if (checkLevel === ECheck.eWarn) {
 			console.log(`warn695: ${logstr}`);
 		}
 	}
@@ -316,7 +368,7 @@ function triLLLrAAA(
 	l1: number,
 	l2: number,
 	l3: number,
-	checkLevel = EAngleCheck.eError
+	checkLevel = ECheck.eError
 ): [number, number, number] {
 	const triLenghts = [l1, l2, l3];
 	const [tl1Idx, tl2Idx, tl3Idx] = triOrderLLLrIII(l1, l2, l3, checkLevel);
@@ -328,9 +380,9 @@ function triLLLrAAA(
 	// check the length condition tl1 < tl2 + tl3
 	if (tl23 < tl1) {
 		const logstr = `triLLLrAAA tl1 ${ffix(tl1)} is bigger than tl2+tl3 ${ffix(tl23)}, tl2 ${ffix(tl2)}, tl3 ${ffix(tl3)}`;
-		if (checkLevel === EAngleCheck.eError) {
+		if (checkLevel === ECheck.eError) {
 			throw `err690: ${logstr}`;
-		} else if (checkLevel === EAngleCheck.eWarn) {
+		} else if (checkLevel === ECheck.eWarn) {
 			console.log(`warn691: ${logstr}`);
 		}
 	}
@@ -341,17 +393,17 @@ function triLLLrAAA(
 	// angle calculation
 	if (tl2 < Math.abs(lAB)) {
 		const logstr = `triLLLrAAA tl2 ${ffix(tl2)} is smaller than lAB ${ffix(lAB)}`;
-		if (checkLevel === EAngleCheck.eError) {
+		if (checkLevel === ECheck.eError) {
 			throw `err390: ${logstr}`;
-		} else if (checkLevel === EAngleCheck.eWarn) {
+		} else if (checkLevel === ECheck.eWarn) {
 			console.log(`warn391: ${logstr}`);
 		}
 	}
 	if (tl3 < Math.abs(lBC)) {
 		const logstr = `triLLLrAAA tl3 ${ffix(tl3)} is smaller than lBC ${ffix(lBC)}`;
-		if (checkLevel === EAngleCheck.eError) {
+		if (checkLevel === ECheck.eError) {
 			throw `err392: ${logstr}`;
-		} else if (checkLevel === EAngleCheck.eWarn) {
+		} else if (checkLevel === ECheck.eWarn) {
 			console.log(`warn393: ${logstr}`);
 		}
 	}
@@ -374,7 +426,7 @@ export {
 	triA02Pi,
 	triA0Pi,
 	triAPihPih,
-	EAngleCheck,
+	ECheck,
 	triAArA,
 	triALArLAL,
 	triLALrL,

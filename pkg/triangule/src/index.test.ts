@@ -24,7 +24,7 @@ describe('triangule under tests', () => {
 	});
 	// angles of triangle
 	it('triangle angles', () => {
-		expect(dut.triAArA(1, 2, dut.EAngleCheck.eError)).toBeCloseTo(0.14159, 4);
+		expect(dut.triAArA(1, 2, dut.ECheck.eError)).toBeCloseTo(0.14159, 4);
 	});
 	it('triangle angles', () => {
 		expect(dut.triAArA(-1, -2)).toBeCloseTo(-0.14159, 4);

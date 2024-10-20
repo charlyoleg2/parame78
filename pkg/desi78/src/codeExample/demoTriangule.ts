@@ -38,7 +38,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-import { triDegRad, triRadDeg, EAngleCheck, triAArA } from 'triangule';
+import { triDegRad, triRadDeg, ECheck, triAArA } from 'triangule';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -87,7 +87,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const aA = triDegRad(param.aCAB);
 		const aB = triDegRad(param.aABC);
-		const aC = triAArA(aA, aB, EAngleCheck.eError);
+		const aC = triAArA(aA, aB, ECheck.eError);
 		const sumAngles = aA + aB + aC;
 		// step-5 : checks on the parameter values
 		if (param.lAB < 0) {
