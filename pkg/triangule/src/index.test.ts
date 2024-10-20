@@ -43,7 +43,7 @@ describe('triangule under tests', () => {
 	// triALLrL
 	it('triALLrL', () => {
 		expect(dut.triALLrL(Math.PI / 3, 100, 100)).toEqual([
-			expect.closeTo(100, 4),
+			expect.closeTo(0, 4),
 			expect.closeTo(100, 4)
 		]);
 	});

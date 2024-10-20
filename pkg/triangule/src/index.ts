@@ -118,7 +118,21 @@ enum ECheck {
 }
 
 /**
- * Check if the angle is zero or neagtive
+ * Actions of the check
+ *
+ *  @param strID an ID for identifying the context
+ *  @param msg the error/warning message to be displayed
+ */
+function triCheckAction(strID: string, msg: string, checkLevel: ECheck) {
+	if (checkLevel === ECheck.eError) {
+		throw `err${strID}: ${msg}`;
+	} else if (checkLevel === ECheck.eWarn) {
+		console.log(`warn${strID}: ${msg}`);
+	}
+}
+
+/**
+ * Check if the angle is zero or negative
  *
  *  @param a1 an angle in radian
  *  @param ctx a string to give an hint of the context of the check
@@ -127,17 +141,13 @@ enum ECheck {
 function triCheckA(a1: number, ctx: string, checkLevel = ECheck.eError) {
 	const a1b = triAPiPi(a1);
 	if (a1b <= 0 || triIsZero(a1b)) {
-		const logstr = `${ctx} : a1 ${ffix(a1)}, a1b ${ffix(a1b)} is null or negative`;
-		if (checkLevel === ECheck.eError) {
-			throw `err120: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn121: ${logstr}`);
-		}
+		const eMsg = `${ctx} : a1 ${ffix(a1)}, a1b ${ffix(a1b)} is null or negative`;
+		triCheckAction('145', eMsg, checkLevel);
 	}
 }
 
 /**
- * Check if the length is zero or neagtive
+ * Check if the length is zero or negative
  *
  *  @param l1 a length
  *  @param ctx a string to give an hint of the context of the check
@@ -145,12 +155,8 @@ function triCheckA(a1: number, ctx: string, checkLevel = ECheck.eError) {
  */
 function triCheckL(l1: number, ctx: string, checkLevel = ECheck.eError) {
 	if (l1 <= 0 || triIsZero(l1)) {
-		const logstr = `${ctx} : l1 ${ffix(l1)} is null or negative`;
-		if (checkLevel === ECheck.eError) {
-			throw `err130: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn131: ${logstr}`);
-		}
+		const eMsg = `${ctx} : l1 ${ffix(l1)} is null or negative`;
+		triCheckAction('159', eMsg, checkLevel);
 	}
 }
 
@@ -168,20 +174,12 @@ function triAArA(a1: number, a2: number, checkLevel = ECheck.eError): number {
 	triCheckA(a1b, 'triAArA', ECheck.eWarn);
 	triCheckA(a2b, 'triAArA', ECheck.eWarn);
 	if (Math.sign(a1) * Math.sign(a2) < 0) {
-		const logstr = `triAArA : the signs of a1 ${ffix(a1)} and a2 ${ffix(a2)} differ`;
-		if (checkLevel === ECheck.eError) {
-			throw `err628: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn629: ${logstr}`);
-		}
+		const eMsg = `triAArA : the signs of a1 ${ffix(a1)} and a2 ${ffix(a2)} differ`;
+		triCheckAction('178', eMsg, checkLevel);
 	}
 	if (Math.abs(a1b) + Math.abs(a2b) >= Math.PI) {
-		const logstr = `triAArA : a1 ${ffix(a1)} plus a2 ${ffix(a2)} are bigger than Pi`;
-		if (checkLevel === ECheck.eError) {
-			throw `err141: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn142: ${logstr}`);
-		}
+		const eMsg = `triAArA : a1 ${ffix(a1)} plus a2 ${ffix(a2)} are bigger than Pi`;
+		triCheckAction('182', eMsg, checkLevel);
 	}
 	const rA = triAPiPi(Math.PI - a1 - a2);
 	return rA;
@@ -207,12 +205,8 @@ function triALArLL(
 	let rl23 = 0;
 	let rl31 = 0;
 	if (triIsZero(a3)) {
-		const logstr = `triALArLL : flat triangle with a1 ${ffix(a1)}, a2 ${ffix(a2)} and a3 ${ffix(a3)}`;
-		if (checkLevel === ECheck.eError) {
-			throw `err390: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn391: ${logstr}`);
-		}
+		const eMsg = `triALArLL : flat triangle with a1 ${ffix(a1)}, a2 ${ffix(a2)} and a3 ${ffix(a3)}`;
+		triCheckAction('209', eMsg, checkLevel);
 		if (triIsZero(a1)) {
 			rl23 = 0; // length can not be defined
 			rl31 = l12; // minimal length
@@ -237,11 +231,16 @@ function triALArLL(
  *  @param checkLevel the level of check on the input angle
  *  @returns the length l3 of the triangle
  */
-function triLALrL(l1: number, a12: number, l2: number, checkLevel = ECheck.eIgnore): number {
+function triLALrL(l1: number, a12: number, l2: number, checkLevel = ECheck.eError): number {
 	triCheckL(l1, 'triLALrL', checkLevel);
 	triCheckA(a12, 'triLALrL', checkLevel);
 	triCheckL(l2, 'triLALrL', checkLevel);
-	const rl3 = Math.sqrt(l1 ** 2 + l2 ** 2 - 2 * l1 * l2 * Math.cos(a12));
+	const ql3 = l1 ** 2 + l2 ** 2 - 2 * l1 * l2 * Math.cos(a12);
+	if (ql3 < 0) {
+		const eMsg = `triLALrL : ql3 ${ffix(ql3)} is negative with l1 ${ffix(l1)}, a12 ${ffix(a12)}, l2 ${ffix(l2)}`;
+		triCheckAction('241', eMsg, checkLevel);
+	}
+	const rl3 = Math.sqrt(ql3);
 	return rl3;
 }
 
@@ -258,15 +257,24 @@ function triALLrL(
 	a31: number,
 	l1: number,
 	l2: number,
-	checkLevel = ECheck.eIgnore
+	checkLevel = ECheck.eError
 ): [number, number] {
 	triCheckA(a31, 'triALLrL', checkLevel);
 	triCheckL(l1, 'triALLrL', checkLevel);
 	triCheckL(l2, 'triALLrL', checkLevel);
-	// TODO
-	const rl3a = 100;
-	const rl3b = 100;
-	return [rl3a, rl3b];
+	//const qA = 1;
+	const qB = -2 * l1 * Math.cos(a31);
+	const qC = l1 ** 2 - l2 ** 2;
+	const qD = qB ** 2 - 4 * qC;
+	if (qD < 0) {
+		const eMsg = `triALLrL : qD ${ffix(qD)} is negative with a31 ${ffix(a31)}, l1 ${ffix(l1)}, l2 ${ffix(l2)}`;
+		triCheckAction('271', eMsg, checkLevel);
+	}
+	const rx1 = (-qB - Math.sqrt(qD)) / 2;
+	const rx2 = (-qB + Math.sqrt(qD)) / 2;
+	triCheckL(rx1, 'triALLrL', ECheck.eWarn);
+	triCheckL(rx2, 'triALLrL', ECheck.eWarn);
+	return [rx1, rx2];
 }
 
 /**
@@ -278,18 +286,14 @@ function triALLrL(
  *  @param checkLevel the level of check on the input length
  *  @returns one angles of the triangle: a31
  */
-function triLLLrA(l1: number, l2: number, l3: number, checkLevel = ECheck.eIgnore): number {
+function triLLLrA(l1: number, l2: number, l3: number, checkLevel = ECheck.eError): number {
 	triCheckL(l1, 'triLLLrA', checkLevel);
 	triCheckL(l2, 'triLLLrA', checkLevel);
 	triCheckL(l3, 'triLLLrA', checkLevel);
 	const cosA31 = (l3 ** 2 + l1 ** 2 - l2 ** 2) / (2 * l3 * l1);
 	if (Math.abs(cosA31) > 1) {
-		const logstr = `triLLLrA : cosA31 ${ffix(cosA31)} is bigger than 1`;
-		if (checkLevel === ECheck.eError) {
-			throw `err181: ${logstr}`;
-		} else if (checkLevel === ECheck.eWarn) {
-			console.log(`warn182: ${logstr}`);
-		}
+		const eMsg = `triLLLrA : cosA31 ${ffix(cosA31)} is bigger than 1`;
+		triCheckAction('296', eMsg, checkLevel);
 	}
 	const ra31 = Math.acos(cosA31);
 	return ra31;
