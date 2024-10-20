@@ -18,17 +18,17 @@ import {
 	//designParam,
 	//checkGeom,
 	//prefixLog,
-	//point,
+	point,
 	//Point,
 	//ShapePoint,
 	//line,
 	//vector,
 	contour,
-	//contourCircle,
+	contourCircle,
 	//ctrRectangle,
 	figure,
-	//degToRad,
-	//radToDeg,
+	degToRad,
+	radToDeg,
 	ffix,
 	pNumber,
 	//pCheckbox,
@@ -38,7 +38,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-import { triDegRad, triRadDeg, ECheck, triAArA } from 'triangule';
+import { triAArA, triALArLL } from 'triangule';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -85,23 +85,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const aA = triDegRad(param.aCAB);
-		const aB = triDegRad(param.aABC);
-		const aC = triAArA(aA, aB, ECheck.eError);
-		const sumAngles = aA + aB + aC;
+		const a0A = degToRad(param.aAB);
+		const aA = degToRad(param.aCAB);
+		const aB = degToRad(param.aABC);
+		const [tr1lBC, tr1lCA] = triALArLL(aA, param.lAB, aB);
+		const tr1aC = triAArA(aA, aB);
 		// step-5 : checks on the parameter values
 		if (param.lAB < 0) {
 			throw `err639: lAB ${ffix(param.lAB)} is negative`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `sum of angles: ${ffix(triRadDeg(sumAngles))} degree\n`;
+		rGeome.logstr += `triangle-1: aA ${ffix(radToDeg(aA))}, lAB ${ffix(param.lAB)}, aB ${ffix(radToDeg(aB))}\n`;
+		rGeome.logstr += `triangle-1: lBC ${ffix(tr1lBC)} aC ${ffix(radToDeg(tr1aC))}, lCA ${ffix(tr1lCA)}\n`;
 		// step-7 : drawing of the figures
 		// figTriangles
 		const ctr1 = contour(param.Ax, param.Ay)
-			.addSegStrokeRP(triDegRad(param.aAB), param.lAB)
-			.addSegStrokeA(100, -20)
+			.addSegStrokeRP(a0A, param.lAB)
+			.addSegStrokeRP(a0A + Math.PI + aB, tr1lBC)
 			.closeSegStroke();
 		figTriangles.addMainO(ctr1);
+		const ptC = point(param.Ax, param.Ay).translatePolar(a0A - aA, tr1lCA);
+		const [tr1Cx, tr1Cy] = [ptC.cx, ptC.cy];
+		figTriangles.addSecond(contourCircle(tr1Cx, tr1Cy, tr1lCA));
+		figTriangles.addSecond(contourCircle(tr1Cx, tr1Cy, tr1lBC));
 		// final figure list
 		rGeome.fig = {
 			faceTriangles: figTriangles
