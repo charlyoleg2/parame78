@@ -260,7 +260,7 @@ function triALLrL(
 	l2: number,
 	checkLevel = ECheck.eError
 ): [number, number] {
-	triCheckA(a31, 'triALLrL', checkLevel);
+	triCheckA(a31, 'triALLrL', ECheck.eWarn);
 	triCheckL(l1, 'triALLrL', checkLevel);
 	triCheckL(l2, 'triALLrL', checkLevel);
 	//const qA = 1;
