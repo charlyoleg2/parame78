@@ -39,7 +39,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-import { triAArA, triALArLL, triLALrL, triLLLrA, triLLLrAAA } from 'triangule';
+import { triAArA, triALArLL, triLALrL, triALLrL, triLLLrA, triLLLrAAA } from 'triangule';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -95,6 +95,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const tr2lBC = triLALrL(param.lAC, aA, param.lAB);
 		const tr2aC = Math.sign(aA) * triLLLrA(param.lAC, param.lAB, tr2lBC);
 		const tr2aB = triAArA(aA, tr2aC);
+		const [tr3lAC1, tr3lAC2] = triALLrL(aA, param.lAB, param.lBC);
+		const tr3aA1 = tr3lAC1 > 0 ? aA : aA - Math.PI;
+		const tr3aA2 = tr3lAC2 > 0 ? aA : aA - Math.PI;
+		const tr3aB1 = Math.sign(tr3aA1) * triLLLrA(param.lBC, Math.abs(tr3lAC1), param.lAB);
+		const tr3aB2 = Math.sign(tr3aA2) * triLLLrA(param.lBC, Math.abs(tr3lAC2), param.lAB);
+		const tr3aC1 = triAArA(tr3aA1, tr3aB1);
+		const tr3aC2 = triAArA(tr3aA2, tr3aB2);
 		const [tr4aA, tr4aB, tr4aC] = triLLLrAAA(param.lAB, param.lBC, param.lAC);
 		const step = 300;
 		// step-5 : checks on the parameter values
@@ -106,6 +113,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `triangle-1: lBC ${ffix(tr1lBC)} aC ${ffix(radToDeg(tr1aC))}, lCA ${ffix(tr1lCA)}\n`;
 		rGeome.logstr += `triangle-2: lAC ${ffix(param.lAC)}, aA ${ffix(radToDeg(aA))}, lAB ${ffix(param.lAB)}\n`;
 		rGeome.logstr += `triangle-2: aB ${ffix(radToDeg(tr2aB))}, lBC ${ffix(tr2lBC)}, aC ${ffix(radToDeg(tr2aC))}\n`;
+		rGeome.logstr += `triangle-3: aA ${ffix(radToDeg(aA))}, lAB ${ffix(param.lAB)}, lBC ${ffix(param.lBC)}\n`;
+		rGeome.logstr += `triangle-31: lAC1 ${ffix(tr3lAC1)} aB1 ${ffix(radToDeg(tr3aB1))}, aC1 ${ffix(radToDeg(tr3aC1))}\n`;
+		rGeome.logstr += `triangle-32: lAC2 ${ffix(tr3lAC2)} aB2 ${ffix(radToDeg(tr3aB2))}, aC2 ${ffix(radToDeg(tr3aC2))}\n`;
 		rGeome.logstr += `triangle-4: lAB ${ffix(param.lAB)}, lBC ${ffix(param.lBC)}, lAC ${ffix(param.lAC)}\n`;
 		rGeome.logstr += `triangle-4: aA ${ffix(radToDeg(tr4aA))}, aB ${ffix(radToDeg(tr4aB))}, aC ${ffix(radToDeg(tr4aC))}\n`;
 		// step-7 : drawing of the figures
@@ -124,6 +134,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		figTriangles.addMainO(ctr2);
 		figTriangles.addSecond(contourCircle(param.Ax + step, param.Ay, param.lAC));
+		const ctr31 = contour(param.Ax + step, param.Ay - step)
+			.addSegStrokeRP(a0A, param.lAB)
+			.addSegStrokeRP(a0A + Math.PI + tr3aB1, param.lBC)
+			.closeSegStroke();
+		figTriangles.addMainO(ctr31);
+		const ctr32 = contour(param.Ax + step, param.Ay - step)
+			.addSegStrokeRP(a0A, param.lAB)
+			.addSegStrokeRP(a0A + Math.PI + tr3aB2, param.lBC)
+			.closeSegStroke();
+		figTriangles.addSecond(ctr32);
+		const [tr3Bx, tr3By] = pointCoord(param.Ax + step, param.Ay - step, a0A, param.lAB);
+		figTriangles.addSecond(contourCircle(tr3Bx, tr3By, param.lBC));
 		const ctr4 = contour(param.Ax, param.Ay - step)
 			.addSegStrokeRP(a0A, param.lAB)
 			.addSegStrokeRP(a0A + Math.PI + tr4aB, param.lBC)
