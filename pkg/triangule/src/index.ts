@@ -234,7 +234,7 @@ function triALArLL(
  */
 function triLALrL(l1: number, a12: number, l2: number, checkLevel = ECheck.eError): number {
 	triCheckL(l1, 'triLALrL', checkLevel);
-	triCheckA(a12, 'triLALrL', checkLevel);
+	triCheckA(a12, 'triLALrL', ECheck.eWarn);
 	triCheckL(l2, 'triLALrL', checkLevel);
 	const ql3 = l1 ** 2 + l2 ** 2 - 2 * l1 * l2 * Math.cos(a12);
 	if (ql3 < 0) {

@@ -39,7 +39,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-import { triAArA, triALArLL } from 'triangule';
+import { triAArA, triALArLL, triLALrL, triLLLrA, triLLLrAAA } from 'triangule';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -47,12 +47,12 @@ const pDef: tParamDef = {
 	partName: 'demoTriangule',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('lAB', 'mm', 60, -200, 200, 1),
-		pNumber('lBC', 'mm', 40, -200, 200, 1),
-		pNumber('lAC', 'mm', 35, -200, 200, 1),
+		pNumber('lAB', 'mm', 60, 0, 200, 1),
+		pNumber('lBC', 'mm', 40, 0, 200, 1),
+		pNumber('lAC', 'mm', 35, 0, 200, 1),
 		pNumber('aCAB', 'degree', 35, -180, 180, 1),
 		pNumber('aABC', 'degree', 45, -180, 180, 1),
-		pNumber('aBCA', 'degree', 100, -180, 180, 1),
+		//pNumber('aBCA', 'degree', 100, -180, 180, 1),
 		pSectionSeparator('Start'),
 		pNumber('Ax', 'mm', 50, -1000, 1000, 1),
 		pNumber('Ay', 'mm', 50, -1000, 1000, 1),
@@ -64,9 +64,9 @@ const pDef: tParamDef = {
 		lAB: 'demoTriangule_triangle.svg',
 		lBC: 'demoTriangule_triangle.svg',
 		lAC: 'demoTriangule_triangle.svg',
-		aCAB: 'demoTriangule_triangle.svg',
+		aCAB: 'demoTriangule_anglePotentialError.svg',
 		aABC: 'demoTriangule_strokeAngle.svg',
-		aBCA: 'demoTriangule_anglePotentialError.svg',
+		//aBCA: 'demoTriangule_anglePotentialError.svg',
 		Ax: 'demoTriangule_start.svg',
 		Ay: 'demoTriangule_start.svg',
 		aAB: 'demoTriangule_start.svg',
@@ -89,8 +89,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const a0A = degToRad(param.aAB);
 		const aA = degToRad(param.aCAB);
 		const aB = degToRad(param.aABC);
+		//const aC = degToRad(param.aBCA);
 		const [tr1lBC, tr1lCA] = triALArLL(aA, param.lAB, aB);
 		const tr1aC = triAArA(aA, aB);
+		const tr2lBC = triLALrL(param.lAC, aA, param.lAB);
+		const tr2aC = Math.sign(aA) * triLLLrA(param.lAC, param.lAB, tr2lBC);
+		const tr2aB = triAArA(aA, tr2aC);
+		const [tr4aA, tr4aB, tr4aC] = triLLLrAAA(param.lAB, param.lBC, param.lAC);
+		const step = 300;
 		// step-5 : checks on the parameter values
 		if (param.lAB < 0) {
 			throw `err639: lAB ${ffix(param.lAB)} is negative`;
@@ -98,6 +104,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-6 : any logs
 		rGeome.logstr += `triangle-1: aA ${ffix(radToDeg(aA))}, lAB ${ffix(param.lAB)}, aB ${ffix(radToDeg(aB))}\n`;
 		rGeome.logstr += `triangle-1: lBC ${ffix(tr1lBC)} aC ${ffix(radToDeg(tr1aC))}, lCA ${ffix(tr1lCA)}\n`;
+		rGeome.logstr += `triangle-2: lAC ${ffix(param.lAC)}, aA ${ffix(radToDeg(aA))}, lAB ${ffix(param.lAB)}\n`;
+		rGeome.logstr += `triangle-2: aB ${ffix(radToDeg(tr2aB))}, lBC ${ffix(tr2lBC)}, aC ${ffix(radToDeg(tr2aC))}\n`;
+		rGeome.logstr += `triangle-4: lAB ${ffix(param.lAB)}, lBC ${ffix(param.lBC)}, lAC ${ffix(param.lAC)}\n`;
+		rGeome.logstr += `triangle-4: aA ${ffix(radToDeg(tr4aA))}, aB ${ffix(radToDeg(tr4aB))}, aC ${ffix(radToDeg(tr4aC))}\n`;
 		// step-7 : drawing of the figures
 		// figTriangles
 		const ctr1 = contour(param.Ax, param.Ay)
@@ -108,6 +118,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const [tr1Cx, tr1Cy] = pointCoord(param.Ax, param.Ay, a0A - aA, tr1lCA);
 		figTriangles.addSecond(contourCircle(tr1Cx, tr1Cy, tr1lCA));
 		figTriangles.addSecond(contourCircle(tr1Cx, tr1Cy, tr1lBC));
+		const ctr2 = contour(param.Ax + step, param.Ay)
+			.addSegStrokeRP(a0A, param.lAB)
+			.addSegStrokeRP(a0A + Math.PI + tr2aB, tr2lBC)
+			.closeSegStroke();
+		figTriangles.addMainO(ctr2);
+		figTriangles.addSecond(contourCircle(param.Ax + step, param.Ay, param.lAC));
+		const ctr4 = contour(param.Ax, param.Ay - step)
+			.addSegStrokeRP(a0A, param.lAB)
+			.addSegStrokeRP(a0A + Math.PI + tr4aB, param.lBC)
+			.closeSegStroke();
+		figTriangles.addMainO(ctr4);
+		const ctr4b = contour(param.Ax, param.Ay - step)
+			.addSegStrokeRP(a0A, param.lAB)
+			.addSegStrokeRP(a0A + Math.PI - tr4aB, param.lBC)
+			.closeSegStroke();
+		figTriangles.addSecond(ctr4b);
+		figTriangles.addSecond(contourCircle(param.Ax, param.Ay - step, param.lAC));
 		// final figure list
 		rGeome.fig = {
 			faceTriangles: figTriangles
