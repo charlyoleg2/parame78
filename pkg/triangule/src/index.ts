@@ -252,7 +252,7 @@ function triLALrL(l1: number, a12: number, l2: number, checkLevel = ECheck.eErro
  *  @param l1 - the first length of the triangle
  *  @param l2 - the second length of the triangle
  *  @param checkLevel - the level of check
- *  @returns the two possible lengths of l3 of the triangle
+ *  @returns the two possible lengths of l3 of the triangle. l3 can be positive or negative.
  */
 function triALLrL(
 	a31: number,

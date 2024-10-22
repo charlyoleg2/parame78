@@ -62,7 +62,7 @@ const pDef: tParamDef = {
 		pNumber('T1', 'mm', 5, 1, 20, 1)
 	],
 	paramSvg: {
-		lAB: 'demoTriangule_triangle.svg',
+		lAB: 'demoTriangule_overview.svg',
 		lBC: 'demoTriangule_triangle.svg',
 		lAC: 'demoTriangule_triangle.svg',
 		aCAB: 'demoTriangule_anglePotentialError.svg',
