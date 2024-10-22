@@ -279,6 +279,29 @@ function triALLrL(
 }
 
 /**
+ * Calculate the length l3 and angle a12 of a triangle from a31, l1 and l2
+ *
+ *  @param a31 - the angle between l3 and l1 in radian
+ *  @param l1 - the first length of the triangle
+ *  @param l2 - the second length of the triangle
+ *  @param checkLevel - the level of check
+ *  @returns the two possible sets of l3, a31, a12 of the triangle [l3a, a31a, a12a, l3b, a31b, a12b]
+ */
+function triALLrLAA(
+	a31: number,
+	l1: number,
+	l2: number,
+	checkLevel = ECheck.eError
+): [number, number, number, number, number, number] {
+	const [rl3a, rl3b] = triALLrL(a31, l1, l2, checkLevel);
+	const ra31a = rl3a > 0 ? a31 : triAPiPi(a31 - Math.PI);
+	const ra31b = rl3b > 0 ? a31 : triAPiPi(a31 - Math.PI);
+	const ra12a = Math.sign(ra31a) * triLLLrA(l2, Math.abs(rl3a), l1, checkLevel);
+	const ra12b = Math.sign(ra31b) * triLLLrA(l2, Math.abs(rl3b), l1, checkLevel);
+	return [rl3a, ra31a, ra12a, rl3b, ra31b, ra12b];
+}
+
+/**
  * Calculate one angle of a triangle from l1, l2, l3
  *
  *  @param l1 - the first length of the triangle
@@ -333,6 +356,7 @@ export {
 	triALArLL,
 	triLALrL,
 	triALLrL,
+	triALLrLAA,
 	triLLLrA,
 	triLLLrAAA
 };

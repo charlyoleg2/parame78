@@ -39,7 +39,8 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triLLLrA, triLLLrAAA } from 'triangule';
+//import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
+import { triAArA, triALArLL, triLALrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -95,11 +96,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const tr2lBC = triLALrL(param.lAC, aA, param.lAB);
 		const tr2aC = Math.sign(aA) * triLLLrA(param.lAC, param.lAB, tr2lBC);
 		const tr2aB = triAArA(aA, tr2aC);
-		const [tr3lAC1, tr3lAC2] = triALLrL(aA, param.lAB, param.lBC);
-		const tr3aA1 = tr3lAC1 > 0 ? aA : triAPiPi(aA - Math.PI);
-		const tr3aA2 = tr3lAC2 > 0 ? aA : triAPiPi(aA - Math.PI);
-		const tr3aB1 = Math.sign(tr3aA1) * triLLLrA(param.lBC, Math.abs(tr3lAC1), param.lAB);
-		const tr3aB2 = Math.sign(tr3aA2) * triLLLrA(param.lBC, Math.abs(tr3lAC2), param.lAB);
+		//const [tr3lAC1, tr3lAC2] = triALLrL(aA, param.lAB, param.lBC);
+		//const tr3aA1 = tr3lAC1 > 0 ? aA : triAPiPi(aA - Math.PI);
+		//const tr3aA2 = tr3lAC2 > 0 ? aA : triAPiPi(aA - Math.PI);
+		//const tr3aB1 = Math.sign(tr3aA1) * triLLLrA(param.lBC, Math.abs(tr3lAC1), param.lAB);
+		//const tr3aB2 = Math.sign(tr3aA2) * triLLLrA(param.lBC, Math.abs(tr3lAC2), param.lAB);
+		const tr3 = triALLrLAA(aA, param.lAB, param.lBC);
+		const [tr3lAC1, tr3aA1, tr3aB1] = tr3.slice(0, 3);
+		const [tr3lAC2, tr3aA2, tr3aB2] = tr3.slice(3, 6);
 		const tr3aC1 = triAArA(tr3aA1, tr3aB1);
 		const tr3aC2 = triAArA(tr3aA2, tr3aB2);
 		const [tr4aA, tr4aB, tr4aC] = triLLLrAAA(param.lAB, param.lBC, param.lAC);
