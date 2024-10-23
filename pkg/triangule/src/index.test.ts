@@ -24,39 +24,54 @@ describe('triangule under tests', () => {
 	});
 	// angles of triangle
 	it('triangle angles', () => {
-		expect(dut.triAArA(1, 2, dut.ECheck.eError)).toBeCloseTo(0.14159, 4);
+		expect(dut.triAArA(1, 2, dut.ECheck.eError)).toEqual([
+			expect.closeTo(0.14159, 4),
+			expect.any(String)
+		]);
 	});
 	it('triangle angles', () => {
-		expect(dut.triAArA(-1, -2)).toBeCloseTo(-0.14159, 4);
+		expect(dut.triAArA(-1, -2)).toEqual([
+			expect.closeTo(-0.14159, 4),
+			expect.any(String)
+		]);
 	});
 	// triALArLL
 	it('triALArLL', () => {
 		expect(dut.triALArLL(Math.PI / 3, 100, Math.PI / 3)).toEqual([
 			expect.closeTo(100, 4),
-			expect.closeTo(100, 4)
+			expect.closeTo(100, 4),
+			expect.any(String)
 		]);
 	});
 	// triLALrL
 	it('triLALrL', () => {
-		expect(dut.triLALrL(100, Math.PI / 3, 100)).toBeCloseTo(100, 4);
+		expect(dut.triLALrL(100, Math.PI / 3, 100)).toEqual([
+			expect.closeTo(100, 4),
+			expect.any(String)
+		]);
 	});
 	// triALLrL
 	it('triALLrL', () => {
 		expect(dut.triALLrL(Math.PI / 3, 100, 100)).toEqual([
 			expect.closeTo(0, 4),
-			expect.closeTo(100, 4)
+			expect.closeTo(100, 4),
+			expect.any(String)
 		]);
 	});
 	// triLLLrA
 	it('triLLLrA', () => {
-		expect(dut.triLLLrA(100, 100, 100)).toBeCloseTo(Math.PI / 3, 4);
+		expect(dut.triLLLrA(100, 100, 100)).toEqual([
+			expect.closeTo(Math.PI / 3, 4),
+			expect.any(String)
+		]);
 	});
 	// triLLLrAAA
 	it('triLLLrAAA', () => {
 		expect(dut.triLLLrAAA(100, 100, 100)).toEqual([
 			expect.closeTo(Math.PI / 3, 4),
 			expect.closeTo(Math.PI / 3, 4),
-			expect.closeTo(Math.PI / 3, 4)
+			expect.closeTo(Math.PI / 3, 4),
+			expect.any(String)
 		]);
 	});
 });
