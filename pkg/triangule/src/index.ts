@@ -183,8 +183,8 @@ function triAArA(a1: number, a2: number, checkLevel = ECheck.eError): [number, s
 	let rStr = '';
 	const a1b = triAPiPi(a1);
 	const a2b = triAPiPi(a2);
-	rStr += triCheckA(a1b, 'triAArA', ECheck.eWarn);
-	rStr += triCheckA(a2b, 'triAArA', ECheck.eWarn);
+	rStr += triCheckA(a1b, 'triAArA', ECheck.eIgnore);
+	rStr += triCheckA(a2b, 'triAArA', ECheck.eIgnore);
 	if (Math.sign(a1) * Math.sign(a2) < 0) {
 		const eMsg = `triAArA : the signs of a1 ${ffix(a1)} and a2 ${ffix(a2)} differ`;
 		rStr += triCheckAction('178', eMsg, checkLevel);
@@ -253,7 +253,7 @@ function triLALrL(
 ): [number, string] {
 	let rStr = '';
 	rStr += triCheckL(l1, 'triLALrL', checkLevel);
-	rStr += triCheckA(a12, 'triLALrL', ECheck.eWarn);
+	rStr += triCheckA(a12, 'triLALrL', ECheck.eIgnore);
 	rStr += triCheckL(l2, 'triLALrL', checkLevel);
 	const ql3 = l1 ** 2 + l2 ** 2 - 2 * l1 * l2 * Math.cos(a12);
 	if (ql3 < 0) {
@@ -280,7 +280,7 @@ function triALLrL(
 	checkLevel = ECheck.eError
 ): [number, number, string] {
 	let rStr = '';
-	rStr += triCheckA(a31, 'triALLrL', ECheck.eWarn);
+	rStr += triCheckA(a31, 'triALLrL', ECheck.eIgnore);
 	rStr += triCheckL(l1, 'triALLrL', checkLevel);
 	rStr += triCheckL(l2, 'triALLrL', checkLevel);
 	//const qA = 1;
