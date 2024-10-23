@@ -58,8 +58,8 @@
 	},
 	"dependencies": {
 		"desi78": "^0.5.30",
-		"geomcli": "^0.5.53",
-		"geometrix": "^0.5.50"
+		"geomcli": "^0.5.56",
+		"geometrix": "^0.5.53"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.10.0",
@@ -67,7 +67,7 @@
 		"bats": "^1.11.0",
 		"eslint": "^9.13.0",
 		"eslint-config-prettier": "^9.1.0",
-		"npm-run-all2": "^7.0.0",
+		"npm-run-all2": "^7.0.1",
 		"prettier": "^3.3.3",
 		"rimraf": "^6.0.1",
 		"tsup": "^8.3.0",
