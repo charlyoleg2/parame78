@@ -108,13 +108,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aACD = Math.PI / 2 - degToRad(param.ha);
 		const lCD = param.pegR;
 		//const lAD = Math.sqrt(lAC ** 2 + lCD ** 2 - 2 * lAC * lCD * Math.cos(aACD));
-		const lAD = triLALrL(lAC, aACD, lCD);
+		const [lAD, str2] = triLALrL(lAC, aACD, lCD);
 		//const aCDA = Math.asin((Math.sin(aACD) * lAC) / lAD); // law of sines
 		//const aCDA = Math.acos((lCD ** 2 + lAD ** 2 - lAC ** 2) / (2 * lCD * lAD)); // law of cosines
-		const aCDA = triLLLrA(lCD, lAC, lAD);
+		const [aCDA, str3] = triLLLrA(lCD, lAC, lAD);
 		//console.log(`dbg115: lAD ${ffix(lAD)} ${ffix(lAD2)}  aCDA ${ffix(aCDA)} ${ffix(aCDA2)}`);
 		//const aCAD = Math.asin((Math.sin(aACD) * lCD) / lAD);
-		const aCAD = triLLLrA(lAD, lCD, lAC);
+		const [aCAD, str4] = triLLLrA(lAD, lCD, lAC);
 		const aADF = aCDA + Math.PI / 2;
 		//const sign = aCDA < Math.PI / 2 ? -1 : 1;
 		//rGeome.logstr += `dbg789: aCDA: ${aCDA}, sign: ${sign}\n`;
@@ -127,10 +127,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//}
 		//const x1 = (-eqB + Math.sqrt(eqD)) / (2 * eqA);
 		//const x2 = (-eqB - Math.sqrt(eqD)) / (2 * eqA);
-		const [x1, x2] = triALLrL(aADF, lAD, R2);
+		const [x1, x2, str5] = triALLrL(aADF, lAD, R2);
 		const lDF = Math.min(Math.abs(x1), Math.abs(x2));
 		//const aDAF = Math.asin((Math.sin(aADF) * lDF) / R2);
-		const aDAF = triLLLrA(lAD, lDF, R2);
+		const [aDAF, str6] = triLLLrA(lAD, lDF, R2);
 		//console.log(`dbg133: aCAD ${ffix(aCAD)} ${ffix(aCAD2)}  aDAF ${ffix(aDAF)} ${ffix(aDAF2)}`);
 		const aCAF = aCAD - aDAF;
 		//rGeome.logstr += `dbg783: aCAD: ${aCAD}, aDAF: ${aDAF}, aCAF: ${aCAF}rad\n`;
@@ -139,6 +139,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//rGeome.logstr += `dbg785: ap: ${ap}, apd: ${apd}, apa: ${apa}\n`;
 		const rimR = R2 + param.rimPlus;
 		const wheelWh = param.wheelW / 2;
+		rGeome.logstr += str2 + str3 + str4 + str5 + str6;
 		// step-5 : checks on the parameter values
 		//if (x1 <= 0) {
 		//	throw `err109: x1 ${x1} is negative`;
