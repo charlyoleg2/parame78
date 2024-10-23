@@ -183,8 +183,8 @@ function triAArA(a1: number, a2: number, checkLevel = ECheck.eError): [number, s
 	let rStr = '';
 	const a1b = triAPiPi(a1);
 	const a2b = triAPiPi(a2);
-	rStr += triCheckA(a1b, 'triAArA', ECheck.eIgnore);
-	rStr += triCheckA(a2b, 'triAArA', ECheck.eIgnore);
+	rStr += triCheckA(a1b, 'triAArA.a1', ECheck.eIgnore);
+	rStr += triCheckA(a2b, 'triAArA.a2', ECheck.eIgnore);
 	if (Math.sign(a1) * Math.sign(a2) < 0) {
 		const eMsg = `triAArA : the signs of a1 ${ffix(a1)} and a2 ${ffix(a2)} differ`;
 		rStr += triCheckAction('178', eMsg, checkLevel);
@@ -215,7 +215,7 @@ function triALArLL(
 	let rStr = '';
 	const [a3, str2] = triAArA(a1, a2, checkLevel);
 	rStr += str2;
-	rStr += triCheckL(l12, 'triALArLL', checkLevel);
+	rStr += triCheckL(l12, 'triALArLL.l12', checkLevel);
 	let rl23 = 0;
 	let rl31 = 0;
 	if (triIsZero(a3)) {
@@ -252,9 +252,9 @@ function triLALrL(
 	checkLevel = ECheck.eError
 ): [number, string] {
 	let rStr = '';
-	rStr += triCheckL(l1, 'triLALrL', checkLevel);
-	rStr += triCheckA(a12, 'triLALrL', ECheck.eIgnore);
-	rStr += triCheckL(l2, 'triLALrL', checkLevel);
+	rStr += triCheckL(l1, 'triLALrL.l1', checkLevel);
+	rStr += triCheckA(a12, 'triLALrL.a12', ECheck.eIgnore);
+	rStr += triCheckL(l2, 'triLALrL.l2', checkLevel);
 	const ql3 = l1 ** 2 + l2 ** 2 - 2 * l1 * l2 * Math.cos(a12);
 	if (ql3 < 0) {
 		const eMsg = `triLALrL : ql3 ${ffix(ql3)} is negative with l1 ${ffix(l1)}, a12 ${ffix(a12)}, l2 ${ffix(l2)}`;
@@ -280,9 +280,9 @@ function triALLrL(
 	checkLevel = ECheck.eError
 ): [number, number, string] {
 	let rStr = '';
-	rStr += triCheckA(a31, 'triALLrL', ECheck.eIgnore);
-	rStr += triCheckL(l1, 'triALLrL', checkLevel);
-	rStr += triCheckL(l2, 'triALLrL', checkLevel);
+	rStr += triCheckA(a31, 'triALLrL.a31', ECheck.eIgnore);
+	rStr += triCheckL(l1, 'triALLrL.l1', checkLevel);
+	rStr += triCheckL(l2, 'triALLrL.l2', checkLevel);
 	//const qA = 1;
 	const qB = -2 * l1 * Math.cos(a31);
 	const qC = l1 ** 2 - l2 ** 2;
@@ -293,8 +293,8 @@ function triALLrL(
 	}
 	const rx1 = (-qB - Math.sqrt(qD)) / 2;
 	const rx2 = (-qB + Math.sqrt(qD)) / 2;
-	rStr += triCheckL(rx1, 'triALLrL', ECheck.eWarn);
-	rStr += triCheckL(rx2, 'triALLrL', ECheck.eWarn);
+	rStr += triCheckL(rx1, 'triALLrL.rx1', ECheck.eIgnore);
+	rStr += triCheckL(rx2, 'triALLrL.rx2', ECheck.eIgnore);
 	return [rx1, rx2, rStr];
 }
 
@@ -342,9 +342,9 @@ function triLLLrA(
 	checkLevel = ECheck.eError
 ): [number, string] {
 	let rStr = '';
-	rStr += triCheckL(l1, 'triLLLrA', checkLevel);
-	rStr += triCheckL(l2, 'triLLLrA', checkLevel);
-	rStr += triCheckL(l3, 'triLLLrA', checkLevel);
+	rStr += triCheckL(l1, 'triLLLrA.l1', checkLevel);
+	rStr += triCheckL(l2, 'triLLLrA.l2', checkLevel);
+	rStr += triCheckL(l3, 'triLLLrA.l3', checkLevel);
 	const cosA31 = (l3 ** 2 + l1 ** 2 - l2 ** 2) / (2 * l3 * l1);
 	if (Math.abs(cosA31) > 1) {
 		const eMsg = `triLLLrA : cosA31 ${ffix(cosA31)} is bigger than 1`;
