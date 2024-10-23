@@ -245,7 +245,12 @@ function triALArLL(
  *  @param checkLevel - the level of check
  *  @returns the length l3 of the triangle + string-for-log
  */
-function triLALrL(l1: number, a12: number, l2: number, checkLevel = ECheck.eError): [number, string] {
+function triLALrL(
+	l1: number,
+	a12: number,
+	l2: number,
+	checkLevel = ECheck.eError
+): [number, string] {
 	let rStr = '';
 	rStr += triCheckL(l1, 'triLALrL', checkLevel);
 	rStr += triCheckA(a12, 'triLALrL', ECheck.eWarn);
@@ -330,7 +335,12 @@ function triALLrLAA(
  *  @param checkLevel - the level of check
  *  @returns one angles of the triangle: a31 + string-for-log
  */
-function triLLLrA(l1: number, l2: number, l3: number, checkLevel = ECheck.eError): [number, string] {
+function triLLLrA(
+	l1: number,
+	l2: number,
+	l3: number,
+	checkLevel = ECheck.eError
+): [number, string] {
 	let rStr = '';
 	rStr += triCheckL(l1, 'triLLLrA', checkLevel);
 	rStr += triCheckL(l2, 'triLLLrA', checkLevel);

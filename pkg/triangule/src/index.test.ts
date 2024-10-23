@@ -30,10 +30,7 @@ describe('triangule under tests', () => {
 		]);
 	});
 	it('triangle angles', () => {
-		expect(dut.triAArA(-1, -2)).toEqual([
-			expect.closeTo(-0.14159, 4),
-			expect.any(String)
-		]);
+		expect(dut.triAArA(-1, -2)).toEqual([expect.closeTo(-0.14159, 4), expect.any(String)]);
 	});
 	// triALArLL
 	it('triALArLL', () => {
