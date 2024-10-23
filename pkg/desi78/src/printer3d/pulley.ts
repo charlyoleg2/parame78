@@ -35,8 +35,8 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-//import { triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
-import { triLALrL, triALLrL, triLLLrA } from 'triangule';
+//import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
+import { triAPiPi, triLALrL, triALLrL, triLLLrA } from 'triangule';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -107,13 +107,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const lAC = R3 + param.pegR;
 		const aACD = Math.PI / 2 - degToRad(param.ha);
 		const lCD = param.pegR;
-		//const lAD = Math.sqrt(lAC ** 2 + lCD ** 2 - 2 * lAC * lCD * Math.cos(aACD));
+		//const lAD2 = Math.sqrt(lAC ** 2 + lCD ** 2 - 2 * lAC * lCD * Math.cos(aACD));
 		const [lAD, str2] = triLALrL(lAC, aACD, lCD);
 		//const aCDA = Math.asin((Math.sin(aACD) * lAC) / lAD); // law of sines
-		//const aCDA = Math.acos((lCD ** 2 + lAD ** 2 - lAC ** 2) / (2 * lCD * lAD)); // law of cosines
+		//const aCDA2 = Math.acos((lCD ** 2 + lAD ** 2 - lAC ** 2) / (2 * lCD * lAD)); // law of cosines
 		const [aCDA, str3] = triLLLrA(lCD, lAC, lAD);
-		//console.log(`dbg115: lAD ${ffix(lAD)} ${ffix(lAD2)}  aCDA ${ffix(aCDA)} ${ffix(aCDA2)}`);
-		//const aCAD = Math.asin((Math.sin(aACD) * lCD) / lAD);
+		//rGeome.logstr += `dbg115: lAD ${ffix(lAD)} ${ffix(lAD2)}  aCDA ${ffix(aCDA)} ${ffix(aCDA2)}\n`;
+		//const aCAD2 = Math.asin((Math.sin(aACD) * lCD) / lAD);
 		const [aCAD, str4] = triLLLrA(lAD, lCD, lAC);
 		const aADF = aCDA + Math.PI / 2;
 		//const sign = aCDA < Math.PI / 2 ? -1 : 1;
@@ -129,9 +129,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//const x2 = (-eqB - Math.sqrt(eqD)) / (2 * eqA);
 		const [x1, x2, str5] = triALLrL(aADF, lAD, R2);
 		const lDF = Math.min(Math.abs(x1), Math.abs(x2));
-		//const aDAF = Math.asin((Math.sin(aADF) * lDF) / R2);
-		const [aDAF, str6] = triLLLrA(lAD, lDF, R2);
-		//console.log(`dbg133: aCAD ${ffix(aCAD)} ${ffix(aCAD2)}  aDAF ${ffix(aDAF)} ${ffix(aDAF2)}`);
+		//const aDAF2 = Math.asin((Math.sin(aADF) * lDF) / R2);
+		const [tmpaDAF, str6] = triLLLrA(lAD, lDF, R2);
+		const aDAF = Math.sign(triAPiPi(aADF)) * tmpaDAF;
+		//rGeome.logstr += `dbg133: aCAD ${ffix(aCAD)} ${ffix(aCAD2)}  aDAF ${ffix(aDAF)} ${ffix(aDAF2)}\n`;
 		const aCAF = aCAD - aDAF;
 		//rGeome.logstr += `dbg783: aCAD: ${aCAD}, aDAF: ${aDAF}, aCAF: ${aCAF}rad\n`;
 		const apd = 2 * aCAF;
