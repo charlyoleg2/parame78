@@ -35,6 +35,8 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
+//import { triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
+import { triLALrL, triALLrL, triLLLrA } from 'triangule';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -105,24 +107,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const lAC = R3 + param.pegR;
 		const aACD = Math.PI / 2 - degToRad(param.ha);
 		const lCD = param.pegR;
-		const lAD = Math.sqrt(lAC ** 2 + lCD ** 2 - 2 * lAC * lCD * Math.cos(aACD));
+		//const lAD = Math.sqrt(lAC ** 2 + lCD ** 2 - 2 * lAC * lCD * Math.cos(aACD));
+		const lAD = triLALrL(lAC, aACD, lCD);
 		//const aCDA = Math.asin((Math.sin(aACD) * lAC) / lAD); // law of sines
-		const aCDA = Math.acos((lCD ** 2 + lAD ** 2 - lAC ** 2) / (2 * lCD * lAD)); // law of cosines
-		const aCAD = Math.asin((Math.sin(aACD) * lCD) / lAD);
+		//const aCDA = Math.acos((lCD ** 2 + lAD ** 2 - lAC ** 2) / (2 * lCD * lAD)); // law of cosines
+		const aCDA = triLLLrA(lCD, lAD, lAC);
+		//const aCAD = Math.asin((Math.sin(aACD) * lCD) / lAD);
+		const aCAD = triLLLrA(lAD, lAC, lCD);
 		const aADF = aCDA + Math.PI / 2;
 		//const sign = aCDA < Math.PI / 2 ? -1 : 1;
 		//rGeome.logstr += `dbg789: aCDA: ${aCDA}, sign: ${sign}\n`;
-		const eqA = 1;
-		const eqB = -2 * lAD * Math.cos(aADF);
-		const eqC = lAD ** 2 - R2 ** 2;
-		const eqD = eqB ** 2 - 4 * eqA * eqC;
-		if (eqD < 0) {
-			throw `err116: discriminant ${eqD} of quadratic equation is negatif`;
-		}
-		const x1 = (-eqB + Math.sqrt(eqD)) / (2 * eqA);
-		const x2 = (-eqB - Math.sqrt(eqD)) / (2 * eqA);
+		//const eqA = 1;
+		//const eqB = -2 * lAD * Math.cos(aADF);
+		//const eqC = lAD ** 2 - R2 ** 2;
+		//const eqD = eqB ** 2 - 4 * eqA * eqC;
+		//if (eqD < 0) {
+		//	throw `err116: discriminant ${eqD} of quadratic equation is negatif`;
+		//}
+		//const x1 = (-eqB + Math.sqrt(eqD)) / (2 * eqA);
+		//const x2 = (-eqB - Math.sqrt(eqD)) / (2 * eqA);
+		const [x1, x2] = triALLrL(aADF, lAD, R2);
 		const lDF = Math.min(Math.abs(x1), Math.abs(x2));
-		const aDAF = Math.asin((Math.sin(aADF) * lDF) / R2);
+		//const aDAF = Math.asin((Math.sin(aADF) * lDF) / R2);
+		const aDAF = triLLLrA(lAD, R2, lDF);
 		const aCAF = aCAD - aDAF;
 		//rGeome.logstr += `dbg783: aCAD: ${aCAD}, aDAF: ${aDAF}, aCAF: ${aCAF}rad\n`;
 		const apd = 2 * aCAF;
