@@ -37,7 +37,7 @@ Usage
 ```bash
 import { triAArA } from 'triangule';
 
-const a3 = triAArA(1.0, 2.0); // expect 0.14159
+const [a3, logstr] = triAArA(1.0, 2.0); // expect 0.14159
 ```
 
 
