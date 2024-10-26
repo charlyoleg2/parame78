@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="286.40793"
+   height="254.5542"
+   viewBox="0 0 75.778764 67.350799"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (1:1.4+202410161351+e7c3feb100)"
+   sodipodi:docname="src_triangule.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="1.569683"
+     inkscape:cx="223.61203"
+     inkscape:cy="3620.7948"
+     inkscape:window-width="1854"
+     inkscape:window-height="1131"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="75.778763"
+       height="67.3508"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <rect
+       x="269.14062"
+       y="1570.3125"
+       width="25.781248"
+       height="21.09375"
+       id="rect83-3" />
+    <rect
+       x="304.10156"
+       y="1591.0156"
+       width="23.632812"
+       height="16.796875"
+       id="rect84-7" />
+    <rect
+       x="350.39062"
+       y="1470.1172"
+       width="30.078123"
+       height="25.585938"
+       id="rect85-4" />
+    <rect
+       x="419.72656"
+       y="1473.8281"
+       width="30.859373"
+       height="22.070312"
+       id="rect86-5" />
+    <marker
+       style="overflow:visible"
+       id="ArrowWide-5-2"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path4-0-54" />
+    </marker>
+    <rect
+       x="257.8125"
+       y="1582.0312"
+       width="42.1875"
+       height="18.945312"
+       id="rect87-7" />
+    <rect
+       x="273.4375"
+       y="1581.25"
+       width="31.640623"
+       height="16.796875"
+       id="rect88-4" />
+    <rect
+       x="264.0625"
+       y="1577.7343"
+       width="40.820312"
+       height="24.999998"
+       id="rect89-4" />
+    <rect
+       x="266.99219"
+       y="1581.0547"
+       width="43.945312"
+       height="21.484373"
+       id="rect90-3" />
+    <rect
+       x="324.02344"
+       y="1595.5078"
+       width="40.234375"
+       height="20.117188"
+       id="rect91-0" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-21.611748,-1015.601)">
+    <rect
+       style="fill:#ffffff;stroke:#ffffff;stroke-width:0.264583;stroke-linejoin:round"
+       id="rect11"
+       width="75.514183"
+       height="67.08625"
+       x="21.74404"
+       y="1015.7333" />
+    <path
+       style="fill:none;stroke:#008080;stroke-width:0.264583;stroke-linejoin:round"
+       d="m 34.073446,1061.1608 30.986571,-14.6163"
+       id="path9-2-6" />
+    <ellipse
+       style="fill:none;stroke:#b3b3b3;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       id="path80-8"
+       cx="65.060005"
+       cy="1046.5444"
+       rx="28.540405"
+       ry="28.415283" />
+    <path
+       style="fill:none;stroke:#b3b3b3;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       d="m 25.284175,1058.4403 63.355302,19.8438"
+       id="path81-8" />
+    <path
+       style="fill:none;stroke:#ff00ff;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       d="m 34.073445,1061.1608 8.367305,2.5436 22.619267,-17.1599"
+       id="path83-4" />
+    <path
+       style="fill:none;stroke:#ffaaaa;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       d="m 65.060017,1046.5445 8.69665,27.1851 -39.734898,-12.3104"
+       id="path82-3"
+       sodipodi:nodetypes="ccc" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-40.913333,643.21324)"
+       id="text83-1"
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect83-3);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="269.14062"
+         y="1583.3626"
+         id="tspan1">A</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-16.05697,621.71584)"
+       id="text84-9"
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect84-7);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="304.10156"
+         y="1604.0657"
+         id="tspan2">B</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-52.902265,674.58083)"
+       id="text85-0"
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect85-4);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="350.39062"
+         y="1483.1673"
+         id="tspan3">C1</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-39.466393,683.62421)"
+       id="text86-8"
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect86-5);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="419.72656"
+         y="1486.8782"
+         id="tspan4">C2</tspan></text>
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#ArrowWide-5-2)"
+       d="m 36.523799,1061.6632 c 0,0 0.261124,-0.4479 0.310057,-0.6977 0.05302,-0.2706 -0.02584,-0.8268 -0.02584,-0.8268"
+       id="path86-2"
+       sodipodi:nodetypes="cac" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-39.569746,636.65033)"
+       id="text87-6"
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect87-7);display:inline;fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="257.8125"
+         y="1595.0814"
+         id="tspan5">aCAB</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-27.839196,630.29413)"
+       id="text88-4"
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect88-4);display:inline;fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="273.4375"
+         y="1594.3001"
+         id="tspan6">lAB</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-1.4325395,638.61404)"
+       id="text89-5"
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect89-4);display:inline;fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="264.0625"
+         y="1590.7845"
+         id="tspan7">lBC</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-40.758304,644.09174)"
+       id="text90-4"
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect90-3);display:inline;fill:#800080;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="266.99219"
+         y="1594.1048"
+         id="tspan8">lAC1</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-34.402103,640.78445)"
+       id="text91-7"
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect91-0);display:inline;fill:#800080;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="324.02344"
+         y="1608.5579"
+         id="tspan9">lAC2</tspan></text>
+  </g>
+</svg>

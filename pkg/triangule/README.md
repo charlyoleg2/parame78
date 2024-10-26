@@ -54,21 +54,47 @@ npm -w triangule run ci
 Main functions of Triangule
 ---------------------------
 
-### triAArR
+### triAArA
 
+![triangule\_triAArA.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_triAArA.svg)
 
+Compute the third angle fron the two first angles. The sign of the two first angles must be identical. The sign of the third angle is the same as the sign of the two first angles. The sum of the 3 angles of a triangle is Pi.
 
 ### triALArLL
 
+![triangule\_triALArLL.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_triALArLL.svg)
+
+From two angles and one length, compute the two remaining lengths. The two input angles must be adjacent to the input length. After getting the third angle, it uses the *law of sines* for computing the two remaining traingle-side-lengths.
+
 ### triLALrL
+
+![triangule\_triLALrL.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_triLALrL.svg)
+
+From two lengths and one angle, compute the remaining length. The input angle must be the angle between the two lengths. It's the direct application of the *law of cosines*.
 
 ### triALLrL
 
+![triangule\_triALLrL.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_triALLrL.svg)
+
+From one angle and two lengths, compute the two possible length of the third triangle-side. The input angle must be opposite to one of the length. It is the intersection between a line and a circle, which can have two solutions. The *law of cosines* provides an equation of the second degree, which can have two solutions.
+
 ### triALLrLAA
+
+![triangule\_triALLrLAA.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_triALLrLAA.svg)
+
+Same inputs as *triALLrL*. The output is completed with two angles for each possible length.
 
 ### triLLLrA
 
+![triangule\_triLLLrA.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_triLLLrA.svg)
+
+From the three lengths of a triangle, compute one of the angle. It's a direct application of the *law of cosines*.
+
 ### triLLLrAAA
+
+![triangule\_triLLLrAAA.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_triLLLrAAA.svg)
+
+Same inputs as *triLLLrA*. The output is extended to the three angles of the triangle.
 
 
 Common pitfalls around triangles
