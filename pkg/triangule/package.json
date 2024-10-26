@@ -1,6 +1,6 @@
 {
 	"name": "triangule",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"description": "a library for triangulation and other triangle calculations",
 	"private": false,
 	"repository": {
