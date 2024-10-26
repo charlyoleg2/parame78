@@ -83,8 +83,8 @@ Either all angles of a triangle are positive or they are all negative.
 
 ### Possible ways to measure an angle
 
-If we measure the angle between two *half-lines*, the angle is modulo 2\*Pi.
-If we measure the angle between two *lines*, the angle is modulo Pi.
+- If we measure the angle between two *half-lines*, the angle is modulo 2\*Pi.
+- If we measure the angle between two *lines*, the angle is modulo Pi.
 
 ![triangule\_strokeAngle.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_strokeAngle.svg)
 
