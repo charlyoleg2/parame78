@@ -64,7 +64,7 @@ Compute the third angle fron the two first angles. The sign of the two first ang
 
 ![triangule\_triALArLL.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_triALArLL.svg)
 
-From two angles and one length, compute the two remaining lengths. The two input angles must be adjacent to the input length. After getting the third angle, it uses the *law of sines* for computing the two remaining traingle-side-lengths.
+From two angles and one length, compute the two remaining lengths. The two input angles must be adjacent to the input length. After getting the third angle, it uses the *law of sines* for computing the two remaining triangle-side-lengths.
 
 ### triLALrL
 
@@ -76,7 +76,7 @@ From two lengths and one angle, compute the remaining length. The input angle mu
 
 ![triangule\_triALLrL.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/triangule/svg/triangule_triALLrL.svg)
 
-From one angle and two lengths, compute the two possible length of the third triangle-side. The input angle must be opposite to one of the length. It is the intersection between a line and a circle, which can have two solutions. The *law of cosines* provides an equation of the second degree, which can have two solutions.
+From one angle and two lengths, compute the two possible length of the third triangle-side. The input angle must be opposite to the second input length. It is the intersection between a line and a circle, which can have two solutions. The *law of cosines* provides an equation of the second degree, which can have two solutions.
 
 ### triALLrLAA
 

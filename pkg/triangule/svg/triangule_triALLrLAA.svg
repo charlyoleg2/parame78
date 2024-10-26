@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="1.569683"
-     inkscape:cx="223.61203"
-     inkscape:cy="3926.589"
+     inkscape:zoom="2.219867"
+     inkscape:cx="223.43681"
+     inkscape:cy="4614.0152"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -162,7 +162,7 @@
        height="67.08625"
        x="22.349052"
        y="1093.7849"
-       inkscape:export-filename="triangule_triALLrL.svg"
+       inkscape:export-filename="triangule_triALLrLAA.svg"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <path
@@ -228,7 +228,7 @@
        sodipodi:nodetypes="cac" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-38.964733,714.70206)"
+       transform="matrix(0.26458333,0,0,0.26458333,-39.203111,712.48055)"
        id="text87-6-6"
        style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect87-7-1);display:inline;fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="257.8125"
@@ -268,7 +268,7 @@
          id="tspan9">lAC2</tspan></text>
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-39.297658,711.17882)"
+       transform="matrix(0.26458333,0,0,0.26458333,-39.536036,708.95731)"
        id="text87-6-6-0"
        style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect87-7-1-8);display:inline;fill:#800080;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="257.8125"
@@ -293,9 +293,14 @@
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,15.911708,-32.240577)"
        id="text18"
-       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:center;text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect18);fill:#800080;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+       style="font-size:14.6667px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-align:center;text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect18);display:inline;fill:#800080;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="149.52405"
          y="4411.7376"
          id="tspan11">aABC</tspan></text>
+    <path
+       style="fill:#ffffff;stroke:#800080;stroke-width:0.264583;stroke-linejoin:round;marker-end:url(#ArrowWide)"
+       d="m 29.32045,1137.3593 c 0,0 1.279919,-1.6095 2.204992,-1.907 1.044377,-0.3359 2.317458,-0.2326 3.277693,0.298 0.831135,0.4592 1.728237,2.2646 1.728237,2.2646"
+       id="path36"
+       sodipodi:nodetypes="caac" />
   </g>
 </svg>
