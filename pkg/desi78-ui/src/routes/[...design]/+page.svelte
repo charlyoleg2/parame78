@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { OneDesign } from 'geomui';
-	export let data;
+
+	let { data } = $props();
 </script>
 
 <OneDesign pageDef={data.pageDef} pLink={data.allLink} />

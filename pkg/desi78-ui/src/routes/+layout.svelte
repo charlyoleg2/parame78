@@ -5,6 +5,11 @@
 	import topPackage from '../../../../package.json';
 	import libPackage from '../../../desi78/package.json';
 	import appPackage from '../../package.json';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	const detailed_versions = version_details(appPackage);
 </script>
@@ -21,7 +26,7 @@
 	</nav>
 </header>
 <main>
-	<slot />
+	{@render children?.()}
 </main>
 <footer>
 	<article>
