@@ -1,14 +1,16 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { repoToHomepage } from '$lib/general';
 	import { base } from '$app/paths';
 	import { version_details } from 'geometrix';
 	import topPackage from '../../../../package.json';
 	import libPackage from '../../../desi78/package.json';
 	import appPackage from '../../package.json';
-	interface Props {
-		children?: import('svelte').Snippet;
-	}
 
+	// props
+	interface Props {
+		children?: Snippet;
+	}
 	let { children }: Props = $props();
 
 	const detailed_versions = version_details(appPackage);
