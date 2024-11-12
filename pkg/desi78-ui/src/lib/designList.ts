@@ -3,6 +3,7 @@
 import type { tAllPageDef } from 'geometrix';
 import {
 	doorDef,
+	maisonDef,
 	cabanePlancherDef,
 	cabaneDef,
 	reinforcedTubeDef,
@@ -17,6 +18,7 @@ import {
 
 const designList: tAllPageDef = {
 	'desi78/door': doorDef,
+	'desi78/maison': maisonDef,
 	'desi78/cabane_plancher': cabanePlancherDef,
 	'desi78/cabane': cabaneDef,
 	'desi78/reinforced_tube': reinforcedTubeDef,
