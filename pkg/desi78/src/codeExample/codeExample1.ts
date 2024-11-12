@@ -90,7 +90,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const sumAngles = a3 + a4 + a5;
 		// step-5 : checks on the parameter values
 		if (param.L2 < param.L3) {
-			throw `err639: L2 ${ffix(param.L2)} is smaller than L3 ${ffix(param.L3)}}`;
+			throw `err639: L2 ${ffix(param.L2)} is smaller than L3 ${ffix(param.L3)}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `sum of angles: ${ffix(radToDeg(sumAngles))} degree`;

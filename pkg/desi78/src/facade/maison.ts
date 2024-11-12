@@ -18,9 +18,9 @@ import {
 	//Point,
 	//ShapePoint,
 	//vector,
-	//contour,
+	contour,
 	//contourCircle,
-	ctrRectangle,
+	//ctrRectangle,
 	figure,
 	//degToRad,
 	//radToDeg,
@@ -78,14 +78,39 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
+		const s1top = (param.W1 * param.RS) / 100.0;
+		const s2top = (param.W2 * param.RS) / 100.0;
 		// step-5 : checks on the parameter values
+		if (param.H1 < param.H2 || param.H1 < param.H3) {
+			throw `err885: H1 ${ffix(param.H1)} is too small compare to H2 ${ffix(param.H2)} or H3 ${ffix(param.H3)}`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `maison: height ${ffix(param.H1)} m\n`;
 		// step-7 : drawing of the figures
 		// figSide1
+		const ctrSide1 = contour(0, 0)
+			.addSegStrokeA(param.W1, 0)
+			.addSegStrokeA(param.W1, param.H2)
+			.addSegStrokeA(s1top, param.H1)
+			.addSegStrokeA(0, param.H3)
+			.closeSegStroke();
+		const ctrSide2 = contour(0, 0)
+			.addSegStrokeA(param.W2, 0)
+			.addSegStrokeA(param.W2, param.H2)
+			.addSegStrokeA(s2top, param.H1)
+			.addSegStrokeA(0, param.H3)
+			.closeSegStroke();
+		figSide1.addMainO(ctrSide1);
+		figSide1.addSecond(ctrSide2.translate(s1top - s2top, 0));
 		// figSide2
+		figSide2.addMainO(ctrSide2);
+		figSide2.addSecond(ctrSide1.translate(s2top - s1top, 0));
 		// figTop
-		figTop.addMainO(ctrRectangle(0, 0, param.L1, param.L2));
+		const ctrRoof = contour(0, 0)
+			.addSegStrokeA(param.W1, 0)
+			.addSegStrokeA(param.W1, param.L1)
+			.closeSegStroke();
+		figTop.addMainO(ctrRoof);
 		// final figure list
 		rGeome.fig = {
 			faceSide1: figSide1,
