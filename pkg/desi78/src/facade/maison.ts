@@ -173,12 +173,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
-		const t3dTop2 = transform3d().addTranslation(0, lExt1, 0).addRotation(0, 0, aAExt);
+		const t3dTop2 = transform3d().addRotation(0, 0, aAExt).addTranslation(0, lExt1, 0);
 		const t3dSide2 = transform3d()
 			.addRotation(Math.PI / 2, 0, 0)
 			.addTranslation(0, lExt2, 0)
-			.addTranslation(0, lExt1, 0)
-			.addRotation(0, 0, aAExt);
+			.addRotation(0, 0, aAExt)
+			.addTranslation(0, lExt1, 0);
 		rGeome.vol = {
 			extrudes: [
 				{
