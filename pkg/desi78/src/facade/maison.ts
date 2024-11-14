@@ -3,7 +3,7 @@
 
 // step-1 : import from geometrix
 import type {
-	//tContour,
+	tContour,
 	//tOuterInner,
 	tParamDef,
 	tParamVal,
@@ -54,10 +54,10 @@ const pDef: tParamDef = {
 		pNumber('L1', 'm', 16, 2, 50, 0.1),
 		pNumber('L2', 'm', 16, 2, 50, 0.1),
 		pSectionSeparator('Roof border'),
-		pNumber('WF', 'm', 0.4, 0, 1.5, 0.1),
+		pNumber('WF1', 'm', 0.4, 0, 1.5, 0.1),
 		pNumber('WBL', '%', 3.0, 0, 20, 0.01),
 		pNumber('WBH', '%', 5.0, 0, 20, 0.01),
-		pNumber('AB', 'degree', 15, 0, 80, 1),
+		pNumber('AB1', 'degree', 15, 0, 80, 1),
 		pNumber('WBE', 'm', 0.3, 0.05, 1, 0.01),
 		pNumber('WBR', '%', 50, 0, 100, 1),
 		pSectionSeparator('Chimney'),
@@ -75,10 +75,10 @@ const pDef: tParamDef = {
 		W2: 'maison_top.svg',
 		L1: 'maison_top.svg',
 		L2: 'maison_top.svg',
-		WF: 'maison_roofBorder.svg',
+		WF1: 'maison_roofBorder.svg',
 		WBL: 'maison_roofBorder.svg',
 		WBH: 'maison_roofBorder.svg',
-		AB: 'maison_roofBorder.svg',
+		AB1: 'maison_roofBorder.svg',
 		WBE: 'maison_roofBorder.svg',
 		WBR: 'maison_roofBorder.svg',
 		ChiH: 'maison_chimney.svg',
@@ -126,8 +126,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const lBD = Math.sqrt(param.W1 ** 2 + lDC ** 2);
 		const lExt1 = param.L1 + lDE;
 		const lExt2 = param.L2 + lDC;
-		const lExt1f = param.L1 + lDE * (1 - param.RS / 100.0);
-		const lExt2f = (lDC * param.RS) / 100.0;
+		//const lExt1f = param.L1 + lDE * (1 - param.RS / 100.0);
+		//const lExt2f = (lDC * param.RS) / 100.0;
 		const aAExt = aA1 - Math.PI;
 		const WBL1 = (param.L1 * param.WBL) / 100.0;
 		const WBH1 = (param.L1 * param.WBH) / 100.0;
@@ -135,6 +135,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const WBH2 = (param.L2 * param.WBH) / 100.0;
 		const WBEstroke = param.WBR < 1 ? true : false;
 		const WBER = (param.WBE * param.WBR) / 200.0;
+		const aAB1 = degToRad(param.AB1);
+		const WBH1H = WBH1 * Math.tan(aAB1);
+		const r12 = param.W2 / param.W1;
+		const WF2 = param.WF1 * r12;
 		// step-5 : checks on the parameter values
 		if (param.H1 < param.H2 || param.H1 < param.H3) {
 			throw `err885: H1 ${ffix(param.H1)} is too small compare to H2 ${ffix(param.H2)} or H3 ${ffix(param.H3)}`;
@@ -148,29 +152,46 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `maison: aA3: ${ffix(radToDeg(aA3))}, aA2: ${ffix(radToDeg(aA2))} degree\n`;
 		rGeome.logstr += `fold lBD: ${ffix(lBD)} m\n`;
 		rGeome.logstr += `Roof border: low-1: ${ffix(WBL1)} low-2: ${ffix(WBL2)} high-1: ${ffix(WBH1)} high-2: ${ffix(WBH2)}\n`;
+		rGeome.logstr += `Roof top: WF1: ${ffix(param.WF1)} WF2: ${ffix(WF2)} m  ratio12: ${ffix(r12)}\n`;
 		//rGeome.logstr += `dbg326:\n${tl1}\n${tl2}\n${tl3}\n${tl4}\n`;
 		rGeome.logstr += `triangule: ${tl1}${tl2}${tl3}${tl4}\n`;
 		// step-7 : drawing of the figures
 		// figSide1
-		const ctrSide1 = contour(0, 0)
-			.addSegStrokeA(param.W1, 0)
-			.addSegStrokeA(param.W1, param.H2)
-			.addSegStrokeA(param.W1 + WBL1, param.H2);
-		if (WBEstroke) {
-			ctrSide1.addSegStrokeA(param.W1 + WBL1, param.H2 + param.WBE);
-		} else {
-			ctrSide1
-				.addPointA(param.W1 + WBL1 + WBER, param.H2 + param.WBE / 2)
-				.addPointA(param.W1 + WBL1, param.H2 + param.WBE)
-				.addSegArc2();
+		function ctrSide(
+			aW: number,
+			aWBL: number,
+			aWBH: number,
+			aSTop: number,
+			aWF: number
+		): tContour {
+			const rCtr = contour(0, 0)
+				.addSegStrokeA(aW, 0)
+				.addSegStrokeA(aW, param.H2)
+				.addSegStrokeA(aW + aWBL, param.H2);
+			if (WBEstroke) {
+				rCtr.addSegStrokeA(aW + aWBL, param.H2 + param.WBE);
+			} else {
+				rCtr.addPointA(aW + aWBL + WBER, param.H2 + param.WBE / 2)
+					.addPointA(aW + aWBL, param.H2 + param.WBE)
+					.addSegArc2();
+			}
+			rCtr.addSegStrokeA(aW + aWBL - aWBH, param.H2 + param.WBE + WBH1H)
+				.addSegStrokeA(aSTop + aWF / 2, param.H1)
+				.addSegStrokeA(aSTop - aWF / 2, param.H1)
+				.addSegStrokeA(-aWBL + aWBH, param.H3 + param.WBE + WBH1H)
+				.addSegStrokeA(-aWBL, param.H3 + param.WBE);
+			if (WBEstroke) {
+				rCtr.addSegStrokeA(-aWBL, param.H3);
+			} else {
+				rCtr.addPointA(-aWBL - WBER, param.H3 + param.WBE / 2)
+					.addPointA(-aWBL, param.H3)
+					.addSegArc2();
+			}
+			rCtr.addSegStrokeA(0, param.H3).closeSegStroke();
+			return rCtr;
 		}
-		ctrSide1.addSegStrokeA(s1top, param.H1).addSegStrokeA(0, param.H3).closeSegStroke();
-		const ctrSide2 = contour(0, 0)
-			.addSegStrokeA(param.W2, 0)
-			.addSegStrokeA(param.W2, param.H2)
-			.addSegStrokeA(s2top, param.H1)
-			.addSegStrokeA(0, param.H3)
-			.closeSegStroke();
+		const ctrSide1 = ctrSide(param.W1, WBL1, WBH1, s1top, param.WF1);
+		const ctrSide2 = ctrSide(param.W2, WBL2, WBH2, s2top, WF2);
 		figSide1.addMainO(ctrSide1);
 		figSide1.addSecond(ctrSide2.translate(s1top - s2top, 0));
 		// figSide2
@@ -182,22 +203,49 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeA(param.W1, param.L1)
 			.addSegStrokeA(0, lExt1)
 			.closeSegStroke();
-		const ctrFaitiere1 = contour(s1top, 0).addSegStrokeA(s1top, lExt1f);
+		//function ctrFaitiere(
+		//	aW: number,
+		//	aWBL: number,
+		//	aWBH: number,
+		//	aSTop: number,
+		//	aWF: number,
+		//	aS: number,
+		//	aL: number
+		//): tContour {
+		//	const rCtr = contour(0, aS)
+		//		.addSegStrokeA(-aWBL, aS)
+		//		.addSegStrokeA(-aWBL, aL)
+		//		.addSegStrokeA(-aWBL + aWBH, aL)
+		//		.addSegStrokeA(-aWBL + aWBH, aS)
+		//		.addSegStrokeA(aSTop - param.WF / 2, aS)
+		//		.addSegStrokeA(aSTop - param.WF / 2, aL)
+		//		.addSegStrokeA(aSTop, aL)
+		//		.addSegStrokeA(aSTop, aS)
+		//		.addSegStrokeA(aSTop + param.WF / 2, aS)
+		//		.addSegStrokeA(aSTop + param.WF / 2, aL)
+		//		.addSegStrokeA(aW + aWBL - aWBH, aL)
+		//		.addSegStrokeA(aW + aWBL - aWBH, aS)
+		//		.addSegStrokeA(aW + aWBL, aS)
+		//		.addSegStrokeA(aW + aWBL, aL)
+		//		.addSegStrokeA(aW, aL);
+		//	return rCtr;
+		//}
+		//const ctrFaitiere1 = ctrFaitiere(param.W1, WBL1, WBH1, s1top, param.WF1, 0, param.L1);
 		const ctrRoof2 = contour(0, 0)
 			.addSegStrokeA(param.W2, lDC)
 			.addSegStrokeA(param.W2, lExt2)
 			.addSegStrokeA(0, lExt2)
 			.closeSegStroke();
-		const ctrFaitiere2 = contour(s2top, lExt2f).addSegStrokeA(s2top, lExt2);
+		//const ctrFaitiere2 = ctrFaitiere(param.W2, WBL2, WBH2, s2top, WF2, lDC, lDC + param.L2);
 		figTop1.addMainO(ctrRoof1);
-		figTop1.addSecond(ctrFaitiere1);
+		//figTop1.addSecond(ctrFaitiere1);
 		figTop1.addSecond(ctrRoof2.translate(0, lExt1).rotate(0, lExt1, aAExt));
-		figTop1.addSecond(ctrFaitiere2.translate(0, lExt1).rotate(0, lExt1, aAExt));
+		//figTop1.addSecond(ctrFaitiere2.translate(0, lExt1).rotate(0, lExt1, aAExt));
 		// figTop2
 		figTop2.addMainO(ctrRoof2);
-		figTop2.addSecond(ctrFaitiere2);
+		//figTop2.addSecond(ctrFaitiere2);
 		figTop2.addSecond(ctrRoof1.translate(0, -lExt1).rotate(0, 0, -aAExt));
-		figTop2.addSecond(ctrFaitiere1.translate(0, -lExt1).rotate(0, 0, -aAExt));
+		//figTop2.addSecond(ctrFaitiere1.translate(0, -lExt1).rotate(0, 0, -aAExt));
 		// final figure list
 		rGeome.fig = {
 			faceSide1: figSide1,
