@@ -47,12 +47,23 @@ const pDef: tParamDef = {
 		pNumber('H2', 'm', 6, 2, 50, 0.1),
 		pNumber('H3', 'm', 6, 2, 50, 0.1),
 		pNumber('RS', '%', 50, 10, 90, 1),
-		pSectionSeparator('Top'),
+		pSectionSeparator('TopView'),
 		pNumber('A1', 'degree', 135, 90, 180, 1),
 		pNumber('W1', 'm', 12, 2, 50, 0.1),
 		pNumber('W2', 'm', 12, 2, 50, 0.1),
 		pNumber('L1', 'm', 16, 2, 50, 0.1),
-		pNumber('L2', 'm', 16, 2, 50, 0.1)
+		pNumber('L2', 'm', 16, 2, 50, 0.1),
+		pSectionSeparator('Roof border'),
+		pNumber('WF', 'm', 0.4, 0, 1.5, 0.1),
+		pNumber('WBL', '%', 3.0, 0, 20, 0.01),
+		pNumber('WBH', '%', 5.0, 0, 20, 0.01),
+		pNumber('AB', 'degree', 15, 0, 80, 1),
+		pNumber('WBE', 'm', 0.3, 0.05, 1, 0.01),
+		pNumber('WBR', '%', 50, 0, 100, 1),
+		pSectionSeparator('Chimney'),
+		pNumber('ChiH', 'm', 1.5, 0, 3, 0.1),
+		pNumber('ChiW', 'm', 1.5, 0.3, 3, 0.1),
+		pNumber('ChiT', 'm', 0.6, 0.3, 3, 0.1)
 	],
 	paramSvg: {
 		H1: 'maison_side.svg',
@@ -63,7 +74,16 @@ const pDef: tParamDef = {
 		W1: 'maison_top.svg',
 		W2: 'maison_top.svg',
 		L1: 'maison_top.svg',
-		L2: 'maison_top.svg'
+		L2: 'maison_top.svg',
+		WF: 'maison_roofBorder.svg',
+		WBL: 'maison_roofBorder.svg',
+		WBH: 'maison_roofBorder.svg',
+		AB: 'maison_roofBorder.svg',
+		WBE: 'maison_roofBorder.svg',
+		WBR: 'maison_roofBorder.svg',
+		ChiH: 'maison_chimney.svg',
+		ChiW: 'maison_chimney.svg',
+		ChiT: 'maison_chimney.svg'
 	},
 	sim: {
 		tMax: 100,
@@ -109,6 +129,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const lExt1f = param.L1 + lDE * (1 - param.RS / 100.0);
 		const lExt2f = (lDC * param.RS) / 100.0;
 		const aAExt = aA1 - Math.PI;
+		const WBL1 = (param.L1 * param.WBL) / 100.0;
+		const WBH1 = (param.L1 * param.WBH) / 100.0;
+		const WBL2 = (param.L2 * param.WBL) / 100.0;
+		const WBH2 = (param.L2 * param.WBH) / 100.0;
+		const WBEstroke = param.WBR < 1 ? true : false;
+		const WBER = (param.WBE * param.WBR) / 200.0;
 		// step-5 : checks on the parameter values
 		if (param.H1 < param.H2 || param.H1 < param.H3) {
 			throw `err885: H1 ${ffix(param.H1)} is too small compare to H2 ${ffix(param.H2)} or H3 ${ffix(param.H3)}`;
@@ -121,6 +147,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `maison: height ${ffix(param.H1)} m\n`;
 		rGeome.logstr += `maison: aA3: ${ffix(radToDeg(aA3))}, aA2: ${ffix(radToDeg(aA2))} degree\n`;
 		rGeome.logstr += `fold lBD: ${ffix(lBD)} m\n`;
+		rGeome.logstr += `Roof border: low-1: ${ffix(WBL1)} low-2: ${ffix(WBL2)} high-1: ${ffix(WBH1)} high-2: ${ffix(WBH2)}\n`;
 		//rGeome.logstr += `dbg326:\n${tl1}\n${tl2}\n${tl3}\n${tl4}\n`;
 		rGeome.logstr += `triangule: ${tl1}${tl2}${tl3}${tl4}\n`;
 		// step-7 : drawing of the figures
@@ -128,9 +155,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrSide1 = contour(0, 0)
 			.addSegStrokeA(param.W1, 0)
 			.addSegStrokeA(param.W1, param.H2)
-			.addSegStrokeA(s1top, param.H1)
-			.addSegStrokeA(0, param.H3)
-			.closeSegStroke();
+			.addSegStrokeA(param.W1 + WBL1, param.H2);
+		if (WBEstroke) {
+			ctrSide1.addSegStrokeA(param.W1 + WBL1, param.H2 + param.WBE);
+		} else {
+			ctrSide1
+				.addPointA(param.W1 + WBL1 + WBER, param.H2 + param.WBE / 2)
+				.addPointA(param.W1 + WBL1, param.H2 + param.WBE)
+				.addSegArc2();
+		}
+		ctrSide1.addSegStrokeA(s1top, param.H1).addSegStrokeA(0, param.H3).closeSegStroke();
 		const ctrSide2 = contour(0, 0)
 			.addSegStrokeA(param.W2, 0)
 			.addSegStrokeA(param.W2, param.H2)
