@@ -203,49 +203,50 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeA(param.W1, param.L1)
 			.addSegStrokeA(0, lExt1)
 			.closeSegStroke();
-		//function ctrFaitiere(
-		//	aW: number,
-		//	aWBL: number,
-		//	aWBH: number,
-		//	aSTop: number,
-		//	aWF: number,
-		//	aS: number,
-		//	aL: number
-		//): tContour {
-		//	const rCtr = contour(0, aS)
-		//		.addSegStrokeA(-aWBL, aS)
-		//		.addSegStrokeA(-aWBL, aL)
-		//		.addSegStrokeA(-aWBL + aWBH, aL)
-		//		.addSegStrokeA(-aWBL + aWBH, aS)
-		//		.addSegStrokeA(aSTop - param.WF / 2, aS)
-		//		.addSegStrokeA(aSTop - param.WF / 2, aL)
-		//		.addSegStrokeA(aSTop, aL)
-		//		.addSegStrokeA(aSTop, aS)
-		//		.addSegStrokeA(aSTop + param.WF / 2, aS)
-		//		.addSegStrokeA(aSTop + param.WF / 2, aL)
-		//		.addSegStrokeA(aW + aWBL - aWBH, aL)
-		//		.addSegStrokeA(aW + aWBL - aWBH, aS)
-		//		.addSegStrokeA(aW + aWBL, aS)
-		//		.addSegStrokeA(aW + aWBL, aL)
-		//		.addSegStrokeA(aW, aL);
-		//	return rCtr;
-		//}
-		//const ctrFaitiere1 = ctrFaitiere(param.W1, WBL1, WBH1, s1top, param.WF1, 0, param.L1);
+		function ctrFaitiere(
+			aW: number,
+			aWBL: number,
+			aWBH: number,
+			aSTop: number,
+			aWF: number,
+			aS: number,
+			aL: number
+		): tContour {
+			console.log(aW + aWBL + aWBH + aSTop + aWF + aS + aL);
+			const rCtr = contour(0, aS)
+				.addSegStrokeA(-aWBL, aS)
+				.addSegStrokeA(-aWBL, aL)
+				.addSegStrokeA(-aWBL + aWBH, aL)
+				.addSegStrokeA(-aWBL + aWBH, aS)
+				.addSegStrokeA(aSTop - aWF / 2, aS)
+				.addSegStrokeA(aSTop - aWF / 2, aL)
+				.addSegStrokeA(aSTop, aL)
+				.addSegStrokeA(aSTop, aS)
+				.addSegStrokeA(aSTop + aWF / 2, aS)
+				.addSegStrokeA(aSTop + aWF / 2, aL)
+				.addSegStrokeA(aW + aWBL - aWBH, aL)
+				.addSegStrokeA(aW + aWBL - aWBH, aS)
+				.addSegStrokeA(aW + aWBL, aS)
+				.addSegStrokeA(aW + aWBL, aL)
+				.addSegStrokeA(aW, aL);
+			return rCtr;
+		}
+		const ctrFaitiere1 = ctrFaitiere(param.W1, WBL1, WBH1, s1top, param.WF1, 0, param.L1);
 		const ctrRoof2 = contour(0, 0)
 			.addSegStrokeA(param.W2, lDC)
 			.addSegStrokeA(param.W2, lExt2)
 			.addSegStrokeA(0, lExt2)
 			.closeSegStroke();
-		//const ctrFaitiere2 = ctrFaitiere(param.W2, WBL2, WBH2, s2top, WF2, lDC, lDC + param.L2);
+		const ctrFaitiere2 = ctrFaitiere(param.W2, WBL2, WBH2, s2top, WF2, lDC, lDC + param.L2);
 		figTop1.addMainO(ctrRoof1);
-		//figTop1.addSecond(ctrFaitiere1);
+		figTop1.addSecond(ctrFaitiere1);
 		figTop1.addSecond(ctrRoof2.translate(0, lExt1).rotate(0, lExt1, aAExt));
-		//figTop1.addSecond(ctrFaitiere2.translate(0, lExt1).rotate(0, lExt1, aAExt));
+		figTop1.addSecond(ctrFaitiere2.translate(0, lExt1).rotate(0, lExt1, aAExt));
 		// figTop2
 		figTop2.addMainO(ctrRoof2);
-		//figTop2.addSecond(ctrFaitiere2);
+		figTop2.addSecond(ctrFaitiere2);
 		figTop2.addSecond(ctrRoof1.translate(0, -lExt1).rotate(0, 0, -aAExt));
-		//figTop2.addSecond(ctrFaitiere1.translate(0, -lExt1).rotate(0, 0, -aAExt));
+		figTop2.addSecond(ctrFaitiere1.translate(0, -lExt1).rotate(0, 0, -aAExt));
 		// final figure list
 		rGeome.fig = {
 			faceSide1: figSide1,
