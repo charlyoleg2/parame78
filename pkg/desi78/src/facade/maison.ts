@@ -121,8 +121,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// below will check if aEBC + aDEC + aA1 = Pi
 		// further calculations of step-4
 		const [lDC, lDE, tl4] = triALArLL(aECD, lCE, aDEC);
-		const aA3 = Math.atan2(lDC, param.W1);
-		const aA2 = Math.atan2(lDE, param.W2);
+		const aA3 = Math.atan2(lDC, param.W2);
+		const aA2 = Math.atan2(lDE, param.W1);
 		const lBD = Math.sqrt(param.W1 ** 2 + lDC ** 2);
 		const lExt1 = param.L1 + lDE;
 		const lExt2 = param.L2 + lDC;
@@ -139,6 +139,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const WBH1H = WBH1 * Math.tan(aAB1);
 		const r12 = param.W2 / param.W1;
 		const WF2 = param.WF1 * r12;
+		const WBL1b = WBL1 + param.WBE * 2;
+		const WBL2b = WBL2 + param.WBE * r12 * 2;
+		const L1d = WBL1b * Math.tan(aA3);
+		const L1i = param.L1 - L1d;
+		const L1e = lExt1 + L1d;
+		const L2d = WBL2b * Math.tan(aA2);
+		//const L2i = param.L2 - L2d;
+		const L2e = lExt2 + L2d;
 		// step-5 : checks on the parameter values
 		if (param.H1 < param.H2 || param.H1 < param.H3) {
 			throw `err885: H1 ${ffix(param.H1)} is too small compare to H2 ${ffix(param.H2)} or H3 ${ffix(param.H3)}`;
@@ -198,10 +206,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figSide2.addMainO(ctrSide2);
 		figSide2.addSecond(ctrSide1.translate(s2top - s1top, 0));
 		// figTop1
-		const ctrRoof1 = contour(0, 0)
-			.addSegStrokeA(param.W1, 0)
-			.addSegStrokeA(param.W1, param.L1)
-			.addSegStrokeA(0, lExt1)
+		const ctrRoof1 = contour(-WBL1b, 0)
+			.addSegStrokeA(param.W1 + WBL1b, 0)
+			.addSegStrokeA(param.W1 + WBL1b, L1i)
+			.addSegStrokeA(-WBL1b, L1e)
 			.closeSegStroke();
 		function ctrFaitiere(
 			aW: number,
@@ -212,8 +220,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			aS: number,
 			aL: number
 		): tContour {
-			console.log(aW + aWBL + aWBH + aSTop + aWF + aS + aL);
-			const rCtr = contour(0, aS)
+			const rCtr = contour(0, aL)
+				.addSegStrokeA(0, aS)
 				.addSegStrokeA(-aWBL, aS)
 				.addSegStrokeA(-aWBL, aL)
 				.addSegStrokeA(-aWBL + aWBH, aL)
@@ -228,14 +236,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeA(aW + aWBL - aWBH, aS)
 				.addSegStrokeA(aW + aWBL, aS)
 				.addSegStrokeA(aW + aWBL, aL)
-				.addSegStrokeA(aW, aL);
+				.addSegStrokeA(aW, aL)
+				.addSegStrokeA(aW, aS);
 			return rCtr;
 		}
 		const ctrFaitiere1 = ctrFaitiere(param.W1, WBL1, WBH1, s1top, param.WF1, 0, param.L1);
-		const ctrRoof2 = contour(0, 0)
-			.addSegStrokeA(param.W2, lDC)
-			.addSegStrokeA(param.W2, lExt2)
-			.addSegStrokeA(0, lExt2)
+		const ctrRoof2 = contour(-WBL2b, -L2d)
+			.addSegStrokeA(param.W2 + WBL2b, lDC + L2d)
+			.addSegStrokeA(param.W2 + WBL2b, lExt2)
+			.addSegStrokeA(-WBL2b, lExt2)
 			.closeSegStroke();
 		const ctrFaitiere2 = ctrFaitiere(param.W2, WBL2, WBH2, s2top, WF2, lDC, lDC + param.L2);
 		figTop1.addMainO(ctrRoof1);
@@ -276,7 +285,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					outName: `subpax_${designName}_side1`,
 					face: `${designName}_faceSide1`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: lExt1,
+					length: L1e,
 					rotate: [Math.PI / 2, 0, 0],
 					translate: [0, lExt1, 0]
 				},
@@ -292,7 +301,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					outName: `subpax_${designName}_side2`,
 					face: `${designName}_faceSide2`,
 					extrudeMethod: EExtrude.eLinearOrtho,
-					length: lExt2,
+					length: L2e,
 					rotate: t3dSide2.getRotation(),
 					translate: t3dSide2.getTranslation()
 				}
