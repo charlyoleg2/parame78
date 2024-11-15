@@ -211,6 +211,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeA(param.W1 + WBL1b, L1i)
 			.addSegStrokeA(-WBL1b, L1e)
 			.closeSegStroke();
+		const ctrRoofWall1 = contour(0, 0)
+			.addSegStrokeA(param.W1, 0)
+			.addSegStrokeA(param.W1, param.L1)
+			.addSegStrokeA(0, lExt1)
+			.closeSegStroke();
 		function ctrFaitiere(
 			aW: number,
 			aWBL: number,
@@ -246,15 +251,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeA(param.W2 + WBL2b, lExt2)
 			.addSegStrokeA(-WBL2b, lExt2)
 			.closeSegStroke();
+		const ctrRoofWall2 = contour(0, 0)
+			.addSegStrokeA(param.W2, lDC)
+			.addSegStrokeA(param.W2, lExt2)
+			.addSegStrokeA(0, lExt2)
+			.closeSegStroke();
 		const ctrFaitiere2 = ctrFaitiere(param.W2, WBL2, WBH2, s2top, WF2, lDC, lDC + param.L2);
 		figTop1.addMainO(ctrRoof1);
+		figTop1.addDynamics(ctrRoofWall1);
 		figTop1.addSecond(ctrFaitiere1);
 		figTop1.addSecond(ctrRoof2.translate(0, lExt1).rotate(0, lExt1, aAExt));
+		figTop1.addDynamics(ctrRoofWall2.translate(0, lExt1).rotate(0, lExt1, aAExt));
 		figTop1.addSecond(ctrFaitiere2.translate(0, lExt1).rotate(0, lExt1, aAExt));
 		// figTop2
 		figTop2.addMainO(ctrRoof2);
+		figTop2.addDynamics(ctrRoofWall2);
 		figTop2.addSecond(ctrFaitiere2);
 		figTop2.addSecond(ctrRoof1.translate(0, -lExt1).rotate(0, 0, -aAExt));
+		figTop2.addDynamics(ctrRoofWall1.translate(0, -lExt1).rotate(0, 0, -aAExt));
 		figTop2.addSecond(ctrFaitiere1.translate(0, -lExt1).rotate(0, 0, -aAExt));
 		// final figure list
 		rGeome.fig = {
