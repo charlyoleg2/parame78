@@ -289,7 +289,39 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		];
 		if (ChiNb > 1) {
 			ctrChiTopList.push(
-				ctrRectangle(s2top - param.ChiW / 2, lExt2 - param.ChiW, param.ChiW, param.ChiT)
+				ctrRectangle(s2top - param.ChiW / 2, lExt2 - param.ChiT, param.ChiW, param.ChiT)
+					.translate(0, lExt1)
+					.rotate(0, lExt1, aAExt)
+			);
+		}
+		if (ChiNb > 2) {
+			ctrChiTopList.push(
+				ctrRectangle(
+					s1top - param.ChiW / 2,
+					param.L1 + (lDC - param.ChiT) / 2,
+					param.ChiW,
+					param.ChiT
+				).rotate(s1top, param.L1 + lDC / 2, -aA3)
+			);
+		}
+		if (ChiNb > 3) {
+			ctrChiTopList.push(
+				ctrRectangle(
+					s1top - param.ChiW / 2,
+					(lExt1 - param.ChiT) / 2,
+					param.ChiW,
+					param.ChiT
+				)
+			);
+		}
+		if (ChiNb > 4) {
+			ctrChiTopList.push(
+				ctrRectangle(
+					s2top - param.ChiW / 2,
+					(lExt2 - param.ChiT) / 2,
+					param.ChiW,
+					param.ChiT
+				)
 					.translate(0, lExt1)
 					.rotate(0, lExt1, aAExt)
 			);
@@ -298,8 +330,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			figChimney.addMainO(iCtr);
 		}
 		figChimney.addSecond(ctrRoofWall1);
+		figChimney.addDynamics(ctrRoofWall1);
 		figChimney.addSecond(ctrFaitiere1);
 		figChimney.addSecond(ctrRoofWall2.translate(0, lExt1).rotate(0, lExt1, aAExt));
+		figChimney.addDynamics(ctrRoofWall2.translate(0, lExt1).rotate(0, lExt1, aAExt));
 		figChimney.addSecond(ctrFaitiere2.translate(0, lExt1).rotate(0, lExt1, aAExt));
 		// add chimneys to figTop1 and figTop2
 		if (ChiNb > 0) {
