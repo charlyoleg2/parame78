@@ -20,13 +20,13 @@ import {
 	//vector,
 	contour,
 	//contourCircle,
-	//ctrRectangle,
+	ctrRectangle,
 	figure,
 	degToRad,
 	radToDeg,
 	ffix,
 	pNumber,
-	//pCheckbox,
+	pCheckbox,
 	//pDropdown,
 	pSectionSeparator,
 	initGeom,
@@ -61,6 +61,7 @@ const pDef: tParamDef = {
 		pNumber('WBE', 'm', 0.3, 0.05, 1, 0.01),
 		pNumber('WBR', '%', 50, 0, 100, 1),
 		pSectionSeparator('Chimney'),
+		pCheckbox('ChiOn', true),
 		pNumber('ChiH', 'm', 1.5, 0, 3, 0.1),
 		pNumber('ChiW', 'm', 1.5, 0.3, 3, 0.1),
 		pNumber('ChiT', 'm', 0.6, 0.3, 3, 0.1)
@@ -81,6 +82,7 @@ const pDef: tParamDef = {
 		AB1: 'maison_roofBorder.svg',
 		WBE: 'maison_roofBorder.svg',
 		WBR: 'maison_roofBorder.svg',
+		ChiOn: 'maison_chimney.svg',
 		ChiH: 'maison_chimney.svg',
 		ChiW: 'maison_chimney.svg',
 		ChiT: 'maison_chimney.svg'
@@ -99,6 +101,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const figSide2 = figure();
 	const figTop1 = figure();
 	const figTop2 = figure();
+	const figChimney = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -147,6 +150,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const L2d = WBL2b * Math.tan(aA2);
 		//const L2i = param.L2 - L2d;
 		const L2e = lExt2 + L2d;
+		const H23min = Math.min(param.H2, param.H3);
+		const ChiHeight = param.H1 + param.ChiH - H23min;
 		// step-5 : checks on the parameter values
 		if (param.H1 < param.H2 || param.H1 < param.H3) {
 			throw `err885: H1 ${ffix(param.H1)} is too small compare to H2 ${ffix(param.H2)} or H3 ${ffix(param.H3)}`;
@@ -200,11 +205,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		const ctrSide1 = ctrSide(param.W1, WBL1, WBH1, s1top, param.WF1);
 		const ctrSide2 = ctrSide(param.W2, WBL2, WBH2, s2top, WF2);
+		const ctrChimenySide = ctrRectangle(s1top - param.ChiW / 2, H23min, param.ChiW, ChiHeight);
 		figSide1.addMainO(ctrSide1);
 		figSide1.addSecond(ctrSide2.translate(s1top - s2top, 0));
+		if (param.ChiOn) {
+			figSide1.addSecond(ctrChimenySide);
+		}
 		// figSide2
 		figSide2.addMainO(ctrSide2);
 		figSide2.addSecond(ctrSide1.translate(s2top - s1top, 0));
+		if (param.ChiOn) {
+			figSide2.addSecond(ctrChimenySide);
+		}
 		// figTop1
 		const ctrRoof1 = contour(-WBL1b, 0)
 			.addSegStrokeA(param.W1 + WBL1b, 0)
@@ -270,12 +282,25 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop2.addSecond(ctrRoof1.translate(0, -lExt1).rotate(0, 0, -aAExt));
 		figTop2.addDynamics(ctrRoofWall1.translate(0, -lExt1).rotate(0, 0, -aAExt));
 		figTop2.addSecond(ctrFaitiere1.translate(0, -lExt1).rotate(0, 0, -aAExt));
+		// figChimney
+		const ctrChiTop = ctrRectangle(s1top - param.ChiW / 2, 0, param.ChiW, param.ChiT);
+		figChimney.addMainO(ctrChiTop);
+		figChimney.addSecond(ctrRoofWall1);
+		figChimney.addSecond(ctrFaitiere1);
+		figChimney.addSecond(ctrRoofWall2.translate(0, lExt1).rotate(0, lExt1, aAExt));
+		figChimney.addSecond(ctrFaitiere2.translate(0, lExt1).rotate(0, lExt1, aAExt));
+		// add chimneys to figTop1 and figTop2
+		if (param.ChiOn) {
+			figTop1.addSecond(ctrChiTop);
+			figTop2.addSecond(ctrChiTop.translate(0, -lExt1).rotate(0, 0, -aAExt));
+		}
 		// final figure list
 		rGeome.fig = {
 			faceSide1: figSide1,
 			faceSide2: figSide2,
 			faceTop1: figTop1,
-			faceTop2: figTop2
+			faceTop2: figTop2,
+			faceChimney: figChimney
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -285,6 +310,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addTranslation(0, lExt2, 0)
 			.addRotation(0, 0, aAExt)
 			.addTranslation(0, lExt1, 0);
+		const unionList = [`ipax_${designName}_1`, `ipax_${designName}_2`];
+		if (param.ChiOn) {
+			unionList.push(`subpax_${designName}_chi1`);
+		}
 		rGeome.vol = {
 			extrudes: [
 				{
@@ -318,6 +347,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: L2e,
 					rotate: t3dSide2.getRotation(),
 					translate: t3dSide2.getTranslation()
+				},
+				{
+					outName: `subpax_${designName}_chi1`,
+					face: `${designName}_faceChimney`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: ChiHeight,
+					rotate: [0, 0, 0],
+					translate: [0, 0, H23min]
 				}
 			],
 			volumes: [
@@ -334,7 +371,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`ipax_${designName}_1`, `ipax_${designName}_2`]
+					inList: unionList
 				}
 			]
 		};
