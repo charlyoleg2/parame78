@@ -26,8 +26,8 @@ import {
 	radToDeg,
 	ffix,
 	pNumber,
-	pCheckbox,
-	//pDropdown,
+	//pCheckbox,
+	pDropdown,
 	pSectionSeparator,
 	initGeom,
 	transform3d,
@@ -61,7 +61,7 @@ const pDef: tParamDef = {
 		pNumber('WBE', 'm', 0.3, 0.05, 1, 0.01),
 		pNumber('WBR', '%', 50, 0, 100, 1),
 		pSectionSeparator('Chimney'),
-		pCheckbox('ChiOn', true),
+		pDropdown('ChiNb', ['5', '4', '3', '2', '1', '0']),
 		pNumber('ChiH', 'm', 1.5, 0, 3, 0.1),
 		pNumber('ChiW', 'm', 1.5, 0.3, 3, 0.1),
 		pNumber('ChiT', 'm', 0.6, 0.3, 3, 0.1)
@@ -82,7 +82,7 @@ const pDef: tParamDef = {
 		AB1: 'maison_roofBorder.svg',
 		WBE: 'maison_roofBorder.svg',
 		WBR: 'maison_roofBorder.svg',
-		ChiOn: 'maison_chimney.svg',
+		ChiNb: 'maison_chimney_nb.svg',
 		ChiH: 'maison_chimney.svg',
 		ChiW: 'maison_chimney.svg',
 		ChiT: 'maison_chimney.svg'
@@ -152,6 +152,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const L2e = lExt2 + L2d;
 		const H23min = Math.min(param.H2, param.H3);
 		const ChiHeight = param.H1 + param.ChiH - H23min;
+		const ChiNb = 5 - param.ChiNb;
 		// step-5 : checks on the parameter values
 		if (param.H1 < param.H2 || param.H1 < param.H3) {
 			throw `err885: H1 ${ffix(param.H1)} is too small compare to H2 ${ffix(param.H2)} or H3 ${ffix(param.H3)}`;
@@ -208,13 +209,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctrChimenySide = ctrRectangle(s1top - param.ChiW / 2, H23min, param.ChiW, ChiHeight);
 		figSide1.addMainO(ctrSide1);
 		figSide1.addSecond(ctrSide2.translate(s1top - s2top, 0));
-		if (param.ChiOn) {
+		if (ChiNb > 0) {
 			figSide1.addSecond(ctrChimenySide);
 		}
 		// figSide2
 		figSide2.addMainO(ctrSide2);
 		figSide2.addSecond(ctrSide1.translate(s2top - s1top, 0));
-		if (param.ChiOn) {
+		if (ChiNb > 0) {
 			figSide2.addSecond(ctrChimenySide);
 		}
 		// figTop1
@@ -283,16 +284,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop2.addDynamics(ctrRoofWall1.translate(0, -lExt1).rotate(0, 0, -aAExt));
 		figTop2.addSecond(ctrFaitiere1.translate(0, -lExt1).rotate(0, 0, -aAExt));
 		// figChimney
-		const ctrChiTop = ctrRectangle(s1top - param.ChiW / 2, 0, param.ChiW, param.ChiT);
-		figChimney.addMainO(ctrChiTop);
+		const ctrChiTopList: tContour[] = [
+			ctrRectangle(s1top - param.ChiW / 2, 0, param.ChiW, param.ChiT)
+		];
+		if (ChiNb > 1) {
+			ctrChiTopList.push(
+				ctrRectangle(s2top - param.ChiW / 2, lExt2 - param.ChiW, param.ChiW, param.ChiT)
+					.translate(0, lExt1)
+					.rotate(0, lExt1, aAExt)
+			);
+		}
+		for (const iCtr of ctrChiTopList) {
+			figChimney.addMainO(iCtr);
+		}
 		figChimney.addSecond(ctrRoofWall1);
 		figChimney.addSecond(ctrFaitiere1);
 		figChimney.addSecond(ctrRoofWall2.translate(0, lExt1).rotate(0, lExt1, aAExt));
 		figChimney.addSecond(ctrFaitiere2.translate(0, lExt1).rotate(0, lExt1, aAExt));
 		// add chimneys to figTop1 and figTop2
-		if (param.ChiOn) {
-			figTop1.addSecond(ctrChiTop);
-			figTop2.addSecond(ctrChiTop.translate(0, -lExt1).rotate(0, 0, -aAExt));
+		if (ChiNb > 0) {
+			for (const iCtr of ctrChiTopList) {
+				figTop1.addSecond(iCtr);
+				figTop2.addSecond(iCtr.translate(0, -lExt1).rotate(0, 0, -aAExt));
+			}
 		}
 		// final figure list
 		rGeome.fig = {
@@ -311,7 +325,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addRotation(0, 0, aAExt)
 			.addTranslation(0, lExt1, 0);
 		const unionList = [`ipax_${designName}_1`, `ipax_${designName}_2`];
-		if (param.ChiOn) {
+		if (ChiNb > 0) {
 			unionList.push(`subpax_${designName}_chi1`);
 		}
 		rGeome.vol = {
