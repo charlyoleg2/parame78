@@ -120,19 +120,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// below will check if aEBC + aDEC + aA1 = Pi
 		// further calculations of step-4
-		const [lDC, lDE, tl4] = triALArLL(aECD, lCE, aDEC);
-		const aA3 = Math.atan2(lDC, param.W2);
-		const aA2 = Math.atan2(lDE, param.W1);
+		const [lDE, lDC, tl4] = triALArLL(aECD, lCE, aDEC);
+		const aA3 = Math.atan2(lDC, param.W1);
+		const aA2 = Math.atan2(lDE, param.W2);
 		const lBD = Math.sqrt(param.W1 ** 2 + lDC ** 2);
-		const lExt1 = param.L1 + lDE;
-		const lExt2 = param.L2 + lDC;
-		//const lExt1f = param.L1 + lDE * (1 - param.RS / 100.0);
-		//const lExt2f = (lDC * param.RS) / 100.0;
+		const lExt1 = param.L1 + lDC;
+		const lExt2 = param.L2 + lDE;
+		//const lExt1f = param.L1 + lDC * (1 - param.RS / 100.0);
+		//const lExt2f = (lDE * param.RS) / 100.0;
 		const aAExt = aA1 - Math.PI;
-		const WBL1 = (param.L1 * param.WBL) / 100.0;
-		const WBH1 = (param.L1 * param.WBH) / 100.0;
-		const WBL2 = (param.L2 * param.WBL) / 100.0;
-		const WBH2 = (param.L2 * param.WBH) / 100.0;
+		const WBL1 = (param.W1 * param.WBL) / 100.0;
+		const WBH1 = (param.W1 * param.WBH) / 100.0;
+		const WBL2 = (param.W2 * param.WBL) / 100.0;
+		const WBH2 = (param.W2 * param.WBH) / 100.0;
 		const WBEstroke = param.WBR < 1 ? true : false;
 		const WBER = (param.WBE * param.WBR) / 200.0;
 		const aAB1 = degToRad(param.AB1);
@@ -245,18 +245,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeA(aW, aS);
 			return rCtr;
 		}
-		const ctrFaitiere1 = ctrFaitiere(param.W1, WBL1, WBH1, s1top, param.WF1, 0, param.L1);
+		const ctrFaitiere1 = ctrFaitiere(param.W1, WBL1, WBH1, s1top, param.WF1, 0, lExt1);
 		const ctrRoof2 = contour(-WBL2b, -L2d)
-			.addSegStrokeA(param.W2 + WBL2b, lDC + L2d)
+			.addSegStrokeA(param.W2 + WBL2b, lDE + L2d)
 			.addSegStrokeA(param.W2 + WBL2b, lExt2)
 			.addSegStrokeA(-WBL2b, lExt2)
 			.closeSegStroke();
 		const ctrRoofWall2 = contour(0, 0)
-			.addSegStrokeA(param.W2, lDC)
+			.addSegStrokeA(param.W2, lDE)
 			.addSegStrokeA(param.W2, lExt2)
 			.addSegStrokeA(0, lExt2)
 			.closeSegStroke();
-		const ctrFaitiere2 = ctrFaitiere(param.W2, WBL2, WBH2, s2top, WF2, lDC, lDC + param.L2);
+		const ctrFaitiere2 = ctrFaitiere(param.W2, WBL2, WBH2, s2top, WF2, 0, lExt2);
 		figTop1.addMainO(ctrRoof1);
 		figTop1.addDynamics(ctrRoofWall1);
 		figTop1.addSecond(ctrFaitiere1);
@@ -301,7 +301,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					extrudeMethod: EExtrude.eLinearOrtho,
 					length: L1e,
 					rotate: [Math.PI / 2, 0, 0],
-					translate: [0, lExt1, 0]
+					translate: [0, L1e, 0]
 				},
 				{
 					outName: `subpax_${designName}_top2`,
