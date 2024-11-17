@@ -62,6 +62,7 @@ const pDef: tParamDef = {
 		pNumber('WBR', '%', 50, 0, 100, 1),
 		pSectionSeparator('Chimney'),
 		pDropdown('ChiNb', ['5', '4', '3', '2', '1', '0']),
+		pNumber('ChiOffset', 'm', 1.5, 0, 5, 0.1),
 		pNumber('ChiH', 'm', 1.5, 0, 3, 0.1),
 		pNumber('ChiW', 'm', 1.5, 0.3, 3, 0.1),
 		pNumber('ChiT', 'm', 0.6, 0.3, 3, 0.1)
@@ -83,6 +84,7 @@ const pDef: tParamDef = {
 		WBE: 'maison_roofBorder.svg',
 		WBR: 'maison_roofBorder.svg',
 		ChiNb: 'maison_chimney_nb.svg',
+		ChiOffset: 'maison_chimney_nb.svg',
 		ChiH: 'maison_chimney.svg',
 		ChiW: 'maison_chimney.svg',
 		ChiT: 'maison_chimney.svg'
@@ -285,11 +287,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figTop2.addSecond(ctrFaitiere1.translate(0, -lExt1).rotate(0, 0, -aAExt));
 		// figChimney
 		const ctrChiTopList: tContour[] = [
-			ctrRectangle(s1top - param.ChiW / 2, 0, param.ChiW, param.ChiT)
+			ctrRectangle(s1top - param.ChiW / 2, param.ChiOffset, param.ChiW, param.ChiT)
 		];
 		if (ChiNb > 1) {
 			ctrChiTopList.push(
-				ctrRectangle(s2top - param.ChiW / 2, lExt2 - param.ChiT, param.ChiW, param.ChiT)
+				ctrRectangle(
+					s2top - param.ChiW / 2,
+					lExt2 - param.ChiOffset - param.ChiT,
+					param.ChiW,
+					param.ChiT
+				)
 					.translate(0, lExt1)
 					.rotate(0, lExt1, aAExt)
 			);
@@ -308,7 +315,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			ctrChiTopList.push(
 				ctrRectangle(
 					s1top - param.ChiW / 2,
-					(lExt1 - param.ChiT) / 2,
+					(lExt1 + param.ChiOffset - param.ChiT) / 2,
 					param.ChiW,
 					param.ChiT
 				)
@@ -318,7 +325,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			ctrChiTopList.push(
 				ctrRectangle(
 					s2top - param.ChiW / 2,
-					(lExt2 - param.ChiT) / 2,
+					(lExt2 - param.ChiOffset - param.ChiT) / 2,
 					param.ChiW,
 					param.ChiT
 				)
