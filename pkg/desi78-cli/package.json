@@ -58,21 +58,21 @@
 	},
 	"dependencies": {
 		"desi78": "^0.5.32",
-		"geomcli": "^0.5.59",
-		"geometrix": "^0.5.56"
+		"geomcli": "^0.5.60",
+		"geometrix": "^0.5.57"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.10.0",
 		"@types/eslint__js": "^8.42.3",
-		"bats": "^1.11.0",
-		"eslint": "^9.15.0",
+		"bats": "^1.11.1",
+		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^9.1.0",
-		"npm-run-all2": "^7.0.1",
-		"prettier": "^3.3.3",
+		"npm-run-all2": "^7.0.2",
+		"prettier": "^3.4.2",
 		"rimraf": "^6.0.1",
 		"tsup": "^8.3.5",
 		"typescript": "^5.6.3",
-		"typescript-eslint": "^8.15.0",
-		"vitest": "^2.1.5"
+		"typescript-eslint": "^8.20.0",
+		"vitest": "^2.1.8"
 	}
 }
