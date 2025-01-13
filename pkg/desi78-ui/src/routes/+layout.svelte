@@ -50,6 +50,15 @@
 		</code>
 	</article>
 	<article>
+		<h3>Parametrix</h3>
+		<pre>The base libraries</pre>
+		<ol>
+			<li><a href="https://github.com/charlyoleg2/parametrix">Parametrix repo</a></li>
+			<li><a href="https://charlyoleg2.github.io/parametrix/">Parametrix page</a></li>
+			<li><a href="https://catalos-catalui.vercel.app/">Catalos</a></li>
+		</ol>
+	</article>
+	<article>
 		<h3>Triangule</h3>
 		<pre>A companion library for basic calculations of triangulation</pre>
 		<ol>
