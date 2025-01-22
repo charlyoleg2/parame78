@@ -1,7 +1,7 @@
 {
 	"name": "desi78-cli",
 	"description": "The cli-frontend for desi78",
-	"version": "0.1.28",
+	"version": "1.0.0",
 	"private": false,
 	"repository": {
 		"type": "git",
@@ -57,7 +57,7 @@
 		"clean": "rimraf build dist node_modules"
 	},
 	"dependencies": {
-		"desi78": "^0.5.33",
+		"desi78": "^1.0.0",
 		"geomcli": "^1.0.3",
 		"geometrix": "^1.0.3"
 	},

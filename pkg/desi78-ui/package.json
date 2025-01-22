@@ -1,7 +1,7 @@
 {
 	"name": "desi78-ui",
 	"description": "sveltekit-ui for desi78",
-	"version": "0.1.10",
+	"version": "1.0.0",
 	"private": true,
 	"repository": {
 		"type": "git",
@@ -32,7 +32,7 @@
 		"clean": "rimraf .svelte-kit build node_modules static/pgdsvg"
 	},
 	"dependencies": {
-		"desi78": "^0.5.33",
+		"desi78": "^1.0.0",
 		"geometrix": "^1.0.3",
 		"geomui": "^1.0.3"
 	},

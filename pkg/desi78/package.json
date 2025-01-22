@@ -1,6 +1,6 @@
 {
 	"name": "desi78",
-	"version": "0.5.33",
+	"version": "1.0.0",
 	"description": "A collection of 3D-designs",
 	"private": false,
 	"repository": {
@@ -61,7 +61,8 @@
 		"clean": "rimraf dist dist2 node_modules"
 	},
 	"dependencies": {
-		"geometrix": "^1.0.3"
+		"geometrix": "^1.0.3",
+		"triangule": "^1.0.0"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.10.0",
