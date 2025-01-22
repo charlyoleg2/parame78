@@ -18,6 +18,7 @@
 	"type": "module",
 	"scripts": {
 		"cp_pgdsvg": "fse copy ../../node_modules/desi78/dist/pgdsvg static/pgdsvg",
+		"prebuild": "svelte-kit sync",
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
