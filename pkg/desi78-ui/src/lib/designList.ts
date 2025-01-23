@@ -13,6 +13,7 @@ import {
 	pulleyDef,
 	codeExample1Def,
 	demoTrianguleDef,
+	demoSheetFoldDef,
 	railDef
 } from 'desi78';
 
@@ -28,6 +29,7 @@ const designList: tAllPageDef = {
 	'desi78/pulley': pulleyDef,
 	'desi78/codeExample1': codeExample1Def,
 	'desi78/demoTriangule': demoTrianguleDef,
+	'desi78/demoSheetFold': demoSheetFoldDef,
 	'desi78/rail': railDef
 };
 
