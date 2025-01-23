@@ -1,0 +1,71 @@
+{
+	"name": "sheetfold",
+	"version": "0.1.0",
+	"description": "a library for metal sheet construction",
+	"private": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/charlyoleg2/parame78.git"
+	},
+	"homepage": "https://charlyoleg2.github.io/parame78/",
+	"author": "charlyoleg",
+	"license": "ISC",
+	"keywords": [
+		"metal",
+		"wood",
+		"sheet",
+		"cut",
+		"fold",
+		"chaudronnerie",
+		"3D",
+		"CAD"
+	],
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"!dist/**/*.map",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
+	"tsup": {
+		"entry": [
+			"src/index.ts"
+		],
+		"format": "esm",
+		"splitting": false,
+		"dts": true,
+		"sourcemap": true,
+		"clean": true
+	},
+	"scripts": {
+		"dev": "tsup --watch",
+		"build": "tsup",
+		"check": "tsc --noEmit",
+		"pretty": "prettier --check .",
+		"format": "prettier --write .",
+		"lint": "eslint .",
+		"test:unit": "vitest",
+		"test:unit:once": "vitest --run",
+		"ci": "run-s check build pretty lint test:unit:once",
+		"clean": "rimraf dist dist2 node_modules"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.10.0",
+		"@types/eslint__js": "^8.42.3",
+		"eslint": "^9.18.0",
+		"eslint-config-prettier": "^10.0.1",
+		"npm-run-all2": "^7.0.2",
+		"prettier": "^3.4.2",
+		"rimraf": "^6.0.1",
+		"tsup": "^8.3.5",
+		"typescript": "^5.7.3",
+		"typescript-eslint": "^8.21.0",
+		"vitest": "^3.0.3"
+	}
+}
