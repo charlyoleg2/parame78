@@ -47,8 +47,8 @@ const pDef: tParamDef = {
 	partName: 'demoSheetFold',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('W', 'mm', 60, 0, 200, 1),
-		pNumber('L1', 'mm', 40, 0, 200, 1),
+		pNumber('W', 'mm', 40, 0, 200, 1),
+		pNumber('L1', 'mm', 60, 0, 200, 1),
 		pNumber('L2', 'mm', 35, 0, 200, 1),
 		pSectionSeparator('Fold'),
 		pNumber('Ja', 'degree', 60, -120, 120, 1),
@@ -97,20 +97,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-7 : drawing of the figures
 		// figCut
 		const ctr1 = contour(0, 0)
-			.addSegStrokeRP(param.L1, 0)
-			.addSegStrokeRP(0, param.W)
-			.addSegStrokeRP(-param.L1, 0)
+			.addSegStrokeR(param.L1, 0)
+			.addSegStrokeR(0, param.W)
+			.addSegStrokeR(-param.L1, 0)
 			.closeSegStroke();
 		figCut.addMainO(ctr1);
 		const ctr2 = contour(param.L1, 0)
-			.addSegStrokeRP(JarcN, 0)
-			.addSegStrokeRP(0, param.W)
-			.addSegStrokeRP(-JarcN, 0)
+			.addSegStrokeR(JarcN, 0)
+			.addSegStrokeR(0, param.W)
+			.addSegStrokeR(-JarcN, 0)
 			.closeSegStroke();
 		figCut.addMainO(ctr2);
 		const ctr3 = contour(param.L1 + JarcN, 0)
-			.addSegStrokeRP(param.L2, param.W / 2)
-			.addSegStrokeRP(-param.L2, param.W / 2)
+			.addSegStrokeR(param.L2, param.W / 2)
+			.addSegStrokeR(-param.L2, param.W / 2)
 			.closeSegStroke();
 		figCut.addMainO(ctr3);
 		// final figure list
