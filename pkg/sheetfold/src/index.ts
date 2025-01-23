@@ -11,5 +11,4 @@ function facet(ifloat: number): string {
 	return ifloat.toFixed(2);
 }
 
-
 export { facet };
