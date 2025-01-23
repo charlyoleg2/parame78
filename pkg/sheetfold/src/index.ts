@@ -7,9 +7,9 @@
  *  @param ifloat - the floaf to be printed
  *  @returns the string ready for printing
  */
-function ffix(ifloat: number): string {
+function facet(ifloat: number): string {
 	return ifloat.toFixed(2);
 }
 
 
-export { ffix };
+export { facet };

@@ -31,9 +31,9 @@ Usage
 -----
 
 ```js
-import { triAArA } from 'sheetfold';
+import { facet } from 'sheetfold';
 
-const [a3, logstr] = triAArA(1.0, 2.0); // expect 0.14159
+const fa1 = facet(50, 100);
 ```
 
 
@@ -50,11 +50,11 @@ npm -w sheetfold run ci
 Main functions of SheetFold
 ---------------------------
 
-### triAArA
+### facet
 
-![sheetfold\_triAArA.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/sheetfold/svg/sheetfold_triAArA.svg)
+![sheetfold\_facet.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/sheetfold/svg/sheetfold_facet.svg)
 
-Compute the third angle fron the two first angles. The sign of the two first angles must be identical. The sign of the third angle is the same as the sign of the two first angles. The sum of the 3 angles of a triangle is Pi.
+Replace the *Contour* class of *geometrix* for creating a contour with junctions.
 
 
 Common pitfalls around SheetFold
