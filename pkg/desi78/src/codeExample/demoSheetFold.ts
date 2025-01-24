@@ -97,9 +97,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-7 : drawing of the figures
 		// figCut
 		const ctr1 = facet(0, 0)
+			.addCornerRounded(param.R1)
 			.addSegStrokeR(param.L1, 0)
 			.addSegStrokeR(0, param.W)
 			.addSegStrokeR(-param.L1, 0)
+			.addCornerRounded(param.R1)
 			.closeSegStroke();
 		figCut.addMainO(ctr1);
 		const ctr2 = contour(param.L1, 0)
@@ -110,6 +112,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figCut.addMainO(ctr2);
 		const ctr3 = facet(param.L1 + JarcN, 0)
 			.addSegStrokeR(param.L2, param.W / 2)
+			.addCornerRounded(param.R2)
 			.addSegStrokeR(-param.L2, param.W / 2)
 			.closeSegStroke();
 		figCut.addMainO(ctr3);
