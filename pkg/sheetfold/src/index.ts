@@ -1,14 +1,17 @@
 // index.ts : entry point of the library sheetfold
 
+import { Contour } from 'geometrix';
+
 /**
- * Prepare a float for printing log
- * @internal
+ * class `Facet`
  *
- *  @param ifloat - the floaf to be printed
- *  @returns the string ready for printing
  */
-function facet(ifloat: number): string {
-	return ifloat.toFixed(2);
+class Facet extends Contour {}
+
+// instantiation functions
+function facet(ix: number, iy: number, icolor = ''): Facet {
+	return new Facet(ix, iy, icolor);
 }
 
+export type { Facet };
 export { facet };

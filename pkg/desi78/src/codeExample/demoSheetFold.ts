@@ -39,7 +39,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-//import { facet } from 'sheetfold';
+import { facet } from 'sheetfold';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -96,7 +96,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `junction: neutral arc ${ffix(JarcN)}, intern arc ${ffix(JarcI)}, extern arc ${ffix(JarcE)}\n`;
 		// step-7 : drawing of the figures
 		// figCut
-		const ctr1 = contour(0, 0)
+		const ctr1 = facet(0, 0)
 			.addSegStrokeR(param.L1, 0)
 			.addSegStrokeR(0, param.W)
 			.addSegStrokeR(-param.L1, 0)
@@ -108,7 +108,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(-JarcN, 0)
 			.closeSegStroke();
 		figCut.addMainO(ctr2);
-		const ctr3 = contour(param.L1 + JarcN, 0)
+		const ctr3 = facet(param.L1 + JarcN, 0)
 			.addSegStrokeR(param.L2, param.W / 2)
 			.addSegStrokeR(-param.L2, param.W / 2)
 			.closeSegStroke();
