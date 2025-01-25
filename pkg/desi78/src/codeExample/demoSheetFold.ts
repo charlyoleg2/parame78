@@ -39,7 +39,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-import { facet } from 'sheetfold';
+import { facet, facet2contour } from 'sheetfold';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -101,11 +101,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(param.L1, 0)
 			.startJunction('J1', 'A')
 			.addSegStrokeR(0, param.W)
-			.endJunction()
 			.addSegStrokeR(-param.L1, 0)
 			.addCornerRounded(param.R1)
 			.closeSegStroke();
-		figCut.addMainO(fa1);
+		figCut.addMainO(facet2contour(fa1));
 		const ctr2 = contour(param.L1, 0)
 			.addSegStrokeR(JarcN, 0)
 			.addSegStrokeR(0, param.W)
@@ -113,13 +112,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		figCut.addMainO(ctr2);
 		const fa3 = facet(param.L1 + JarcN, 0)
-			.endJunction()
 			.addSegStrokeR(param.L2, param.W / 2)
 			.addCornerRounded(param.R2)
 			.addSegStrokeR(-param.L2, param.W / 2)
 			.startJunction('J1', 'B')
 			.closeSegStroke();
-		figCut.addMainO(fa3);
+		figCut.addMainO(facet2contour(fa3));
 		// final figure list
 		rGeome.fig = {
 			faceCut: figCut
