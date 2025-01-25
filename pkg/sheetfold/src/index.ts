@@ -1,12 +1,12 @@
 // index.ts : entry point of the library sheetfold
 
-import { ContourUncast } from './contourUncast';
+import { Contour } from 'geometrix';
 
 /**
  * class `Facet`
  *
  */
-class Facet extends ContourUncast {
+class Facet extends Contour {
 	/** @internal */
 	junctionID: string[] = [];
 	junctionOrientation: boolean[] = [];
