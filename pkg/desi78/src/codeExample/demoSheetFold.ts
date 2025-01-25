@@ -47,9 +47,9 @@ const pDef: tParamDef = {
 	partName: 'demoSheetFold',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('W', 'mm', 40, 0, 200, 1),
-		pNumber('L1', 'mm', 60, 0, 200, 1),
-		pNumber('L2', 'mm', 35, 0, 200, 1),
+		pNumber('W', 'mm', 80, 10, 200, 1),
+		pNumber('L1', 'mm', 60, 10, 200, 1),
+		pNumber('L2', 'mm', 35, 10, 200, 1),
 		pSectionSeparator('Fold'),
 		pNumber('Ja', 'degree', 60, -120, 120, 1),
 		pNumber('Jr', 'mm', 10, 1, 20, 1),
@@ -89,33 +89,37 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const JarcI = aJa * (param.Jr - param.T * (param.Jn / 100));
 		const JarcE = aJa * (param.Jr + param.T * ((100 - param.Jn) / 100));
 		// step-5 : checks on the parameter values
-		if (param.L1 < param.W) {
-			throw `err633: L1 ${param.L1} is smaller than W ${param.W} and nobody cares!`;
+		if (param.L1 > param.W) {
+			throw `err633: L1 ${param.L1} is bigger than W ${param.W} and nobody cares!`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `junction: neutral arc ${ffix(JarcN)}, intern arc ${ffix(JarcI)}, extern arc ${ffix(JarcE)}\n`;
 		// step-7 : drawing of the figures
 		// figCut
-		const ctr1 = facet(0, 0)
+		const fa1 = facet(0, 0)
 			.addCornerRounded(param.R1)
 			.addSegStrokeR(param.L1, 0)
+			.startJunction('J1', 'A')
 			.addSegStrokeR(0, param.W)
+			.endJunction()
 			.addSegStrokeR(-param.L1, 0)
 			.addCornerRounded(param.R1)
 			.closeSegStroke();
-		figCut.addMainO(ctr1);
+		figCut.addMainO(fa1);
 		const ctr2 = contour(param.L1, 0)
 			.addSegStrokeR(JarcN, 0)
 			.addSegStrokeR(0, param.W)
 			.addSegStrokeR(-JarcN, 0)
 			.closeSegStroke();
 		figCut.addMainO(ctr2);
-		const ctr3 = facet(param.L1 + JarcN, 0)
+		const fa3 = facet(param.L1 + JarcN, 0)
+			.endJunction()
 			.addSegStrokeR(param.L2, param.W / 2)
 			.addCornerRounded(param.R2)
 			.addSegStrokeR(-param.L2, param.W / 2)
+			.startJunction('J1', 'B')
 			.closeSegStroke();
-		figCut.addMainO(ctr3);
+		figCut.addMainO(fa3);
 		// final figure list
 		rGeome.fig = {
 			faceCut: figCut
