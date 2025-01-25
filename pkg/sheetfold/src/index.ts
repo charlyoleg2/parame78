@@ -2,6 +2,16 @@
 
 import { Contour } from 'geometrix';
 
+enum tJDir {
+	eA,
+	eB
+}
+
+enum tJSide {
+	eABRight,
+	eABLeft
+}
+
 /**
  * class `Facet`
  *
@@ -9,18 +19,17 @@ import { Contour } from 'geometrix';
 class Facet extends Contour {
 	/** @internal */
 	junctionID: string[] = [];
-	junctionOrientation: boolean[] = [];
+	junctionDir: tJDir[] = [];
+	junctionSide: tJSide[] = [];
 	junctionPosition: number[] = [];
-	startJunction(jName: string, aNb: string): Facet {
+	startJunction(jName: string, aNb: tJDir, abSide: tJSide): Facet {
 		//console.log(`dbg822: jName: ${jName} aNb: ${aNb}`);
-		if (!['A', 'B'].includes(aNb)) {
-			throw `err712: startJunction invalid argument aNb: ${aNb}`;
-		}
 		if (this.junctionID.includes(jName)) {
 			throw `err209: junctionID ${jName} already used`;
 		}
 		this.junctionID.push(jName);
-		this.junctionOrientation.push('A' === aNb);
+		this.junctionDir.push(aNb);
+		this.junctionSide.push(abSide);
 		this.junctionPosition.push(this.segments.length - 1);
 		return this;
 	}
@@ -37,4 +46,4 @@ function facet2contour(iFacet: Facet): Contour {
 }
 
 export type { Facet };
-export { facet, facet2contour };
+export { tJDir, tJSide, facet, facet2contour };

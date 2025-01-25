@@ -39,6 +39,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
+import { tJDir, tJSide } from 'sheetfold';
 import { facet, facet2contour } from 'sheetfold';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
@@ -99,7 +100,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const fa1 = facet(0, 0)
 			.addCornerRounded(param.R1)
 			.addSegStrokeR(param.L1, 0)
-			.startJunction('J1', 'A')
+			.startJunction('J1', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeR(0, param.W)
 			.addSegStrokeR(-param.L1, 0)
 			.addCornerRounded(param.R1)
@@ -115,7 +116,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(param.L2, param.W / 2)
 			.addCornerRounded(param.R2)
 			.addSegStrokeR(-param.L2, param.W / 2)
-			.startJunction('J1', 'B')
+			.startJunction('J1', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
 		figCut.addMainO(facet2contour(fa3));
 		// final figure list
