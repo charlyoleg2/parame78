@@ -85,7 +85,7 @@
 		"@types/express": "^5.0.0",
 		"@types/fs-extra": "^11.0.4",
 		"@types/yargs": "^17.0.33",
-		"eslint": "^9.18.0",
+		"eslint": "^9.19.0",
 		"eslint-config-prettier": "^10.0.1",
 		"npm-run-all2": "^7.0.2",
 		"prettier": "^3.4.2",
