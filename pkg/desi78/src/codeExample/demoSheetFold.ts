@@ -39,8 +39,15 @@ import {
 	//EExtrude,
 	//EBVolume
 } from 'geometrix';
-import { tJDir, tJSide } from 'sheetfold';
-import { facet, facet2contour, sheetFold } from 'sheetfold';
+import {
+	tJDir,
+	tJSide,
+	contourJ,
+	facet,
+	sheetFold,
+	contourJ2contour,
+	facet2figure
+} from 'sheetfold';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -82,7 +89,6 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figCut = figure();
-	const figPattern = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -98,7 +104,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `junction: neutral arc ${ffix(JarcN)}, intern arc ${ffix(JarcI)}, extern arc ${ffix(JarcE)}\n`;
 		// step-7 : drawing of the figures
 		// figCut
-		const fa1 = facet(0, 0)
+		const ctr1 = contourJ(0, 0)
 			.addCornerRounded(param.R1)
 			.addSegStrokeR(param.L1, 0)
 			.startJunction('J1', tJDir.eA, tJSide.eABLeft)
@@ -106,29 +112,32 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(-param.L1, 0)
 			.addCornerRounded(param.R1)
 			.closeSegStroke();
-		figCut.addMainO(facet2contour(fa1));
+		const fa1 = facet([ctr1]);
+		figCut.addMainO(contourJ2contour(ctr1));
 		const ctr2 = contour(param.L1, 0)
 			.addSegStrokeR(JarcN, 0)
 			.addSegStrokeR(0, param.W)
 			.addSegStrokeR(-JarcN, 0)
 			.closeSegStroke();
 		figCut.addMainO(ctr2);
-		const fa3 = facet(param.L1 + JarcN, 0)
+		const ctr3 = contourJ(param.L1 + JarcN, 0)
 			.addSegStrokeR(param.L2, param.W / 2)
 			.addCornerRounded(param.R2)
 			.addSegStrokeR(-param.L2, param.W / 2)
 			.startJunction('J1', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
-		figCut.addMainO(facet2contour(fa3));
+		const fa3 = facet([ctr3]);
+		figCut.addMainO(contourJ2contour(ctr3));
 		// sheetFold
 		const sFold = sheetFold([fa1, fa3], {
 			J1: { angle: param.Ja, radius: param.Jr, neutral: param.Jn }
 		});
-		figPattern.addMainO(sFold.makePattern());
 		// final figure list
 		rGeome.fig = {
 			faceCut: figCut,
-			facePattern: figPattern
+			facet1: facet2figure(fa1),
+			facet3: facet2figure(fa3),
+			facePattern: sFold.makePatternFigure()
 		};
 		// step-8 : recipes of the 3D construction
 		rGeome.vol = sFold.makeVolume();
