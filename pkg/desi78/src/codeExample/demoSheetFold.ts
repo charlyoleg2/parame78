@@ -35,12 +35,12 @@ import {
 	//pCheckbox,
 	//pDropdown,
 	pSectionSeparator,
-	initGeom,
-	EExtrude,
-	EBVolume
+	initGeom
+	//EExtrude,
+	//EBVolume
 } from 'geometrix';
 import { tJDir, tJSide } from 'sheetfold';
-import { facet, facet2contour } from 'sheetfold';
+import { facet, facet2contour, sheetFold } from 'sheetfold';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -82,6 +82,7 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figCut = figure();
+	const figPattern = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -119,31 +120,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.startJunction('J1', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
 		figCut.addMainO(facet2contour(fa3));
+		// sheetFold
+		const sFold = sheetFold([fa1, fa3], {
+			J1: { angle: param.Ja, radius: param.Jr, neutral: param.Jn }
+		});
+		figPattern.addMainO(sFold.makePattern());
 		// final figure list
 		rGeome.fig = {
-			faceCut: figCut
+			faceCut: figCut,
+			facePattern: figPattern
 		};
 		// step-8 : recipes of the 3D construction
-		const designName = rGeome.partName;
-		rGeome.vol = {
-			extrudes: [
-				{
-					outName: `subpax_${designName}_cut`,
-					face: `${designName}_faceCut`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.T,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
-				}
-			],
-			volumes: [
-				{
-					outName: `pax_${designName}`,
-					boolMethod: EBVolume.eIdentity,
-					inList: [`subpax_${designName}_cut`]
-				}
-			]
-		};
+		rGeome.vol = sFold.makeVolume();
 		// step-9 : optional sub-design parameter export
 		// sub-design
 		rGeome.sub = {};
