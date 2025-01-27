@@ -1,6 +1,6 @@
 // index.ts : entry point of the library sheetfold
 
-import type { Figure, tVolume, tContour } from 'geometrix';
+import type { Figure, tFigures, tVolume, tContour } from 'geometrix';
 import { Contour, figure } from 'geometrix';
 
 enum tJDir {
@@ -78,11 +78,14 @@ class Facet {
 
 class SheetFold {
 	/** @internal */
+	pName = '';
 	pFacets: Facet[] = [];
 	pJuncs: tJuncs2 = {};
-	constructor(iFacets: Facet[], iJuncs: tJuncs) {
+	constructor(iName: string, iFacets: Facet[], iJuncs: tJuncs) {
+		this.pName = iName;
 		const jNames2 = Object.keys(iJuncs);
 		for (const [iFacetIdx, iFacet] of iFacets.entries()) {
+			let backward = 0;
 			for (const [iCtrIdx, iCtr] of iFacet.outerInner.entries()) {
 				if (iCtr instanceof ContourJ) {
 					for (const [iJuncIdx, iJuncName] of iCtr.junctionID.entries()) {
@@ -93,6 +96,11 @@ class SheetFold {
 								this.pJuncs[iJuncName].a2FacetIdx = iFacetIdx;
 								this.pJuncs[iJuncName].a2ContIdx = iCtrIdx;
 								this.pJuncs[iJuncName].a2JuncIdx = iJuncIdx;
+								if (0 === backward) {
+									backward = 1;
+								} else {
+									throw `err628: jName ${iJuncName} is the second backward junction of facet-idx ${iFacetIdx}`;
+								}
 							} else {
 								throw `err125: jName ${iJuncName} used a third time in facet-idx ${iFacetIdx}`;
 							}
@@ -118,6 +126,9 @@ class SheetFold {
 					}
 				}
 			}
+			if (0 === backward && iFacetIdx > 0) {
+				throw `err738: iFacetIdx ${iFacetIdx} has no backward connection`;
+			}
 			this.pFacets.push(iFacet);
 		}
 	}
@@ -136,6 +147,24 @@ class SheetFold {
 		rfig.addMainOI(outerInner);
 		return rfig;
 	}
+	makeFacetFigures(): tFigures {
+		const rfigs: tFigures = {};
+		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
+			const fig = figure();
+			const outerInner: tContour[] = [];
+			for (const iCtr of iFacet.outerInner) {
+				if (iCtr instanceof ContourJ) {
+					outerInner.push(contourJ2contour(iCtr));
+				} else {
+					outerInner.push(iCtr);
+				}
+			}
+			fig.addMainOI(outerInner);
+			const faceName = `${this.pName}_f${iFacetIdx.toString().padStart(2, '0')}`;
+			rfigs[faceName] = fig;
+		}
+		return rfigs;
+	}
 	makeVolume(): tVolume {
 		return { extrudes: [], volumes: [] };
 	}
@@ -148,8 +177,8 @@ function contourJ(ix: number, iy: number, icolor = ''): ContourJ {
 function facet(iOuterInner: tContourJ[]): Facet {
 	return new Facet(iOuterInner);
 }
-function sheetFold(iFacets: Facet[], iJuncs: tJuncs): SheetFold {
-	return new SheetFold(iFacets, iJuncs);
+function sheetFold(iName: string, iFacets: Facet[], iJuncs: tJuncs): SheetFold {
+	return new SheetFold(iName, iFacets, iJuncs);
 }
 
 // other helper functions
