@@ -1,7 +1,7 @@
 // index.ts : entry point of the library sheetfold
 
 import type { Figure, tFigures, tVolume, tContour } from 'geometrix';
-import { Contour, figure, ffix } from 'geometrix';
+import { Contour, figure, ffix, SegEnum, isActiveCorner, withinPiPi } from 'geometrix';
 
 enum tJDir {
 	eA,
@@ -21,19 +21,24 @@ interface tJunc {
 type tJuncs = Record<string, tJunc>;
 
 interface tJunc2 {
+	jName: string;
 	angle: number;
 	radius: number;
 	neutral: number;
 	associated: number;
 	a1FacetIdx: number;
 	a1ContIdx: number;
-	a1JuncIdx: number;
+	a1SegIdx: number;
+	a1Dir: tJDir;
+	a1Side: tJSide;
 	a2FacetIdx: number;
 	a2ContIdx: number;
-	a2JuncIdx: number;
+	a2SegIdx: number;
+	a2Dir: tJDir;
+	a2Side: tJSide;
 	jLength: number;
+	jTeta: number;
 }
-type tJuncs2 = Record<string, tJunc2>;
 
 /**
  * class `ContourJ`
@@ -90,7 +95,7 @@ class SheetFold {
 	/** @internal */
 	pName = '';
 	pFacets: Facet[] = [];
-	pJuncs: tJuncs2 = {};
+	pJuncs: tJunc2[] = [];
 	constructor(iName: string, iFacets: Facet[], iJuncs: tJuncs) {
 		this.pName = iName;
 		const jNames2 = Object.keys(iJuncs);
@@ -99,13 +104,16 @@ class SheetFold {
 			for (const [iCtrIdx, iCtr] of iFacet.outerInner.entries()) {
 				if (iCtr instanceof ContourJ) {
 					for (const [iJuncIdx, iJuncName] of iCtr.junctionID.entries()) {
-						const jNames = Object.keys(this.pJuncs);
+						const jNames = this.pJuncs.map((item) => item.jName);
 						if (jNames.includes(iJuncName)) {
-							if (1 === this.pJuncs[iJuncName].associated) {
-								this.pJuncs[iJuncName].associated = 2;
-								this.pJuncs[iJuncName].a2FacetIdx = iFacetIdx;
-								this.pJuncs[iJuncName].a2ContIdx = iCtrIdx;
-								this.pJuncs[iJuncName].a2JuncIdx = iCtr.junctionPosition[iJuncIdx];
+							const jIdx = jNames.findIndex((item) => item === iJuncName);
+							if (1 === this.pJuncs[jIdx].associated) {
+								this.pJuncs[jIdx].associated = 2;
+								this.pJuncs[jIdx].a2FacetIdx = iFacetIdx;
+								this.pJuncs[jIdx].a2ContIdx = iCtrIdx;
+								this.pJuncs[jIdx].a2SegIdx = iCtr.junctionPosition[iJuncIdx];
+								this.pJuncs[jIdx].a2Dir = iCtr.junctionDir[iJuncIdx];
+								this.pJuncs[jIdx].a2Side = iCtr.junctionSide[iJuncIdx];
 								if (0 === backward) {
 									backward = 1;
 								} else {
@@ -116,19 +124,25 @@ class SheetFold {
 							}
 						} else {
 							if (jNames2.includes(iJuncName)) {
-								this.pJuncs[iJuncName] = {
+								this.pJuncs.push({
+									jName: iJuncName,
 									angle: iJuncs[iJuncName].angle,
 									radius: iJuncs[iJuncName].radius,
 									neutral: iJuncs[iJuncName].neutral,
 									associated: 1,
 									a1FacetIdx: iFacetIdx,
 									a1ContIdx: iCtrIdx,
-									a1JuncIdx: iCtr.junctionPosition[iJuncIdx],
+									a1SegIdx: iCtr.junctionPosition[iJuncIdx],
+									a1Dir: iCtr.junctionDir[iJuncIdx],
+									a1Side: iCtr.junctionSide[iJuncIdx],
 									a2FacetIdx: -1,
 									a2ContIdx: -1,
-									a2JuncIdx: -1,
-									jLength: 0
-								};
+									a2SegIdx: -1,
+									a2Dir: tJDir.eA,
+									a2Side: tJSide.eABRight,
+									jLength: 0,
+									jTeta: 0
+								});
 							} else {
 								throw `err129: jName ${iJuncName} not defined in junction-list`;
 							}
@@ -144,52 +158,75 @@ class SheetFold {
 	}
 	/** @internal */
 	printJuncs() {
-		const jNames = Object.keys(this.pJuncs);
-		for (const jName of jNames) {
-			const fa1 = this.pJuncs[jName].a1FacetIdx;
-			const co1 = this.pJuncs[jName].a1ContIdx;
-			const ju1 = this.pJuncs[jName].a1JuncIdx;
-			const fa2 = this.pJuncs[jName].a2FacetIdx;
-			const co2 = this.pJuncs[jName].a2ContIdx;
-			const ju2 = this.pJuncs[jName].a2JuncIdx;
-			console.log(`dbg527: ${jName} : ${fa1} ${co1} ${ju1} : ${fa2} ${co2} ${ju2}`);
+		for (const iJunc of this.pJuncs) {
+			const fa1 = iJunc.a1FacetIdx;
+			const co1 = iJunc.a1ContIdx;
+			const seg1 = iJunc.a1SegIdx;
+			const fa2 = iJunc.a2FacetIdx;
+			const co2 = iJunc.a2ContIdx;
+			const seg2 = iJunc.a2SegIdx;
+			console.log(`dbg527: ${iJunc.jName} : ${fa1} ${co1} ${seg1} : ${fa2} ${co2} ${seg2}`);
 		}
 	}
 	/** @internal */
-	oneLength(faIdx: number, coIdx: number, juIdx: number): number {
+	oneTetaLength(faIdx: number, coIdx: number, segIdx: number): [number, number] {
 		const ctr = this.pFacets[faIdx].outerInner[coIdx];
 		if (!(ctr instanceof Contour)) {
 			throw `err234: faIdx ${faIdx}, coIdx ${coIdx} is not a Contour but a ContourCircle`;
 		}
-		const segA = ctr.segments[juIdx];
-		const segB = ctr.segments[juIdx + 1];
+		const maxLen = ctr.segments.length;
+		const segA = ctr.segments[segIdx];
+		const segB = ctr.segments[(segIdx + 1) % maxLen];
+		const segC = ctr.segments[(segIdx + 2) % maxLen];
+		if (isActiveCorner(segA.sType)) {
+			throw `err101: junction ${faIdx} ${coIdx} ${segIdx} starts with an active corner`;
+		}
+		if (SegEnum.eStroke !== segB.sType) {
+			throw `err102: junction ${faIdx} ${coIdx} ${segIdx} is not a stroke`;
+		}
+		if (isActiveCorner(segC.sType)) {
+			throw `err103: junction ${faIdx} ${coIdx} ${segIdx} ends with an active corner`;
+		}
 		const rLength = Math.sqrt((segB.px - segA.px) ** 2 + (segB.py - segA.py) ** 2);
-		//console.log(`dbg320: ${faIdx} ${coIdx} ${juIdx} has a length of ${ffix(rLength)}`);
-		return rLength;
+		//console.log(`dbg320: ${faIdx} ${coIdx} ${segIdx} has a length of ${ffix(rLength)}`);
+		const rTeta = Math.atan2(segB.py - segA.py, segB.px - segA.px);
+		return [rTeta, rLength];
 	}
 	/** @internal */
 	computeLength() {
 		//this.printJuncs();
-		const jNames = Object.keys(this.pJuncs);
-		for (const jName of jNames) {
-			for (let idx = 0; idx < this.pJuncs[jName].associated; idx++) {
-				let faIdx = this.pJuncs[jName].a1FacetIdx;
-				let coIdx = this.pJuncs[jName].a1ContIdx;
-				let juIdx = this.pJuncs[jName].a1JuncIdx;
+		for (const iJunc of this.pJuncs) {
+			for (let idx = 0; idx < iJunc.associated; idx++) {
+				let faIdx = iJunc.a1FacetIdx;
+				let coIdx = iJunc.a1ContIdx;
+				let segIdx = iJunc.a1SegIdx;
+				let jDir = iJunc.a1Dir;
 				if (1 === idx) {
-					faIdx = this.pJuncs[jName].a2FacetIdx;
-					coIdx = this.pJuncs[jName].a2ContIdx;
-					juIdx = this.pJuncs[jName].a2JuncIdx;
+					faIdx = iJunc.a2FacetIdx;
+					coIdx = iJunc.a2ContIdx;
+					segIdx = iJunc.a2SegIdx;
+					jDir = iJunc.a2Dir;
 				}
-				const jLength = this.oneLength(faIdx, coIdx, juIdx);
+				const [jTetaPre, jLength] = this.oneTetaLength(faIdx, coIdx, segIdx);
+				let jTeta = jTetaPre;
+				if (tJDir.eB === jDir) {
+					jTeta = withinPiPi(jTetaPre + Math.PI);
+				}
 				if (1 === idx) {
-					const jLength1 = this.pJuncs[jName].jLength;
-					const absDiff = Math.abs(jLength - jLength1);
-					if (absDiff > cPrecision) {
-						throw `err908: jLength ${ffix(jLength1)} ${ffix(jLength)} differs of ${absDiff}`;
+					const absDiffL = Math.abs(jLength - iJunc.jLength);
+					if (absDiffL > cPrecision) {
+						throw `err908: jLength ${ffix(iJunc.jLength)} ${ffix(jLength)} differs of ${absDiffL}`;
+					}
+					const absDiffA = Math.abs(withinPiPi(jTeta - iJunc.jTeta));
+					if (absDiffA > cPrecision) {
+						throw `err909: jTeta ${ffix(iJunc.jTeta)} ${ffix(jTeta)} differs of ${absDiffA}`;
+					}
+					if (iJunc.a1Side === iJunc.a2Side) {
+						throw `err905: jSide ${iJunc.a1Side} ${iJunc.a2Side} must be opposite`;
 					}
 				} else {
-					this.pJuncs[jName].jLength = jLength;
+					iJunc.jLength = jLength;
+					iJunc.jTeta = jTeta;
 				}
 			}
 		}
