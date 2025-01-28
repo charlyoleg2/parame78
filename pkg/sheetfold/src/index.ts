@@ -17,6 +17,7 @@ interface tJunc {
 	angle: number;
 	radius: number;
 	neutral: number;
+	mark: number;
 }
 type tJuncs = Record<string, tJunc>;
 
@@ -25,19 +26,27 @@ interface tJunc2 {
 	angle: number;
 	radius: number;
 	neutral: number;
+	mark: number;
 	associated: number;
 	a1FacetIdx: number;
 	a1ContIdx: number;
 	a1SegIdx: number;
 	a1Dir: tJDir;
 	a1Side: tJSide;
+	a1x: number;
+	a1y: number;
 	a2FacetIdx: number;
 	a2ContIdx: number;
 	a2SegIdx: number;
 	a2Dir: tJDir;
 	a2Side: tJSide;
+	a2x: number;
+	a2y: number;
 	jLength: number;
 	jTeta: number;
+	diffA: number;
+	diffX: number;
+	diffY: number;
 }
 
 /**
@@ -129,19 +138,27 @@ class SheetFold {
 									angle: iJuncs[iJuncName].angle,
 									radius: iJuncs[iJuncName].radius,
 									neutral: iJuncs[iJuncName].neutral,
+									mark: iJuncs[iJuncName].mark,
 									associated: 1,
 									a1FacetIdx: iFacetIdx,
 									a1ContIdx: iCtrIdx,
 									a1SegIdx: iCtr.junctionPosition[iJuncIdx],
 									a1Dir: iCtr.junctionDir[iJuncIdx],
 									a1Side: iCtr.junctionSide[iJuncIdx],
+									a1x: 0,
+									a1y: 0,
 									a2FacetIdx: -1,
 									a2ContIdx: -1,
 									a2SegIdx: -1,
 									a2Dir: tJDir.eA,
 									a2Side: tJSide.eABRight,
+									a2x: 0,
+									a2y: 0,
 									jLength: 0,
-									jTeta: 0
+									jTeta: 0,
+									diffA: 0,
+									diffX: 0,
+									diffY: 0
 								});
 							} else {
 								throw `err129: jName ${iJuncName} not defined in junction-list`;
@@ -169,7 +186,7 @@ class SheetFold {
 		}
 	}
 	/** @internal */
-	oneTetaLength(faIdx: number, coIdx: number, segIdx: number): [number, number] {
+	oneTetaLength(faIdx: number, coIdx: number, segIdx: number): [number, number, number, number] {
 		const ctr = this.pFacets[faIdx].outerInner[coIdx];
 		if (!(ctr instanceof Contour)) {
 			throw `err234: faIdx ${faIdx}, coIdx ${coIdx} is not a Contour but a ContourCircle`;
@@ -190,7 +207,7 @@ class SheetFold {
 		const rLength = Math.sqrt((segB.px - segA.px) ** 2 + (segB.py - segA.py) ** 2);
 		//console.log(`dbg320: ${faIdx} ${coIdx} ${segIdx} has a length of ${ffix(rLength)}`);
 		const rTeta = Math.atan2(segB.py - segA.py, segB.px - segA.px);
-		return [rTeta, rLength];
+		return [segA.px, segA.py, rTeta, rLength];
 	}
 	/** @internal */
 	computeLength() {
@@ -207,7 +224,7 @@ class SheetFold {
 					segIdx = iJunc.a2SegIdx;
 					jDir = iJunc.a2Dir;
 				}
-				const [jTetaPre, jLength] = this.oneTetaLength(faIdx, coIdx, segIdx);
+				const [xx, yy, jTetaPre, jLength] = this.oneTetaLength(faIdx, coIdx, segIdx);
 				let jTeta = jTetaPre;
 				if (tJDir.eB === jDir) {
 					jTeta = withinPiPi(jTetaPre + Math.PI);
@@ -217,16 +234,20 @@ class SheetFold {
 					if (absDiffL > cPrecision) {
 						throw `err908: jLength ${ffix(iJunc.jLength)} ${ffix(jLength)} differs of ${absDiffL}`;
 					}
-					const absDiffA = Math.abs(withinPiPi(jTeta - iJunc.jTeta));
-					if (absDiffA > cPrecision) {
-						throw `err909: jTeta ${ffix(iJunc.jTeta)} ${ffix(jTeta)} differs of ${absDiffA}`;
-					}
 					if (iJunc.a1Side === iJunc.a2Side) {
 						throw `err905: jSide ${iJunc.a1Side} ${iJunc.a2Side} must be opposite`;
 					}
+					iJunc.a2x = xx;
+					iJunc.a2y = yy;
+					const diffA = withinPiPi(jTeta - iJunc.jTeta);
+					iJunc.diffA = diffA;
+					iJunc.diffX = iJunc.a2x - iJunc.a1x;
+					iJunc.diffY = iJunc.a2y - iJunc.a1y;
 				} else {
 					iJunc.jLength = jLength;
 					iJunc.jTeta = jTeta;
+					iJunc.a1x = xx;
+					iJunc.a1y = yy;
 				}
 			}
 		}

@@ -64,6 +64,7 @@ const pDef: tParamDef = {
 		pNumber('Jn', '%', 50, 0, 100, 1),
 		pSectionSeparator('Thickness'),
 		pNumber('T', 'mm', 10, 1, 20, 1),
+		pNumber('jMark', 'mm', 1, 0, 20, 0.1),
 		pNumber('R1', 'mm', 10, 0, 30, 1),
 		pNumber('R2', 'mm', 10, 0, 30, 1)
 	],
@@ -130,7 +131,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figCut.addMainO(contourJ2contour(ctr3));
 		// sheetFold
 		const sFold = sheetFold('demoSF', [fa1, fa3], {
-			J1: { angle: param.Ja, radius: param.Jr, neutral: param.Jn }
+			J1: { angle: param.Ja, radius: param.Jr, neutral: param.Jn, mark: param.jMark }
 		});
 		// final figure list
 		rGeome.fig = {
