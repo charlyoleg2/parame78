@@ -174,6 +174,7 @@ class SheetFold {
 			}
 			this.pFacets.push(iFacet);
 		}
+		this.computeLength();
 	}
 	/** @internal */
 	printJuncs() {
@@ -259,8 +260,8 @@ class SheetFold {
 			}
 		}
 	}
+	// end of constructor sub-functions
 	makePatternFigure(): Figure {
-		this.computeLength();
 		const rfig = figure();
 		const outerInner: tContour[] = [];
 		for (const iFacet of this.pFacets) {
