@@ -1,7 +1,7 @@
 // index.ts : entry point of the library sheetfold
 
 import type { Figure, tFigures, tVolume, tContour } from 'geometrix';
-import { Contour, figure, ffix, SegEnum, isActiveCorner, withinPiPi } from 'geometrix';
+import { Contour, figure, ffix, SegEnum, isActiveCorner, withinPiPi, point } from 'geometrix';
 
 enum tJDir {
 	eA,
@@ -35,6 +35,7 @@ interface tJunc2 {
 	a1Side: tJSide;
 	a1x: number;
 	a1y: number;
+	a1Teta: number;
 	a2FacetIdx: number;
 	a2ContIdx: number;
 	a2SegIdx: number;
@@ -42,8 +43,8 @@ interface tJunc2 {
 	a2Side: tJSide;
 	a2x: number;
 	a2y: number;
+	a2Teta: number;
 	jLength: number;
-	jTeta: number;
 	diffA: number;
 	diffX: number;
 	diffY: number;
@@ -147,6 +148,7 @@ class SheetFold {
 									a1Side: iCtr.junctionSide[iJuncIdx],
 									a1x: 0,
 									a1y: 0,
+									a1Teta: 0,
 									a2FacetIdx: -1,
 									a2ContIdx: -1,
 									a2SegIdx: -1,
@@ -154,8 +156,8 @@ class SheetFold {
 									a2Side: tJSide.eABRight,
 									a2x: 0,
 									a2y: 0,
+									a2Teta: 0,
 									jLength: 0,
-									jTeta: 0,
 									diffA: 0,
 									diffX: 0,
 									diffY: 0
@@ -224,9 +226,14 @@ class SheetFold {
 					segIdx = iJunc.a2SegIdx;
 					jDir = iJunc.a2Dir;
 				}
-				const [xx, yy, jTetaPre, jLength] = this.oneTetaLength(faIdx, coIdx, segIdx);
+				const [xxPre, yyPre, jTetaPre, jLength] = this.oneTetaLength(faIdx, coIdx, segIdx);
 				let jTeta = jTetaPre;
+				let xx = xxPre;
+				let yy = yyPre;
 				if (tJDir.eB === jDir) {
+					const pA = point(xxPre, yyPre).translatePolar(jTetaPre, jLength);
+					xx = pA.cx;
+					yy = pA.cy;
 					jTeta = withinPiPi(jTetaPre + Math.PI);
 				}
 				if (1 === idx) {
@@ -239,13 +246,13 @@ class SheetFold {
 					}
 					iJunc.a2x = xx;
 					iJunc.a2y = yy;
-					const diffA = withinPiPi(jTeta - iJunc.jTeta);
-					iJunc.diffA = diffA;
+					iJunc.a2Teta = jTeta;
+					iJunc.diffA = withinPiPi(iJunc.a2Teta - iJunc.a1Teta);
 					iJunc.diffX = iJunc.a2x - iJunc.a1x;
 					iJunc.diffY = iJunc.a2y - iJunc.a1y;
 				} else {
 					iJunc.jLength = jLength;
-					iJunc.jTeta = jTeta;
+					iJunc.a1Teta = jTeta;
 					iJunc.a1x = xx;
 					iJunc.a1y = yy;
 				}
