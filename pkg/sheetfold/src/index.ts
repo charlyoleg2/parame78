@@ -306,11 +306,13 @@ class SheetFold {
 			const fig = figure();
 			const outerInner: tContour[] = [];
 			for (const iCtr of iFacet.outerInner) {
-				if (iCtr instanceof ContourJ) {
-					outerInner.push(contourJ2contour(iCtr));
-				} else {
-					outerInner.push(iCtr);
+				let ctr1 = contourJ2contour(iCtr);
+				if (iFacetIdx > 0) {
+					ctr1 = ctr1
+						.translate(-iFacet.ax, -iFacet.ay)
+						.rotate(0, 0, Math.PI / 2 - iFacet.aa);
 				}
+				outerInner.push(ctr1);
 			}
 			fig.addMainOI(outerInner);
 			const faceName = `${this.pName}_f${iFacetIdx.toString().padStart(2, '0')}`;
@@ -335,7 +337,7 @@ function sheetFold(iName: string, iFacets: Facet[], iJuncs: tJuncs): SheetFold {
 }
 
 // other helper functions
-function contourJ2contour(iContoutJ: ContourJ): Contour {
+function contourJ2contour(iContoutJ: tContourJ): tContour {
 	return iContoutJ;
 }
 function facet2figure(iFacet: Facet): Figure {
