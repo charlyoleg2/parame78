@@ -1,7 +1,17 @@
 // index.ts : entry point of the library sheetfold
 
-import type { Figure, tFigures, tVolume, tContour } from 'geometrix';
-import { Contour, figure, ffix, SegEnum, isActiveCorner, withinPiPi, point } from 'geometrix';
+import type { Figure, tFigures, tVolume, tContour, tExtrude, tBVolume } from 'geometrix';
+import {
+	Contour,
+	figure,
+	ffix,
+	SegEnum,
+	isActiveCorner,
+	withinPiPi,
+	point,
+	EExtrude,
+	EBVolume
+} from 'geometrix';
 
 enum tJDir {
 	eA,
@@ -300,6 +310,10 @@ class SheetFold {
 		rfig.addMainOI(outerInner);
 		return rfig;
 	}
+	nameFace(idx: number): string {
+		const rStr = `${this.pName}_f${idx.toString().padStart(2, '0')}`;
+		return rStr;
+	}
 	makeFacetFigures(): tFigures {
 		const rfigs: tFigures = {};
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
@@ -315,13 +329,33 @@ class SheetFold {
 				outerInner.push(ctr1);
 			}
 			fig.addMainOI(outerInner);
-			const faceName = `${this.pName}_f${iFacetIdx.toString().padStart(2, '0')}`;
+			const faceName = this.nameFace(iFacetIdx);
 			rfigs[faceName] = fig;
 		}
 		return rfigs;
 	}
-	makeVolume(): tVolume {
-		return { extrudes: [], volumes: [] };
+	makeVolume(thickness: number): tVolume {
+		const extrudeList: tExtrude[] = [];
+		for (const iFacetIdx of this.pFacets.keys()) {
+			const subM: tExtrude = {
+				outName: `subpax_${this.nameFace(iFacetIdx)}`,
+				face: this.nameFace(iFacetIdx),
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: thickness,
+				rotate: [0, 0, 0],
+				translate: [0, 0, 4 * thickness * iFacetIdx]
+			};
+			extrudeList.push(subM);
+		}
+		const subN = extrudeList.map((item) => item.outName);
+		const volumeList: tBVolume[] = [];
+		const vol1: tBVolume = {
+			outName: `pax_${this.pName}`,
+			boolMethod: EBVolume.eUnion,
+			inList: subN
+		};
+		volumeList.push(vol1);
+		return { extrudes: extrudeList, volumes: volumeList };
 	}
 }
 

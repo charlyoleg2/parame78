@@ -145,7 +145,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			rGeome.fig[iFace] = ffObj[iFace];
 		}
 		// step-8 : recipes of the 3D construction
-		rGeome.vol = sFold.makeVolume();
+		rGeome.vol = sFold.makeVolume(param.T);
 		// step-9 : optional sub-design parameter export
 		// sub-design
 		rGeome.sub = {};
