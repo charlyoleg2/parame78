@@ -87,6 +87,10 @@ type tContourJ = tContour | ContourJ;
  */
 class Facet {
 	/** @internal */
+	attached = false;
+	ax = 0;
+	ay = 0;
+	aa = 0;
 	outerInner: tContourJ[] = [];
 	constructor(iOuterInner: tContourJ[]) {
 		for (const iCtr of iOuterInner) {
@@ -118,6 +122,10 @@ class SheetFold {
 						if (jNames.includes(iJuncName)) {
 							const jIdx = jNames.findIndex((item) => item === iJuncName);
 							if (1 === this.pJuncs[jIdx].associated) {
+								const facetIdx1 = this.pJuncs[jIdx].a1FacetIdx;
+								if (iFacetIdx <= facetIdx1) {
+									throw `err390: junction ${jIdx} connects facets ${facetIdx1} and ${iFacetIdx}. Must be higher!`;
+								}
 								this.pJuncs[jIdx].associated = 2;
 								this.pJuncs[jIdx].a2FacetIdx = iFacetIdx;
 								this.pJuncs[jIdx].a2ContIdx = iCtrIdx;
@@ -175,6 +183,7 @@ class SheetFold {
 			this.pFacets.push(iFacet);
 		}
 		this.computeLength();
+		this.checkFacet();
 	}
 	/** @internal */
 	printJuncs() {
@@ -251,12 +260,27 @@ class SheetFold {
 					iJunc.diffA = withinPiPi(iJunc.a2Teta - iJunc.a1Teta);
 					iJunc.diffX = iJunc.a2x - iJunc.a1x;
 					iJunc.diffY = iJunc.a2y - iJunc.a1y;
+					if (this.pFacets[faIdx].attached === false) {
+						this.pFacets[faIdx].attached = true;
+						this.pFacets[faIdx].ax = xx;
+						this.pFacets[faIdx].ay = yy;
+						this.pFacets[faIdx].aa = jTeta;
+					} else {
+						throw `err545: pFacet ${faIdx} ax is already set`;
+					}
 				} else {
 					iJunc.jLength = jLength;
 					iJunc.a1Teta = jTeta;
 					iJunc.a1x = xx;
 					iJunc.a1y = yy;
 				}
+			}
+		}
+	}
+	checkFacet() {
+		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
+			if (iFacetIdx > 0 && iFacet.attached === false) {
+				throw `err464: pFacet ${iFacetIdx} ax is not set`;
 			}
 		}
 	}
