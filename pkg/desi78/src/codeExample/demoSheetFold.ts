@@ -59,7 +59,7 @@ const pDef: tParamDef = {
 		pNumber('L1', 'mm', 60, 10, 200, 1),
 		pNumber('L2', 'mm', 35, 10, 200, 1),
 		pSectionSeparator('Fold'),
-		pNumber('Ja', 'degree', 60, -120, 120, 1),
+		pNumber('Ja', 'degree', 60, -240, 240, 1),
 		pNumber('Jr', 'mm', 10, 1, 20, 1),
 		pNumber('Jn', '%', 50, 0, 100, 1),
 		pSectionSeparator('Thickness'),
@@ -93,15 +93,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
+		const aJn = param.Jn / 100;
+		const JRadiusI = param.Jr - param.T * aJn;
+		const JRadiusE = param.Jr + param.T * (1 - aJn);
 		const aJa = degToRad(param.Ja);
 		const JarcN = aJa * param.Jr;
-		const JarcI = aJa * (param.Jr - param.T * (param.Jn / 100));
-		const JarcE = aJa * (param.Jr + param.T * ((100 - param.Jn) / 100));
+		const JarcI = aJa * JRadiusI;
+		const JarcE = aJa * JRadiusE;
 		// step-5 : checks on the parameter values
 		if (param.L1 > param.W) {
 			throw `err633: L1 ${param.L1} is bigger than W ${param.W} and nobody cares!`;
 		}
 		// step-6 : any logs
+		rGeome.logstr += `junction: radius neutral ${ffix(param.Jr)}, intern ${ffix(JRadiusI)}, extern ${ffix(JRadiusE)}\n`;
 		rGeome.logstr += `junction: neutral arc ${ffix(JarcN)}, intern arc ${ffix(JarcI)}, extern arc ${ffix(JarcE)}\n`;
 		// step-7 : drawing of the figures
 		// figCut
@@ -133,7 +137,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const sFold = sheetFold(
 			[fa1, fa3],
 			{
-				J1: { angle: param.Ja, radius: param.Jr, neutral: param.Jn, mark: param.jMark }
+				J1: { angle: aJa, radius: param.Jr, neutral: aJn, mark: param.jMark }
 			},
 			rGeome.partName
 		);
@@ -144,7 +148,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			facet3: facet2figure(fa3),
 			facePattern: sFold.makePatternFigure()
 		};
-		const ffObj = sFold.makeFacetFigures();
+		const ffObj = sFold.makeFacetFigures(param.T);
 		for (const iFace of Object.keys(ffObj)) {
 			rGeome.fig[iFace] = ffObj[iFace];
 		}
