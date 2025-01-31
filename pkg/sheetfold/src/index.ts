@@ -11,6 +11,7 @@ import {
 	isActiveCorner,
 	withinPiPi,
 	point,
+	transform3d,
 	EExtrude,
 	EBVolume
 } from 'geometrix';
@@ -400,24 +401,28 @@ class SheetFold {
 	makeVolume(thickness: number): tVolume {
 		const extrudeList: tExtrude[] = [];
 		for (const iFacetIdx of this.pFacets.keys()) {
+			const tm = transform3d().addTranslation(0, 0, 4 * thickness * iFacetIdx);
 			const subM: tExtrude = {
 				outName: `subpax_${this.nameFace(iFacetIdx)}`,
 				face: `${this.pPartName}_${this.nameFace(iFacetIdx)}`,
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: thickness,
-				rotate: [0, 0, 0],
-				translate: [0, 0, 4 * thickness * iFacetIdx]
+				rotate: tm.getRotation(),
+				translate: tm.getTranslation()
 			};
 			extrudeList.push(subM);
 		}
 		for (const [iJuncIdx, iJunc] of this.pJuncs.entries()) {
+			const tm = transform3d()
+				.addRotation(Math.PI / 2, 0, 0)
+				.addTranslation(0, iJunc.jLength, 30);
 			const subM: tExtrude = {
 				outName: `subpax_${this.nameFaceJ(iJuncIdx)}`,
 				face: `${this.pPartName}_${this.nameFaceJ(iJuncIdx)}`,
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: iJunc.jLength,
-				rotate: [0, 0, 0],
-				translate: [0, 0, 0]
+				rotate: tm.getRotation(),
+				translate: tm.getTranslation()
 			};
 			extrudeList.push(subM);
 		}
