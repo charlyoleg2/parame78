@@ -23,10 +23,10 @@ import {
 	//ShapePoint,
 	//line,
 	//vector,
-	contour,
+	//contour,
 	//contourCircle,
 	//ctrRectangle,
-	figure,
+	//figure,
 	degToRad,
 	//radToDeg,
 	//pointCoord,
@@ -57,12 +57,16 @@ const pDef: tParamDef = {
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('L1', 'mm', 100, 10, 300, 1),
 		pNumber('W1', 'mm', 200, 10, 500, 1),
+		pNumber('J1', 'degree', 60, -200, 200, 1),
 		pNumber('L2', 'mm', 100, 10, 300, 1),
 		pNumber('A2', 'degree', 60, 1, 179, 1),
+		pNumber('J2', 'degree', 60, -200, 200, 1),
 		pNumber('L3', 'mm', 100, 10, 300, 1),
 		pNumber('A3', 'degree', 60, 1, 179, 1),
+		pNumber('J3', 'degree', 60, -200, 200, 1),
 		pNumber('L4', 'mm', 100, 10, 300, 1),
 		pNumber('A4', 'degree', 60, 1, 179, 1),
+		pNumber('J4', 'degree', 60, -200, 200, 1),
 		pNumber('W5', 'mm', 100, 10, 300, 1),
 		pSectionSeparator('Thickness and fold'),
 		pNumber('Th', 'mm', 10, 1, 20, 1),
@@ -73,12 +77,16 @@ const pDef: tParamDef = {
 	paramSvg: {
 		L1: 'demoSF2_patron.svg',
 		W1: 'demoSF2_patron.svg',
+		J1: 'demoSF2_patron.svg',
 		L2: 'demoSF2_patron.svg',
 		A2: 'demoSF2_patron.svg',
+		J2: 'demoSF2_patron.svg',
 		L3: 'demoSF2_patron.svg',
 		A3: 'demoSF2_patron.svg',
+		J3: 'demoSF2_patron.svg',
 		L4: 'demoSF2_patron.svg',
 		A4: 'demoSF2_patron.svg',
+		J4: 'demoSF2_patron.svg',
 		W5: 'demoSF2_patron.svg',
 		Th: 'demoSF2_patron.svg',
 		Jradius: 'demoSF2_patron.svg',
@@ -98,15 +106,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const aJn = param.Jn / 100;
-		const JRadiusI = param.Jr - param.T * aJn;
-		const JRadiusE = param.Jr + param.T * (1 - aJn);
+		const aJn = param.Jneutral / 100;
+		const aJr = param.Jradius;
+		const aJm = param.Jmark;
+		const JRadiusI = aJr - param.Th * aJn;
+		const JRadiusE = aJr + param.Th * (1 - aJn);
 		// step-5 : checks on the parameter values
-		if (param.Jradius < param.Th) {
-			throw `err107: Jradius ${param.Jradius} is smaller than Th ${param.Th}`;
+		if (aJr < param.Th) {
+			throw `err107: Jradius ${aJr} is smaller than Th ${param.Th}`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `junction: radius neutral ${ffix(param.Jradius)}, intern ${ffix(JRadiusI)}, extern ${ffix(JRadiusE)}\n`;
+		rGeome.logstr += `junction: radius neutral ${ffix(aJr)}, intern ${ffix(JRadiusI)}, extern ${ffix(JRadiusE)}\n`;
 		// step-7 : drawing of the figures
 		// facet1
 		const ctr1 = contourJ(0, 0)
@@ -117,20 +127,26 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		const fa1 = facet([ctr1]);
 		// facet2
-		const ctr2 = contourJ(param.L1 + JarcN, 0)
-			.addSegStrokeR(param.L2, param.W / 2)
-			.addSegStrokeR(-param.L2, param.W / 2)
+		const ctr2 = contourJ(0, 0)
 			.startJunction('J1', tJDir.eB, tJSide.eABRight)
+			.addSegStrokeA(param.L1, 0)
+			.addSegStrokeAP(param.A2, param.L2)
 			.closeSegStroke();
 		const fa2 = facet([ctr2]);
+		// facet3
+		const fa3 = facet([]);
+		// facet4
+		const fa4 = facet([]);
+		// facet5
+		const fa5 = facet([]);
 		// sheetFold
 		const sFold = sheetFold(
 			[fa1, fa2, fa3, fa4, fa5],
 			{
-				J1: { angle: degToRad(param.J1), radius: param.Jradius, neutral: aJn, mark: param.Jmark },
-				J2: { angle: degToRad(param.J2), radius: param.Jradius, neutral: aJn, mark: param.Jmark },
-				J3: { angle: degToRad(param.J3), radius: param.Jradius, neutral: aJn, mark: param.Jmark },
-				J4: { angle: degToRad(param.J4), radius: param.Jradius, neutral: aJn, mark: param.Jmark },
+				J1: { angle: degToRad(param.J1), radius: aJr, neutral: aJn, mark: aJm },
+				J2: { angle: degToRad(param.J2), radius: aJr, neutral: aJn, mark: aJm },
+				J3: { angle: degToRad(param.J3), radius: aJr, neutral: aJn, mark: aJm },
+				J4: { angle: degToRad(param.J4), radius: aJr, neutral: aJn, mark: aJm }
 			},
 			param.Th,
 			rGeome.partName
