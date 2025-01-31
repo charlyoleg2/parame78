@@ -334,7 +334,7 @@ class SheetFold {
 		}
 		return rfigs;
 	}
-	makeVolume(thickness: number): tVolume {
+	makeVolume(vName: string, thickness: number): tVolume {
 		const extrudeList: tExtrude[] = [];
 		for (const iFacetIdx of this.pFacets.keys()) {
 			const subM: tExtrude = {
@@ -350,7 +350,7 @@ class SheetFold {
 		const subN = extrudeList.map((item) => item.outName);
 		const volumeList: tBVolume[] = [];
 		const vol1: tBVolume = {
-			outName: `pax_${this.pName}`,
+			outName: `pax_${vName}`,
 			boolMethod: EBVolume.eUnion,
 			inList: subN
 		};
