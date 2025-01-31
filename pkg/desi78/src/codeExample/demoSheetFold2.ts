@@ -130,7 +130,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctr2 = contourJ(0, 0)
 			.startJunction('J1', tJDir.eB, tJSide.eABRight)
 			.addSegStrokeA(param.L1, 0)
-			.addSegStrokeAP(param.A2, param.L2)
+			.addSegStrokeAP(degToRad(param.A2), param.L2)
 			.startJunction('J2', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
 		const fa2 = facet([ctr2]);
@@ -138,7 +138,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctr3 = contourJ(0, 0)
 			.startJunction('J3', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeA(param.L3, 0)
-			.addSegStrokeAP(param.A3, param.L2)
+			.addSegStrokeAP(degToRad(param.A3), param.L2)
 			.startJunction('J2', tJDir.eA, tJSide.eABLeft)
 			.closeSegStroke();
 		const fa3 = facet([ctr3]);
@@ -146,7 +146,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctr4 = contourJ(0, 0)
 			.startJunction('J3', tJDir.eB, tJSide.eABRight)
 			.addSegStrokeA(param.L3, 0)
-			.addSegStrokeAP(param.A4, param.L4)
+			.addSegStrokeAP(degToRad(param.A4), param.L4)
 			.startJunction('J4', tJDir.eA, tJSide.eABLeft)
 			.closeSegStroke();
 		const fa4 = facet([ctr4]);
@@ -154,7 +154,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const ctr5 = contourJ(0, 0)
 			.addSegStrokeR(param.W5, 0)
 			.addSegStrokeR(0, param.L4)
-			.addSegStrokeR(-param.W1, 0)
+			.addSegStrokeR(-param.W5, 0)
 			.startJunction('J4', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
 		const fa5 = facet([ctr5]);
