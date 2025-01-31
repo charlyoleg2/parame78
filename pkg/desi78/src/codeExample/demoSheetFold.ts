@@ -139,6 +139,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			{
 				J1: { angle: aJa, radius: param.Jr, neutral: aJn, mark: param.jMark }
 			},
+			param.T,
 			rGeome.partName
 		);
 		// final figure list
@@ -148,12 +149,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			facet3: facet2figure(fa3),
 			facePattern: sFold.makePatternFigure()
 		};
-		const ffObj = sFold.makeFacetFigures(param.T);
+		const ffObj = sFold.makeFacetFigures();
 		for (const iFace of Object.keys(ffObj)) {
 			rGeome.fig[iFace] = ffObj[iFace];
 		}
 		// step-8 : recipes of the 3D construction
-		rGeome.vol = sFold.makeVolume(param.T);
+		rGeome.vol = sFold.makeVolume();
 		// step-9 : optional sub-design parameter export
 		// sub-design
 		rGeome.sub = {};

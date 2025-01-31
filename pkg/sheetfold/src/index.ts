@@ -124,11 +124,19 @@ const cPrecision = 10 ** -5;
  */
 class SheetFold {
 	/** @internal */
+	pThickness = 0;
 	pPartName = '';
 	pSFMark = '';
 	pFacets: Facet[] = [];
 	pJuncs: tJunc2[] = [];
-	constructor(iFacets: Facet[], iJuncs: tJuncs, iPartName: string, iSFMark: string) {
+	constructor(
+		iFacets: Facet[],
+		iJuncs: tJuncs,
+		iThickness: number,
+		iPartName: string,
+		iSFMark: string
+	) {
+		this.pThickness = iThickness;
 		this.pPartName = iPartName;
 		this.pSFMark = iSFMark;
 		const jNames2 = Object.keys(iJuncs);
@@ -373,7 +381,7 @@ class SheetFold {
 		const rStr = `${this.pSFMark}_fj${idx.toString().padStart(2, '0')}`;
 		return rStr;
 	}
-	makeFacetFigures(thickness: number): tFigures {
+	makeFacetFigures(): tFigures {
 		const rfigs: tFigures = {};
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
 			const fig = figure();
@@ -391,8 +399,8 @@ class SheetFold {
 			const faceName = this.nameFace(iFacetIdx);
 			rfigs[faceName] = fig;
 		}
-		if (thickness <= 0) {
-			throw `err822: thickness ${thickness} is negative`;
+		if (this.pThickness <= 0) {
+			throw `err822: thickness ${this.pThickness} is negative`;
 		}
 		for (const [iJuncIdx, iJunc] of this.pJuncs.entries()) {
 			const fig = figure();
@@ -402,13 +410,13 @@ class SheetFold {
 			if (iJunc.radius < 0) {
 				throw `err328: junction ${iJuncIdx} ${iJunc.jName} with negative radius ${iJunc.radius}`;
 			}
-			const rI = iJunc.radius - thickness * iJunc.neutral;
-			const rE = iJunc.radius + thickness * (1 - iJunc.neutral);
+			const rI = iJunc.radius - this.pThickness * iJunc.neutral;
+			const rE = iJunc.radius + this.pThickness * (1 - iJunc.neutral);
 			if (rI <= 0) {
-				throw `err901: junction ${iJuncIdx} ${iJunc.jName} with negative rI ${rI}, radius ${iJunc.radius}, neutral ${iJunc.neutral}, thickness ${thickness}`;
+				throw `err901: junction ${iJuncIdx} ${iJunc.jName} with negative rI ${rI}, radius ${iJunc.radius}, neutral ${iJunc.neutral}, thickness ${this.pThickness}`;
 			}
 			if (0 === iJunc.angle) {
-				const ctrFlat = ctrRectangle(0, 0, iJunc.radius, thickness);
+				const ctrFlat = ctrRectangle(0, 0, iJunc.radius, this.pThickness);
 				fig.addMainO(ctrFlat);
 				iJunc.jx = iJunc.radius;
 				iJunc.jy = 0;
@@ -424,7 +432,7 @@ class SheetFold {
 					.addSegArc2()
 					.addSegStrokeA(pI1.cx, pI1.cy)
 					.addPointA(pI2.cx, pI2.cy)
-					.addPointA(0, thickness)
+					.addPointA(0, this.pThickness)
 					.addSegArc2()
 					.closeSegStroke();
 				fig.addMainO(ctrBendP);
@@ -442,7 +450,7 @@ class SheetFold {
 					.addSegArc2()
 					.addSegStrokeA(pE1.cx, pE1.cy)
 					.addPointA(pE2.cx, pE2.cy)
-					.addPointA(0, thickness)
+					.addPointA(0, this.pThickness)
 					.addSegArc2()
 					.closeSegStroke();
 				fig.addMainO(ctrBendN);
@@ -454,7 +462,7 @@ class SheetFold {
 		}
 		return rfigs;
 	}
-	makeVolume(thickness: number): tVolume {
+	makeVolume(): tVolume {
 		const extrudeList: tExtrude[] = [];
 		for (const iFacetIdx of this.pFacets.keys()) {
 			const tm0 = transform3d();
@@ -467,7 +475,7 @@ class SheetFold {
 				outName: `subpax_${this.nameFace(iFacetIdx)}`,
 				face: `${this.pPartName}_${this.nameFace(iFacetIdx)}`,
 				extrudeMethod: EExtrude.eLinearOrtho,
-				length: thickness,
+				length: this.pThickness,
 				rotate: tm2.getRotation(),
 				translate: tm2.getTranslation()
 			};
@@ -511,10 +519,11 @@ function facet(iOuterInner: tContourJ[]): Facet {
 function sheetFold(
 	iFacets: Facet[],
 	iJuncs: tJuncs,
+	iThickness: number,
 	iPartName: string,
 	iSFMark = 'SFG'
 ): SheetFold {
-	return new SheetFold(iFacets, iJuncs, iPartName, iSFMark);
+	return new SheetFold(iFacets, iJuncs, iThickness, iPartName, iSFMark);
 }
 
 // other helper functions
