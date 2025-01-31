@@ -62,6 +62,8 @@ interface tJunc2 {
 	diffA: number;
 	diffX: number;
 	diffY: number;
+	jx: number;
+	jy: number;
 }
 
 /**
@@ -105,6 +107,7 @@ class Facet {
 	ax = 0;
 	ay = 0;
 	aa = 0;
+	juncIdx = 0;
 	outerInner: tContourJ[] = [];
 	constructor(iOuterInner: tContourJ[]) {
 		for (const iCtr of iOuterInner) {
@@ -184,7 +187,9 @@ class SheetFold {
 									jLength: 0,
 									diffA: 0,
 									diffX: 0,
-									diffY: 0
+									diffY: 0,
+									jx: 0,
+									jy: 0
 								});
 							} else {
 								throw `err129: jName ${iJuncName} not defined in junction-list`;
@@ -240,7 +245,7 @@ class SheetFold {
 	/** @internal */
 	computeLength() {
 		//this.printJuncs();
-		for (const iJunc of this.pJuncs) {
+		for (const [iJuncIdx, iJunc] of this.pJuncs.entries()) {
 			for (let idx = 0; idx < iJunc.associated; idx++) {
 				let faIdx = iJunc.a1FacetIdx;
 				let coIdx = iJunc.a1ContIdx;
@@ -281,6 +286,7 @@ class SheetFold {
 						this.pFacets[faIdx].ax = xx;
 						this.pFacets[faIdx].ay = yy;
 						this.pFacets[faIdx].aa = jTeta;
+						this.pFacets[faIdx].juncIdx = iJuncIdx;
 					} else {
 						throw `err545: pFacet ${faIdx} ax is already set`;
 					}
@@ -302,10 +308,21 @@ class SheetFold {
 	}
 	// end of constructor sub-functions
 	/** @internal */
+	positionF(iTm: Transform3d, iFacetIdx: number): Transform3d {
+		let rTm = iTm;
+		if (iFacetIdx > 0) {
+			const jIdx = this.pFacets[iFacetIdx].juncIdx;
+			const junc = this.pJuncs[jIdx];
+			rTm = rTm.addRotation(-junc.angle, 0, 0).addTranslation(0, -junc.jx, junc.jy);
+			rTm = this.positionJ(rTm, jIdx);
+		}
+		return rTm;
+	}
 	positionJ(iTm: Transform3d, jIdx: number): Transform3d {
 		let rTm = iTm;
 		const junc = this.pJuncs[jIdx];
 		if (0 === junc.a1FacetIdx) {
+			//console.log(`dbg720: a1Teta ${junc.a1Teta}  a1x ${junc.a1x}  a1y ${junc.a1y}`);
 			rTm = rTm.addRotation(0, 0, junc.a1Teta).addTranslation(junc.a1x, junc.a1y, 0);
 		}
 		return rTm;
@@ -373,6 +390,8 @@ class SheetFold {
 			if (0 === iJunc.angle) {
 				const ctrFlat = ctrRectangle(0, 0, iJunc.radius, thickness);
 				fig.addMainO(ctrFlat);
+				iJunc.jx = iJunc.radius;
+				iJunc.jy = 0;
 			} else if (iJunc.angle > 0) {
 				const pC = point(0, rE);
 				const pE2 = pC.translatePolar(-Math.PI / 2 + iJunc.angle / 2, rE);
@@ -389,6 +408,8 @@ class SheetFold {
 					.addSegArc2()
 					.closeSegStroke();
 				fig.addMainO(ctrBendP);
+				iJunc.jx = pE1.cx;
+				iJunc.jy = pE1.cy;
 			} else {
 				const pC = point(0, -rI);
 				const pE2 = pC.translatePolar(Math.PI / 2 + iJunc.angle / 2, rE);
@@ -405,6 +426,8 @@ class SheetFold {
 					.addSegArc2()
 					.closeSegStroke();
 				fig.addMainO(ctrBendN);
+				iJunc.jx = pI1.cx;
+				iJunc.jy = pI1.cy;
 			}
 			const faceName = this.nameFaceJ(iJuncIdx);
 			rfigs[faceName] = fig;
@@ -414,14 +437,19 @@ class SheetFold {
 	makeVolume(thickness: number): tVolume {
 		const extrudeList: tExtrude[] = [];
 		for (const iFacetIdx of this.pFacets.keys()) {
-			const tm = transform3d().addTranslation(0, 0, 4 * thickness * iFacetIdx);
+			const tm0 = transform3d();
+			let tm2 = tm0;
+			if (iFacetIdx > 0) {
+				const tm1 = tm0.addRotation(0, 0, -Math.PI / 2);
+				tm2 = this.positionF(tm1, iFacetIdx);
+			}
 			const subM: tExtrude = {
 				outName: `subpax_${this.nameFace(iFacetIdx)}`,
 				face: `${this.pPartName}_${this.nameFace(iFacetIdx)}`,
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: thickness,
-				rotate: tm.getRotation(),
-				translate: tm.getTranslation()
+				rotate: tm2.getRotation(),
+				translate: tm2.getTranslation()
 			};
 			extrudeList.push(subM);
 		}
