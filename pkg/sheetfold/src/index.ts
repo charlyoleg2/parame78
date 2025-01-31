@@ -308,6 +308,25 @@ class SheetFold {
 	}
 	// end of constructor sub-functions
 	/** @internal */
+	fromJunctionToAttach(iJunc: tJunc2): [number, number, number] {
+		let ra = iJunc.a1Teta;
+		let rx = iJunc.a1x;
+		let ry = iJunc.a1y;
+		const faIdx = iJunc.a1FacetIdx;
+		if (faIdx > 0) {
+			const facette = this.pFacets[faIdx];
+			ra = ra - facette.aa;
+			const tx2 = rx - facette.ax;
+			const ty2 = ry - facette.ay;
+			const tl2 = Math.sqrt(tx2 ** 2 + ty2 ** 2);
+			const ta2 = Math.atan2(ty2, tx2);
+			const ta3 = ta2 - facette.aa;
+			rx = tl2 * Math.cos(ta3);
+			ry = tl2 * Math.sin(ta3);
+		}
+		//console.log(`dbg720: jIdx ${jIdx}  ra ${ra}  rx ${rx}  ry ${ry}`);
+		return [ra, rx, ry];
+	}
 	positionF(iTm: Transform3d, iFacetIdx: number): Transform3d {
 		let rTm = iTm;
 		if (iFacetIdx > 0) {
@@ -319,11 +338,12 @@ class SheetFold {
 		return rTm;
 	}
 	positionJ(iTm: Transform3d, jIdx: number): Transform3d {
-		let rTm = iTm;
 		const junc = this.pJuncs[jIdx];
-		if (0 === junc.a1FacetIdx) {
-			//console.log(`dbg720: a1Teta ${junc.a1Teta}  a1x ${junc.a1x}  a1y ${junc.a1y}`);
-			rTm = rTm.addRotation(0, 0, junc.a1Teta).addTranslation(junc.a1x, junc.a1y, 0);
+		const [ta, tx, ty] = this.fromJunctionToAttach(junc);
+		let rTm = iTm.addRotation(0, 0, ta).addTranslation(tx, ty, 0);
+		const faIdx = junc.a1FacetIdx;
+		if (faIdx > 0) {
+			rTm = this.positionF(rTm, faIdx);
 		}
 		return rTm;
 	}
