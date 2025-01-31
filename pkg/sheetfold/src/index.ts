@@ -410,6 +410,17 @@ class SheetFold {
 			};
 			extrudeList.push(subM);
 		}
+		for (const [iJuncIdx, iJunc] of this.pJuncs.entries()) {
+			const subM: tExtrude = {
+				outName: `subpax_${this.nameFaceJ(iJuncIdx)}`,
+				face: `${this.pPartName}_${this.nameFaceJ(iJuncIdx)}`,
+				extrudeMethod: EExtrude.eLinearOrtho,
+				length: iJunc.jLength,
+				rotate: [0, 0, 0],
+				translate: [0, 0, 0]
+			};
+			extrudeList.push(subM);
+		}
 		const subN = extrudeList.map((item) => item.outName);
 		const volumeList: tBVolume[] = [];
 		const vol1: tBVolume = {
