@@ -117,11 +117,13 @@ const cPrecision = 10 ** -5;
  */
 class SheetFold {
 	/** @internal */
-	pName = '';
+	pPartName = '';
+	pSFMark = '';
 	pFacets: Facet[] = [];
 	pJuncs: tJunc2[] = [];
-	constructor(iName: string, iFacets: Facet[], iJuncs: tJuncs) {
-		this.pName = iName;
+	constructor(iFacets: Facet[], iJuncs: tJuncs, iPartName: string, iSFMark: string) {
+		this.pPartName = iPartName;
+		this.pSFMark = iSFMark;
 		const jNames2 = Object.keys(iJuncs);
 		for (const [iFacetIdx, iFacet] of iFacets.entries()) {
 			let backward = 0;
@@ -311,7 +313,7 @@ class SheetFold {
 		return rfig;
 	}
 	nameFace(idx: number): string {
-		const rStr = `${this.pName}_f${idx.toString().padStart(2, '0')}`;
+		const rStr = `${this.pSFMark}_f${idx.toString().padStart(2, '0')}`;
 		return rStr;
 	}
 	makeFacetFigures(): tFigures {
@@ -334,12 +336,12 @@ class SheetFold {
 		}
 		return rfigs;
 	}
-	makeVolume(vName: string, thickness: number): tVolume {
+	makeVolume(thickness: number): tVolume {
 		const extrudeList: tExtrude[] = [];
 		for (const iFacetIdx of this.pFacets.keys()) {
 			const subM: tExtrude = {
 				outName: `subpax_${this.nameFace(iFacetIdx)}`,
-				face: this.nameFace(iFacetIdx),
+				face: `${this.pPartName}_${this.nameFace(iFacetIdx)}`,
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: thickness,
 				rotate: [0, 0, 0],
@@ -350,7 +352,7 @@ class SheetFold {
 		const subN = extrudeList.map((item) => item.outName);
 		const volumeList: tBVolume[] = [];
 		const vol1: tBVolume = {
-			outName: `pax_${vName}`,
+			outName: `pax_${this.pPartName}`,
 			boolMethod: EBVolume.eUnion,
 			inList: subN
 		};
@@ -366,8 +368,13 @@ function contourJ(ix: number, iy: number, icolor = ''): ContourJ {
 function facet(iOuterInner: tContourJ[]): Facet {
 	return new Facet(iOuterInner);
 }
-function sheetFold(iName: string, iFacets: Facet[], iJuncs: tJuncs): SheetFold {
-	return new SheetFold(iName, iFacets, iJuncs);
+function sheetFold(
+	iFacets: Facet[],
+	iJuncs: tJuncs,
+	iPartName: string,
+	iSFMark = 'SFG'
+): SheetFold {
+	return new SheetFold(iFacets, iJuncs, iPartName, iSFMark);
 }
 
 // other helper functions

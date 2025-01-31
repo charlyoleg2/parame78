@@ -130,9 +130,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const fa3 = facet([ctr3]);
 		figCut.addMainO(contourJ2contour(ctr3));
 		// sheetFold
-		const sFold = sheetFold('demoSF', [fa1, fa3], {
-			J1: { angle: param.Ja, radius: param.Jr, neutral: param.Jn, mark: param.jMark }
-		});
+		const sFold = sheetFold(
+			[fa1, fa3],
+			{
+				J1: { angle: param.Ja, radius: param.Jr, neutral: param.Jn, mark: param.jMark }
+			},
+			rGeome.partName
+		);
 		// final figure list
 		rGeome.fig = {
 			faceCut: figCut,
@@ -145,7 +149,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			rGeome.fig[iFace] = ffObj[iFace];
 		}
 		// step-8 : recipes of the 3D construction
-		rGeome.vol = sFold.makeVolume(rGeome.partName, param.T);
+		rGeome.vol = sFold.makeVolume(param.T);
 		// step-9 : optional sub-design parameter export
 		// sub-design
 		rGeome.sub = {};
