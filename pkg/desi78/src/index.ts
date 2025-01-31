@@ -13,3 +13,4 @@ export * from './train/rail';
 export * from './codeExample/codeExample1';
 export * from './codeExample/demoTriangule';
 export * from './codeExample/demoSheetFold';
+export * from './codeExample/demoSheetFold2';
