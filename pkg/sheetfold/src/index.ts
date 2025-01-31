@@ -12,6 +12,7 @@ import {
 	withinPiPi,
 	point,
 	transform3d,
+	Transform3d,
 	EExtrude,
 	EBVolume
 } from 'geometrix';
@@ -300,6 +301,16 @@ class SheetFold {
 		}
 	}
 	// end of constructor sub-functions
+	/** @internal */
+	positionJ(iTm: Transform3d, jIdx: number): Transform3d {
+		let rTm = iTm;
+		const junc = this.pJuncs[jIdx];
+		if (0 === junc.a1FacetIdx) {
+			rTm = rTm.addRotation(0, 0, junc.a1Teta).addTranslation(junc.a1x, junc.a1y, 0);
+		}
+		return rTm;
+	}
+	// external API
 	makePatternFigure(): Figure {
 		const rfig = figure();
 		const outerInner: tContour[] = [];
@@ -315,10 +326,12 @@ class SheetFold {
 		rfig.addMainOI(outerInner);
 		return rfig;
 	}
+	/** @internal */
 	nameFace(idx: number): string {
 		const rStr = `${this.pSFMark}_f${idx.toString().padStart(2, '0')}`;
 		return rStr;
 	}
+	/** @internal */
 	nameFaceJ(idx: number): string {
 		const rStr = `${this.pSFMark}_fj${idx.toString().padStart(2, '0')}`;
 		return rStr;
@@ -413,16 +426,18 @@ class SheetFold {
 			extrudeList.push(subM);
 		}
 		for (const [iJuncIdx, iJunc] of this.pJuncs.entries()) {
-			const tm = transform3d()
+			const tm1 = transform3d()
 				.addRotation(Math.PI / 2, 0, 0)
-				.addTranslation(0, iJunc.jLength, 30);
+				.addTranslation(0, iJunc.jLength, 0)
+				.addRotation(0, 0, -Math.PI / 2);
+			const tm2 = this.positionJ(tm1, iJuncIdx);
 			const subM: tExtrude = {
 				outName: `subpax_${this.nameFaceJ(iJuncIdx)}`,
 				face: `${this.pPartName}_${this.nameFaceJ(iJuncIdx)}`,
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: iJunc.jLength,
-				rotate: tm.getRotation(),
-				translate: tm.getTranslation()
+				rotate: tm2.getRotation(),
+				translate: tm2.getTranslation()
 			};
 			extrudeList.push(subM);
 		}
