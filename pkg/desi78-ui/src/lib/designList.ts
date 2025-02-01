@@ -15,6 +15,7 @@ import {
 	demoTrianguleDef,
 	demoSheetFoldDef,
 	demoSheetFoldDef2,
+	sfDieDef,
 	railDef
 } from 'desi78';
 
@@ -25,6 +26,7 @@ const designList: tAllPageDef = {
 	'desi78/cabane': cabaneDef,
 	'desi78/reinforced_tube': reinforcedTubeDef,
 	'desi78/reinforced_cone': reinforcedConeDef,
+	'desi78/sfDie': sfDieDef,
 	'desi78/lens_x1': lensX1Def,
 	'desi78/lens_x3': lensX3Def,
 	'desi78/pulley': pulleyDef,
