@@ -4,7 +4,7 @@
 // step-1 : import from geometrix
 import type {
 	//Contour,
-	//tContour,
+	tContour,
 	//tOuterInner,
 	tParamDef,
 	tParamVal,
@@ -148,7 +148,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(0, param.W1)
 			.addSegStrokeR(-param.W1, 0)
 			.closeSegStroke();
-		const fa4 = facet([ctr4]);
+		const c4h: tContour[] = [];
+		c4h.push(contourCircle(w1d4, w1d4, r1));
+		c4h.push(contourCircle(w1d4, 3 * w1d4, r1));
+		c4h.push(contourCircle(3 * w1d4, w1d4, r1));
+		c4h.push(contourCircle(3 * w1d4, 3 * w1d4, r1));
+		const fa4 = facet([ctr4, ...c4h]);
 		// facet5
 		const ctr5 = contourJ(0, 0)
 			.addSegStrokeR(param.W1, 0)
@@ -156,7 +161,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(0, param.W1)
 			.addSegStrokeR(-param.W1, 0)
 			.closeSegStroke();
-		const fa5 = facet([ctr5]);
+		const c5h: tContour[] = [];
+		c5h.push(contourCircle(w1d2, w1d2, r1));
+		c5h.push(contourCircle(w1d4, w1d4, r1));
+		c5h.push(contourCircle(3 * w1d4, w1d4, r1));
+		c5h.push(contourCircle(w1d4, 3 * w1d4, r1));
+		c5h.push(contourCircle(3 * w1d4, 3 * w1d4, r1));
+		const fa5 = facet([ctr5, ...c5h]);
 		// facet6
 		const ctr6 = contourJ(0, 0)
 			.addSegStrokeR(param.W1, 0)
@@ -164,7 +175,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(0, param.W1)
 			.addSegStrokeR(-param.W1, 0)
 			.closeSegStroke();
-		const fa6 = facet([ctr6]);
+		const c6h: tContour[] = [];
+		c6h.push(contourCircle(w1d4, w1d4, r1));
+		c6h.push(contourCircle(2 * w1d4, w1d4, r1));
+		c6h.push(contourCircle(3 * w1d4, w1d4, r1));
+		c6h.push(contourCircle(w1d4, 3 * w1d4, r1));
+		c6h.push(contourCircle(2 * w1d4, 3 * w1d4, r1));
+		c6h.push(contourCircle(3 * w1d4, 3 * w1d4, r1));
+		const fa6 = facet([ctr6, ...c6h]);
 		// sheetFold
 		const sFold = sheetFold(
 			[fa1, fa2, fa3, fa4, fa5, fa6],
