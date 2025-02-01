@@ -24,7 +24,7 @@ import {
 	//line,
 	//vector,
 	//contour,
-	//contourCircle,
+	contourCircle,
 	//ctrRectangle,
 	//figure,
 	degToRad,
@@ -58,7 +58,7 @@ const pDef: tParamDef = {
 		pNumber('W1', 'mm', 200, 10, 500, 1),
 		pNumber('J1', 'degree', 90, -200, 200, 1),
 		pNumber('J5', 'degree', 90, -200, 200, 1),
-		pNumber('D1', 'mm', 20, 1, 100, 1),
+		pNumber('D1', 'mm', 50, 1, 100, 1),
 		pSectionSeparator('Thickness and fold'),
 		pNumber('Th', 'mm', 10, 1, 20, 1),
 		pNumber('Jradius', 'mm', 20, 1, 50, 1),
@@ -93,6 +93,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aJm = param.Jmark;
 		const JRadiusI = aJr - param.Th * aJn;
 		const JRadiusE = aJr + param.Th * (1 - aJn);
+		const w1d2 = param.W1 / 2;
+		const w1d3 = param.W1 / 3;
+		const w1d4 = param.W1 / 4;
+		const r1 = param.D1 / 2;
 		// step-5 : checks on the parameter values
 		if (aJr < param.Th) {
 			throw `err107: Jradius ${aJr} is smaller than Th ${param.Th}`;
@@ -113,7 +117,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(-param.W1, 0)
 			.startJunction('J4', tJDir.eA, tJSide.eABLeft)
 			.closeSegStroke();
-		const fa1 = facet([ctr1]);
+		const c1h1 = contourCircle(w1d2, w1d2, r1);
+		const fa1 = facet([ctr1, c1h1]);
 		// facet2
 		const ctr2 = contourJ(0, 0)
 			.addSegStrokeR(param.W1, 0)
@@ -122,7 +127,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegStrokeR(-param.W1, 0)
 			.startJunction('J2', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
-		const fa2 = facet([ctr2]);
+		const c2h1 = contourCircle(w1d3, w1d3, r1);
+		const c2h2 = contourCircle(2 * w1d3, 2 * w1d3, r1);
+		const fa2 = facet([ctr2, c2h1, c2h2]);
 		// facet3
 		const ctr3 = contourJ(0, 0)
 			.addSegStrokeR(param.W1, 0)
@@ -130,7 +137,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.startJunction('J1', tJDir.eB, tJSide.eABRight)
 			.addSegStrokeR(-param.W1, 0)
 			.closeSegStroke();
-		const fa3 = facet([ctr3]);
+		const c3h1 = contourCircle(w1d4, w1d4, r1);
+		const c3h2 = contourCircle(w1d2, w1d2, r1);
+		const c3h3 = contourCircle(3 * w1d4, 3 * w1d4, r1);
+		const fa3 = facet([ctr3, c3h1, c3h2, c3h3]);
 		// facet4
 		const ctr4 = contourJ(0, 0)
 			.startJunction('J3', tJDir.eB, tJSide.eABRight)
