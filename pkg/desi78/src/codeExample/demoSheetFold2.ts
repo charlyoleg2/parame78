@@ -131,7 +131,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.startJunction('J1', tJDir.eB, tJSide.eABRight)
 			.addSegStrokeA(param.L1, 0)
 			.addSegStrokeAP(degToRad(param.A2), param.L2)
-			.startJunction('J2', tJDir.eA, tJSide.eABLeft)
+			.startJunction('J2', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
 		const fa2 = facet([ctr2]);
 		// facet3
@@ -139,7 +139,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.startJunction('J3', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeA(param.L3, 0)
 			.addSegStrokeAP(degToRad(param.A3), param.L2)
-			.startJunction('J2', tJDir.eB, tJSide.eABRight)
+			.startJunction('J2', tJDir.eA, tJSide.eABLeft)
 			.closeSegStroke();
 		const fa3 = facet([ctr3]);
 		// facet4
