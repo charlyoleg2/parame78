@@ -340,7 +340,11 @@ class SheetFold {
 		if (iFacetIdx > 0) {
 			const jIdx = this.pFacets[iFacetIdx].juncIdx;
 			const junc = this.pJuncs[jIdx];
-			rTm = rTm.addRotation(-junc.angle, 0, 0).addTranslation(0, -junc.jx, junc.jy);
+			if (tJSide.eABLeft === junc.a1Side) {
+				rTm = rTm.addRotation(-junc.angle, 0, 0).addTranslation(0, -junc.jx, junc.jy);
+			} else {
+				rTm = rTm.addRotation(junc.angle, 0, 0).addTranslation(0, junc.jx, junc.jy);
+			}
 			rTm = this.positionJ(rTm, jIdx);
 		}
 		return rTm;
@@ -482,10 +486,15 @@ class SheetFold {
 			extrudeList.push(subM);
 		}
 		for (const [iJuncIdx, iJunc] of this.pJuncs.entries()) {
-			const tm1 = transform3d()
-				.addRotation(Math.PI / 2, 0, 0)
-				.addTranslation(0, iJunc.jLength, 0)
-				.addRotation(0, 0, -Math.PI / 2);
+			let tm1 = transform3d();
+			if (tJSide.eABLeft === iJunc.a1Side) {
+				tm1 = tm1
+					.addRotation(Math.PI / 2, 0, 0)
+					.addTranslation(0, iJunc.jLength, 0)
+					.addRotation(0, 0, -Math.PI / 2);
+			} else {
+				tm1 = tm1.addRotation(Math.PI / 2, 0, 0).addRotation(0, 0, Math.PI / 2);
+			}
 			const tm2 = this.positionJ(tm1, iJuncIdx);
 			const subM: tExtrude = {
 				outName: `subpax_${this.nameFaceJ(iJuncIdx)}`,
