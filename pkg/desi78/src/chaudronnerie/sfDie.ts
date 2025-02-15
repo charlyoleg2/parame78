@@ -184,6 +184,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		c6h.push(contourCircle(3 * w1d4, 3 * w1d4, r1));
 		const fa6 = facet([ctr6, ...c6h]);
 		// sheetFold
+		const half1 = ['J1', param.W1];
+		const half2 = ['J1', param.W1, 'J5', param.W1];
+		const half3 = ['J1', param.W1, 'J5'];
 		const sFold = sheetFold(
 			[fa1, fa2, fa3, fa4, fa5, fa6],
 			{
@@ -194,30 +197,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				J5: { angle: degToRad(param.J5), radius: aJr, neutral: aJn, mark: aJm }
 			},
 			[
-				{
-					x1: 0,
-					y1: 0,
-					a1: 0,
-					l1: param.W1,
-					ante: ['J1', param.W1],
-					post: ['J1', param.W1]
-				},
-				{
-					x1: 0,
-					y1: 1.5 * param.W1,
-					a1: 0,
-					l1: param.W1,
-					ante: ['J1', param.W1],
-					post: ['J1', param.W1, 'J5', param.W1]
-				},
-				{
-					x1: 0,
-					y1: 3 * param.W1,
-					a1: 0,
-					l1: param.W1,
-					ante: ['J1', param.W1],
-					post: ['J1', param.W1, 'J5']
-				}
+				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: half1, post: half1 },
+				{ x1: 0, y1: 1.5 * param.W1, a1: 0, l1: param.W1, ante: half1, post: half2 },
+				{ x1: 0, y1: 3 * param.W1, a1: 0, l1: param.W1, ante: half1, post: half3 }
 			],
 			param.Th,
 			rGeome.partName
