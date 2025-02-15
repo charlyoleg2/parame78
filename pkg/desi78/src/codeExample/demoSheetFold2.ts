@@ -48,6 +48,7 @@ import {
 	//facet2figure
 	sheetFold
 } from 'sheetfold';
+import { triLALrL } from 'triangule';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -159,6 +160,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		const fa5 = facet([ctr5]);
 		// sheetFold
+		const [l12, log12] = triLALrL(param.L1, degToRad(param.A2), param.L2);
+		const [l23, log23] = triLALrL(param.L2, degToRad(param.A3), param.L3);
+		const [l34, log34] = triLALrL(param.L3, degToRad(param.A4), param.L4);
+		rGeome.logstr += log12 + log23 + log34;
 		const sFold = sheetFold(
 			[fa1, fa2, fa3, fa4, fa5],
 			{
@@ -167,7 +172,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				J3: { angle: degToRad(param.J3), radius: aJr, neutral: aJn, mark: aJm },
 				J4: { angle: degToRad(param.J4), radius: aJr, neutral: aJn, mark: aJm }
 			},
-			[],
+			[
+				{
+					x1: 0,
+					y1: 0,
+					a1: 0,
+					l1: param.W1,
+					ante: [],
+					post: ['J1', l12, 'J2', 1, 'J3', l34, 'J4', param.W5]
+				},
+				{
+					x1: 0,
+					y1: 4 * param.L1,
+					a1: 0,
+					l1: param.W1,
+					ante: [],
+					post: ['J1', 1, 'J2', l23, 'J3', 1, 'J4', param.W5]
+				}
+			],
 			param.Th,
 			rGeome.partName
 		);

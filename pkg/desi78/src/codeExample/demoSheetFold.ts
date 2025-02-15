@@ -60,7 +60,7 @@ const pDef: tParamDef = {
 		pNumber('L2', 'mm', 35, 10, 200, 1),
 		pSectionSeparator('Fold'),
 		pNumber('Ja', 'degree', 60, -240, 240, 1),
-		pNumber('Jr', 'mm', 10, 1, 20, 1),
+		pNumber('Jr', 'mm', 10, 0, 20, 1),
 		pNumber('Jn', '%', 50, 0, 100, 1),
 		pSectionSeparator('Thickness'),
 		pNumber('T', 'mm', 10, 1, 20, 1),
@@ -139,7 +139,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			{
 				J1: { angle: aJa, radius: param.Jr, neutral: aJn, mark: param.jMark }
 			},
-			[],
+			[{ x1: 0, y1: 0, a1: 0, l1: param.L1, ante: [], post: ['J1', param.L2] }],
 			param.T,
 			rGeome.partName
 		);
