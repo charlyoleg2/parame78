@@ -147,10 +147,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.fig = {
 			faceCut: figCut,
 			facet1: facet2figure(fa1),
-			facet3: facet2figure(fa3),
-			facePattern: sFold.makePatternFigure()
+			facet3: facet2figure(fa3)
 		};
-		const ffObj = sFold.makeFacetFigures();
+		const ffObj = sFold.makeFigures();
 		for (const iFace of Object.keys(ffObj)) {
 			rGeome.fig[iFace] = ffObj[iFace];
 		}

@@ -205,10 +205,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			rGeome.partName
 		);
 		// final figure list
-		rGeome.fig = {
-			facePattern: sFold.makePatternFigure()
-		};
-		const ffObj = sFold.makeFacetFigures();
+		//rGeome.fig = {};
+		const ffObj = sFold.makeFigures();
 		for (const iFace of Object.keys(ffObj)) {
 			rGeome.fig[iFace] = ffObj[iFace];
 		}

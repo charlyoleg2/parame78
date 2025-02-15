@@ -4,6 +4,7 @@ import type { Figure, tFigures, tVolume, tContour, tExtrude, tBVolume } from 'ge
 import {
 	contour,
 	ctrRectangle,
+	ctrRectRot,
 	Contour,
 	figure,
 	ffix,
@@ -428,6 +429,11 @@ class SheetFold {
 		return rfig;
 	}
 	/** @internal */
+	nameFacePattern(): string {
+		const rStr = `${this.pSFMark}_pattern`;
+		return rStr;
+	}
+	/** @internal */
 	nameFace(idx: number): string {
 		const rStr = `${this.pSFMark}_f${idx.toString().padStart(2, '0')}`;
 		return rStr;
@@ -443,96 +449,123 @@ class SheetFold {
 		return rStr;
 	}
 	/** @internal */
-	makeProfiles(): Figure {
+	makeFacetFig(iFacetIdx: number, iFacet: Facet): Figure {
+		const rFig = figure();
+		const outerInner: tContour[] = [];
+		for (const iCtr of iFacet.outerInner) {
+			let ctr1 = contourJ2contour(iCtr);
+			if (iFacetIdx > 0) {
+				ctr1 = ctr1.translate(-iFacet.ax, -iFacet.ay).rotate(0, 0, Math.PI / 2 - iFacet.aa);
+			}
+			outerInner.push(ctr1);
+		}
+		rFig.addMainOI(outerInner);
+		return rFig;
+	}
+	/** @internal */
+	drawJuncPositive(rE: number, rI: number, angle: number): [tContour, number, number] {
+		const pC = point(0, rE);
+		const pE2 = pC.translatePolar(-Math.PI / 2 + angle / 2, rE);
+		const pE1 = pC.translatePolar(-Math.PI / 2 + angle, rE);
+		const pI1 = pC.translatePolar(-Math.PI / 2 + angle, rI);
+		const pI2 = pC.translatePolar(-Math.PI / 2 + angle / 2, rI);
+		const rCtrBendP = contour(0, 0)
+			.addPointA(pE2.cx, pE2.cy)
+			.addPointA(pE1.cx, pE1.cy)
+			.addSegArc2()
+			.addSegStrokeA(pI1.cx, pI1.cy)
+			.addPointA(pI2.cx, pI2.cy)
+			.addPointA(0, this.pThickness)
+			.addSegArc2()
+			.closeSegStroke();
+		return [rCtrBendP, pE1.cx, pE1.cy];
+	}
+	/** @internal */
+	drawJuncNegative(rE: number, rI: number, angle: number): [tContour, number, number] {
+		const pC = point(0, -rI);
+		const pE2 = pC.translatePolar(Math.PI / 2 + angle / 2, rE);
+		const pE1 = pC.translatePolar(Math.PI / 2 + angle, rE);
+		const pI1 = pC.translatePolar(Math.PI / 2 + angle, rI);
+		const pI2 = pC.translatePolar(Math.PI / 2 + angle / 2, rI);
+		const rCtrBendN = contour(0, 0)
+			.addPointA(pI2.cx, pI2.cy)
+			.addPointA(pI1.cx, pI1.cy)
+			.addSegArc2()
+			.addSegStrokeA(pE1.cx, pE1.cy)
+			.addPointA(pE2.cx, pE2.cy)
+			.addPointA(0, this.pThickness)
+			.addSegArc2()
+			.closeSegStroke();
+		return [rCtrBendN, pI1.cx, pI1.cy];
+	}
+	/** @internal */
+	makeJuncFig(iJuncIdx: number, iJunc: tJunc2): Figure {
+		const rFig = figure();
+		if (iJunc.neutral < 0 || iJunc.neutral > 1) {
+			throw `err329: junction ${iJuncIdx} ${iJunc.jName} with neutral ${iJunc.neutral} not within 0..1`;
+		}
+		if (iJunc.radius < 0) {
+			throw `err328: junction ${iJuncIdx} ${iJunc.jName} with negative radius ${iJunc.radius}`;
+		}
+		const rI = iJunc.radius - this.pThickness * iJunc.neutral;
+		const rE = iJunc.radius + this.pThickness * (1 - iJunc.neutral);
+		if (rI <= 0) {
+			throw `err901: junction ${iJuncIdx} ${iJunc.jName} with negative rI ${rI}, radius ${iJunc.radius}, neutral ${iJunc.neutral}, thickness ${this.pThickness}`;
+		}
+		if (0 === iJunc.angle) {
+			const ctrFlat = ctrRectangle(0, 0, iJunc.radius, this.pThickness);
+			rFig.addMainO(ctrFlat);
+			iJunc.jx = iJunc.radius;
+			iJunc.jy = 0;
+		} else if (iJunc.angle > 0) {
+			const [ctrBendP, tjx, tjy] = this.drawJuncPositive(rE, rI, iJunc.angle);
+			rFig.addMainO(ctrBendP);
+			iJunc.jx = tjx;
+			iJunc.jy = tjy;
+		} else {
+			const [ctrBendN, tjx, tjy] = this.drawJuncNegative(rE, rI, iJunc.angle);
+			rFig.addMainO(ctrBendN);
+			iJunc.jx = tjx;
+			iJunc.jy = tjy;
+		}
+		return rFig;
+	}
+	/** @internal */
+	makeProfileFig(): Figure {
 		const rfig = figure();
 		for (const oneP of this.pProfiles) {
-			rfig.addMainO(ctrRectangle(oneP.x1, oneP.y1, oneP.l1, this.pThickness));
+			rfig.addMainO(ctrRectRot(oneP.x1, oneP.y1, oneP.l1, this.pThickness, oneP.a1));
+			for (const half of oneP.ante) {
+				if ('number' === typeof half) {
+					rfig.addMainO(ctrRectRot(oneP.x1, oneP.y1, oneP.l1, this.pThickness, oneP.a1));
+				} else {
+					rfig.addMainO(ctrRectRot(oneP.x1, oneP.y1, oneP.l1, this.pThickness, oneP.a1));
+				}
+			}
 		}
 		return rfig;
 	}
-	makeFacetFigures(): tFigures {
+	makeFigures(): tFigures {
 		const rfigs: tFigures = {};
+		// pattern
+		rfigs[this.nameFacePattern()] = this.makePatternFigure();
+		// facets
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
-			const fig = figure();
-			const outerInner: tContour[] = [];
-			for (const iCtr of iFacet.outerInner) {
-				let ctr1 = contourJ2contour(iCtr);
-				if (iFacetIdx > 0) {
-					ctr1 = ctr1
-						.translate(-iFacet.ax, -iFacet.ay)
-						.rotate(0, 0, Math.PI / 2 - iFacet.aa);
-				}
-				outerInner.push(ctr1);
-			}
-			fig.addMainOI(outerInner);
 			const faceName = this.nameFace(iFacetIdx);
-			rfigs[faceName] = fig;
+			rfigs[faceName] = this.makeFacetFig(iFacetIdx, iFacet);
 		}
 		if (this.pThickness <= 0) {
 			throw `err822: thickness ${this.pThickness} is negative`;
 		}
+		// junctions
 		for (const [iJuncIdx, iJunc] of this.pJuncs.entries()) {
-			const fig = figure();
-			if (iJunc.neutral < 0 || iJunc.neutral > 1) {
-				throw `err329: junction ${iJuncIdx} ${iJunc.jName} with neutral ${iJunc.neutral} not within 0..1`;
-			}
-			if (iJunc.radius < 0) {
-				throw `err328: junction ${iJuncIdx} ${iJunc.jName} with negative radius ${iJunc.radius}`;
-			}
-			const rI = iJunc.radius - this.pThickness * iJunc.neutral;
-			const rE = iJunc.radius + this.pThickness * (1 - iJunc.neutral);
-			if (rI <= 0) {
-				throw `err901: junction ${iJuncIdx} ${iJunc.jName} with negative rI ${rI}, radius ${iJunc.radius}, neutral ${iJunc.neutral}, thickness ${this.pThickness}`;
-			}
-			if (0 === iJunc.angle) {
-				const ctrFlat = ctrRectangle(0, 0, iJunc.radius, this.pThickness);
-				fig.addMainO(ctrFlat);
-				iJunc.jx = iJunc.radius;
-				iJunc.jy = 0;
-			} else if (iJunc.angle > 0) {
-				const pC = point(0, rE);
-				const pE2 = pC.translatePolar(-Math.PI / 2 + iJunc.angle / 2, rE);
-				const pE1 = pC.translatePolar(-Math.PI / 2 + iJunc.angle, rE);
-				const pI1 = pC.translatePolar(-Math.PI / 2 + iJunc.angle, rI);
-				const pI2 = pC.translatePolar(-Math.PI / 2 + iJunc.angle / 2, rI);
-				const ctrBendP = contour(0, 0)
-					.addPointA(pE2.cx, pE2.cy)
-					.addPointA(pE1.cx, pE1.cy)
-					.addSegArc2()
-					.addSegStrokeA(pI1.cx, pI1.cy)
-					.addPointA(pI2.cx, pI2.cy)
-					.addPointA(0, this.pThickness)
-					.addSegArc2()
-					.closeSegStroke();
-				fig.addMainO(ctrBendP);
-				iJunc.jx = pE1.cx;
-				iJunc.jy = pE1.cy;
-			} else {
-				const pC = point(0, -rI);
-				const pE2 = pC.translatePolar(Math.PI / 2 + iJunc.angle / 2, rE);
-				const pE1 = pC.translatePolar(Math.PI / 2 + iJunc.angle, rE);
-				const pI1 = pC.translatePolar(Math.PI / 2 + iJunc.angle, rI);
-				const pI2 = pC.translatePolar(Math.PI / 2 + iJunc.angle / 2, rI);
-				const ctrBendN = contour(0, 0)
-					.addPointA(pI2.cx, pI2.cy)
-					.addPointA(pI1.cx, pI1.cy)
-					.addSegArc2()
-					.addSegStrokeA(pE1.cx, pE1.cy)
-					.addPointA(pE2.cx, pE2.cy)
-					.addPointA(0, this.pThickness)
-					.addSegArc2()
-					.closeSegStroke();
-				fig.addMainO(ctrBendN);
-				iJunc.jx = pI1.cx;
-				iJunc.jy = pI1.cy;
-			}
 			const faceName = this.nameFaceJ(iJuncIdx);
-			rfigs[faceName] = fig;
+			rfigs[faceName] = this.makeJuncFig(iJuncIdx, iJunc);
 		}
-		// section-profiles
+		// profiles
 		if (this.pProfiles.length > 0) {
 			const faceName = this.nameFaceProfiles();
-			rfigs[faceName] = this.makeProfiles();
+			rfigs[faceName] = this.makeProfileFig();
 		}
 		return rfigs;
 	}
