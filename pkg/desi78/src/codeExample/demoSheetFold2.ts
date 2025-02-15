@@ -167,6 +167,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				J3: { angle: degToRad(param.J3), radius: aJr, neutral: aJn, mark: aJm },
 				J4: { angle: degToRad(param.J4), radius: aJr, neutral: aJn, mark: aJm }
 			},
+			[],
 			param.Th,
 			rGeome.partName
 		);

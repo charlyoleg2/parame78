@@ -66,6 +66,15 @@ interface tJunc2 {
 	jy: number;
 }
 
+type tHalfProfile = (string | number)[];
+interface tOneProfile {
+	x1: number;
+	y1: number;
+	a1: number;
+	l1: number;
+	ante: tHalfProfile;
+	post: tHalfProfile;
+}
 /**
  * class `ContourJ`
  *
@@ -129,9 +138,11 @@ class SheetFold {
 	pSFMark = '';
 	pFacets: Facet[] = [];
 	pJuncs: tJunc2[] = [];
+	pProfiles: tOneProfile[] = [];
 	constructor(
 		iFacets: Facet[],
 		iJuncs: tJuncs,
+		iProfiles: tOneProfile[],
 		iThickness: number,
 		iPartName: string,
 		iSFMark: string
@@ -213,6 +224,47 @@ class SheetFold {
 		}
 		this.computeLength();
 		this.checkFacet();
+		// section-profiles
+		for (const oneProfile of iProfiles) {
+			if (oneProfile.l1 <= 0) {
+				throw `err292: profile l1 ${oneProfile.l1} is negative or null`;
+			}
+			for (const [idx, halfP] of oneProfile.ante.entries()) {
+				if (0 === idx % 2) {
+					if ('string' !== typeof halfP) {
+						throw `err234: even element of ante is not a string`;
+					}
+					if (!jNames2.includes(halfP)) {
+						throw `err242: even element string ${halfP} of ante is not a declared junctions`;
+					}
+				} else {
+					if ('number' !== typeof halfP) {
+						throw `err239: odd element of ante is not a number`;
+					}
+					if (halfP <= 0) {
+						throw `err242: odd element number ${halfP} of ante is negative or null`;
+					}
+				}
+			}
+			for (const [idx, halfP] of oneProfile.post.entries()) {
+				if (0 === idx % 2) {
+					if ('string' !== typeof halfP) {
+						throw `err234: even element of post is not a string`;
+					}
+					if (!jNames2.includes(halfP)) {
+						throw `err242: even element string ${halfP} of post is not a declared junctions`;
+					}
+				} else {
+					if ('number' !== typeof halfP) {
+						throw `err239: odd element of post is not a number`;
+					}
+					if (halfP <= 0) {
+						throw `err242: odd element number ${halfP} of post is negative or null`;
+					}
+				}
+			}
+			this.pProfiles.push(oneProfile);
+		}
 	}
 	/** @internal */
 	printJuncs() {
@@ -385,6 +437,19 @@ class SheetFold {
 		const rStr = `${this.pSFMark}_fj${idx.toString().padStart(2, '0')}`;
 		return rStr;
 	}
+	/** @internal */
+	nameFaceProfiles(): string {
+		const rStr = `${this.pSFMark}_profiles`;
+		return rStr;
+	}
+	/** @internal */
+	makeProfiles(): Figure {
+		const rfig = figure();
+		for (const oneP of this.pProfiles) {
+			rfig.addMainO(ctrRectangle(oneP.x1, oneP.y1, oneP.l1, this.pThickness));
+		}
+		return rfig;
+	}
 	makeFacetFigures(): tFigures {
 		const rfigs: tFigures = {};
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
@@ -464,6 +529,11 @@ class SheetFold {
 			const faceName = this.nameFaceJ(iJuncIdx);
 			rfigs[faceName] = fig;
 		}
+		// section-profiles
+		if (this.pProfiles.length > 0) {
+			const faceName = this.nameFaceProfiles();
+			rfigs[faceName] = this.makeProfiles();
+		}
 		return rfigs;
 	}
 	makeVolume(): tVolume {
@@ -528,11 +598,12 @@ function facet(iOuterInner: tContourJ[]): Facet {
 function sheetFold(
 	iFacets: Facet[],
 	iJuncs: tJuncs,
+	iProfiles: tOneProfile[],
 	iThickness: number,
 	iPartName: string,
 	iSFMark = 'SFG'
 ): SheetFold {
-	return new SheetFold(iFacets, iJuncs, iThickness, iPartName, iSFMark);
+	return new SheetFold(iFacets, iJuncs, iProfiles, iThickness, iPartName, iSFMark);
 }
 
 // other helper functions

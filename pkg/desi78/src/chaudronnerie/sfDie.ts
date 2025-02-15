@@ -193,6 +193,32 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				J4: { angle: degToRad(param.J1), radius: aJr, neutral: aJn, mark: aJm },
 				J5: { angle: degToRad(param.J5), radius: aJr, neutral: aJn, mark: aJm }
 			},
+			[
+				{
+					x1: 0,
+					y1: 0,
+					a1: 0,
+					l1: param.W1,
+					ante: ['J1', param.W1],
+					post: ['J1', param.W1]
+				},
+				{
+					x1: 0,
+					y1: 1.5 * param.W1,
+					a1: 0,
+					l1: param.W1,
+					ante: ['J1', param.W1],
+					post: ['J1', param.W1, 'J5', param.W1]
+				},
+				{
+					x1: 0,
+					y1: 3 * param.W1,
+					a1: 0,
+					l1: param.W1,
+					ante: ['J1', param.W1],
+					post: ['J1', param.W1, 'J5']
+				}
+			],
 			param.Th,
 			rGeome.partName
 		);
