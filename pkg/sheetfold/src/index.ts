@@ -581,10 +581,13 @@ class SheetFold {
 					ta += tJunc.angle;
 				}
 			}
-			const p4 = point(oneP.x1, oneP.y1).translatePolar(ta + Math.PI / 2, this.pThickness);
+			// reset for ante
+			tx = oneP.x1;
+			ty = oneP.y1;
+			ta = oneP.a1 + Math.PI;
+			const p4 = point(tx, ty).translatePolar(ta - Math.PI / 2, this.pThickness);
 			tx = p4.cx;
 			ty = p4.cy;
-			ta = oneP.a1 + Math.PI;
 			for (const half of oneP.ante) {
 				if ('number' === typeof half) {
 					rfig.addMainO(ctrRectRot(tx, ty, half, this.pThickness, ta));
