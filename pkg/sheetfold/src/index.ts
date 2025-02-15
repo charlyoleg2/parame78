@@ -369,6 +369,19 @@ class SheetFold {
 	}
 	// end of constructor sub-functions
 	/** @internal */
+	getJuncIdx(jName: string): number {
+		let rIdx = -1;
+		for (const [idx, iJunc] of this.pJuncs.entries()) {
+			if (jName === iJunc.jName) {
+				rIdx = idx;
+			}
+		}
+		if (rIdx < 0) {
+			throw `err801: jName ${jName} not found`;
+		}
+		return rIdx;
+	}
+	/** @internal */
 	fromJunctionToAttach(iJunc: tJunc2): [number, number, number] {
 		let ra = iJunc.a1Teta;
 		let rx = iJunc.a1x;
@@ -463,44 +476,54 @@ class SheetFold {
 		return rFig;
 	}
 	/** @internal */
-	drawJuncPositive(rE: number, rI: number, angle: number): [tContour, number, number] {
+	drawJuncPositive(
+		rE: number,
+		rI: number,
+		angle: number,
+		kx: number
+	): [tContour, number, number] {
 		const pC = point(0, rE);
 		const pE2 = pC.translatePolar(-Math.PI / 2 + angle / 2, rE);
 		const pE1 = pC.translatePolar(-Math.PI / 2 + angle, rE);
 		const pI1 = pC.translatePolar(-Math.PI / 2 + angle, rI);
 		const pI2 = pC.translatePolar(-Math.PI / 2 + angle / 2, rI);
 		const rCtrBendP = contour(0, 0)
-			.addPointA(pE2.cx, pE2.cy)
-			.addPointA(pE1.cx, pE1.cy)
+			.addPointA(kx * pE2.cx, pE2.cy)
+			.addPointA(kx * pE1.cx, pE1.cy)
 			.addSegArc2()
-			.addSegStrokeA(pI1.cx, pI1.cy)
-			.addPointA(pI2.cx, pI2.cy)
+			.addSegStrokeA(kx * pI1.cx, pI1.cy)
+			.addPointA(kx * pI2.cx, pI2.cy)
 			.addPointA(0, this.pThickness)
 			.addSegArc2()
 			.closeSegStroke();
 		return [rCtrBendP, pE1.cx, pE1.cy];
 	}
 	/** @internal */
-	drawJuncNegative(rE: number, rI: number, angle: number): [tContour, number, number] {
+	drawJuncNegative(
+		rE: number,
+		rI: number,
+		angle: number,
+		kx: number
+	): [tContour, number, number] {
 		const pC = point(0, -rI);
 		const pE2 = pC.translatePolar(Math.PI / 2 + angle / 2, rE);
 		const pE1 = pC.translatePolar(Math.PI / 2 + angle, rE);
 		const pI1 = pC.translatePolar(Math.PI / 2 + angle, rI);
 		const pI2 = pC.translatePolar(Math.PI / 2 + angle / 2, rI);
 		const rCtrBendN = contour(0, 0)
-			.addPointA(pI2.cx, pI2.cy)
-			.addPointA(pI1.cx, pI1.cy)
+			.addPointA(kx * pI2.cx, pI2.cy)
+			.addPointA(kx * pI1.cx, pI1.cy)
 			.addSegArc2()
-			.addSegStrokeA(pE1.cx, pE1.cy)
-			.addPointA(pE2.cx, pE2.cy)
+			.addSegStrokeA(kx * pE1.cx, pE1.cy)
+			.addPointA(kx * pE2.cx, pE2.cy)
 			.addPointA(0, this.pThickness)
 			.addSegArc2()
 			.closeSegStroke();
 		return [rCtrBendN, pI1.cx, pI1.cy];
 	}
 	/** @internal */
-	makeJuncFig(iJuncIdx: number, iJunc: tJunc2): [Figure, number, number] {
-		const rFig = figure();
+	makeJuncCtr(iJuncIdx: number, iJunc: tJunc2, kx = 1): [tContour, number, number] {
+		let rCtr = ctrRectangle(0, 0, iJunc.radius, this.pThickness);
 		if (iJunc.neutral < 0 || iJunc.neutral > 1) {
 			throw `err329: junction ${iJuncIdx} ${iJunc.jName} with neutral ${iJunc.neutral} not within 0..1`;
 		}
@@ -515,28 +538,53 @@ class SheetFold {
 		let rjx = 0;
 		let rjy = 0;
 		if (0 === iJunc.angle) {
-			const ctrFlat = ctrRectangle(0, 0, iJunc.radius, this.pThickness);
-			rFig.addMainO(ctrFlat);
+			if (kx > 0) {
+				rCtr = ctrRectangle(0, 0, iJunc.radius, this.pThickness);
+			} else {
+				rCtr = ctrRectangle(-iJunc.radius, 0, iJunc.radius, this.pThickness);
+			}
 			rjx = iJunc.radius;
 			rjy = 0;
 		} else if (iJunc.angle > 0) {
-			const [ctrBendP, tjx, tjy] = this.drawJuncPositive(rE, rI, iJunc.angle);
-			rFig.addMainO(ctrBendP);
+			const [ctrBendP, tjx, tjy] = this.drawJuncPositive(rE, rI, iJunc.angle, kx);
+			rCtr = ctrBendP;
 			rjx = tjx;
 			rjy = tjy;
 		} else {
-			const [ctrBendN, tjx, tjy] = this.drawJuncNegative(rE, rI, iJunc.angle);
-			rFig.addMainO(ctrBendN);
+			const [ctrBendN, tjx, tjy] = this.drawJuncNegative(rE, rI, iJunc.angle, kx);
+			rCtr = ctrBendN;
 			rjx = tjx;
 			rjy = tjy;
 		}
-		return [rFig, rjx, rjy];
+		return [rCtr, rjx, rjy];
 	}
 	/** @internal */
 	makeProfileFig(): Figure {
 		const rfig = figure();
 		for (const oneP of this.pProfiles) {
-			rfig.addMainO(ctrRectRot(oneP.x1, oneP.y1, oneP.l1, this.pThickness, oneP.a1));
+			let tx = oneP.x1;
+			let ty = oneP.y1;
+			let ta = oneP.a1;
+			rfig.addMainO(ctrRectRot(tx, ty, oneP.l1, this.pThickness, ta));
+			const p1 = point(tx, ty).translatePolar(ta, oneP.l1);
+			tx = p1.cx;
+			ty = p1.cy;
+			for (const half of oneP.post) {
+				if ('number' === typeof half) {
+					rfig.addMainO(ctrRectRot(tx, ty, half, this.pThickness, ta));
+					const p2 = point(tx, ty).translatePolar(ta, half);
+					tx = p2.cx;
+					ty = p2.cy;
+				} else {
+					const tJunc = this.pJuncs[this.getJuncIdx(half)];
+					const [ctr, tjx, tjy] = this.makeJuncCtr(-1, tJunc, 1);
+					rfig.addMainO(ctr.rotate(0, 0, ta).translate(tx, ty));
+					const p3 = point(tjx, tjy).rotate(point(0, 0), tJunc.angle);
+					tx += p3.cx;
+					ty += p3.cy;
+					ta += tJunc.angle;
+				}
+			}
 			for (const half of oneP.ante) {
 				if ('number' === typeof half) {
 					rfig.addMainO(ctrRectRot(oneP.x1, oneP.y1, oneP.l1, this.pThickness, oneP.a1));
@@ -562,7 +610,9 @@ class SheetFold {
 		// junctions
 		for (const [iJuncIdx, iJunc] of this.pJuncs.entries()) {
 			const faceName = this.nameFaceJ(iJuncIdx);
-			const [fig, tjx, tjy] = this.makeJuncFig(iJuncIdx, iJunc);
+			const [ctr, tjx, tjy] = this.makeJuncCtr(iJuncIdx, iJunc);
+			const fig = figure();
+			fig.addMainO(ctr);
 			rfigs[faceName] = fig;
 			iJunc.jx = tjx;
 			iJunc.jy = tjy;
