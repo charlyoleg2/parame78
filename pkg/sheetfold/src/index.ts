@@ -499,7 +499,7 @@ class SheetFold {
 		return [rCtrBendN, pI1.cx, pI1.cy];
 	}
 	/** @internal */
-	makeJuncFig(iJuncIdx: number, iJunc: tJunc2): Figure {
+	makeJuncFig(iJuncIdx: number, iJunc: tJunc2): [Figure, number, number] {
 		const rFig = figure();
 		if (iJunc.neutral < 0 || iJunc.neutral > 1) {
 			throw `err329: junction ${iJuncIdx} ${iJunc.jName} with neutral ${iJunc.neutral} not within 0..1`;
@@ -512,23 +512,25 @@ class SheetFold {
 		if (rI <= 0) {
 			throw `err901: junction ${iJuncIdx} ${iJunc.jName} with negative rI ${rI}, radius ${iJunc.radius}, neutral ${iJunc.neutral}, thickness ${this.pThickness}`;
 		}
+		let rjx = 0;
+		let rjy = 0;
 		if (0 === iJunc.angle) {
 			const ctrFlat = ctrRectangle(0, 0, iJunc.radius, this.pThickness);
 			rFig.addMainO(ctrFlat);
-			iJunc.jx = iJunc.radius;
-			iJunc.jy = 0;
+			rjx = iJunc.radius;
+			rjy = 0;
 		} else if (iJunc.angle > 0) {
 			const [ctrBendP, tjx, tjy] = this.drawJuncPositive(rE, rI, iJunc.angle);
 			rFig.addMainO(ctrBendP);
-			iJunc.jx = tjx;
-			iJunc.jy = tjy;
+			rjx = tjx;
+			rjy = tjy;
 		} else {
 			const [ctrBendN, tjx, tjy] = this.drawJuncNegative(rE, rI, iJunc.angle);
 			rFig.addMainO(ctrBendN);
-			iJunc.jx = tjx;
-			iJunc.jy = tjy;
+			rjx = tjx;
+			rjy = tjy;
 		}
-		return rFig;
+		return [rFig, rjx, rjy];
 	}
 	/** @internal */
 	makeProfileFig(): Figure {
@@ -560,7 +562,10 @@ class SheetFold {
 		// junctions
 		for (const [iJuncIdx, iJunc] of this.pJuncs.entries()) {
 			const faceName = this.nameFaceJ(iJuncIdx);
-			rfigs[faceName] = this.makeJuncFig(iJuncIdx, iJunc);
+			const [fig, tjx, tjy] = this.makeJuncFig(iJuncIdx, iJunc);
+			rfigs[faceName] = fig;
+			iJunc.jx = tjx;
+			iJunc.jy = tjy;
 		}
 		// profiles
 		if (this.pProfiles.length > 0) {
