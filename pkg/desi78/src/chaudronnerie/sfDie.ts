@@ -186,7 +186,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// sheetFold
 		const half1 = ['J1', param.W1];
 		const half2 = ['J1', param.W1, 'J5', param.W1];
-		const half3 = ['J1', param.W1, 'J5'];
 		const sFold = sheetFold(
 			[fa1, fa2, fa3, fa4, fa5, fa6],
 			{
@@ -198,8 +197,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			},
 			[
 				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: half1, post: half1 },
-				{ x1: 0, y1: 1.5 * param.W1, a1: 0, l1: param.W1, ante: half1, post: half2 },
-				{ x1: 0, y1: 3 * param.W1, a1: 0, l1: param.W1, ante: half1, post: half3 }
+				{ x1: 0, y1: 1.5 * param.W1, a1: 0, l1: param.W1, ante: half1, post: half2 }
 			],
 			param.Th,
 			rGeome.partName
