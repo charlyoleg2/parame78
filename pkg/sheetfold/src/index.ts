@@ -614,15 +614,21 @@ class SheetFold {
 	}
 	makeFigures(): tFigures {
 		const rfigs: tFigures = {};
+		// check
+		if (this.pThickness <= 0) {
+			throw `err822: thickness ${this.pThickness} is negative`;
+		}
 		// pattern
 		rfigs[this.nameFacePattern()] = this.makePatternFigure();
+		// profiles
+		if (this.pProfiles.length > 0) {
+			const faceName = this.nameFaceProfiles();
+			rfigs[faceName] = this.makeProfileFig();
+		}
 		// facets
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
 			const faceName = this.nameFace(iFacetIdx);
 			rfigs[faceName] = this.makeFacetFig(iFacetIdx, iFacet);
-		}
-		if (this.pThickness <= 0) {
-			throw `err822: thickness ${this.pThickness} is negative`;
 		}
 		// junctions
 		for (const [iJuncIdx, iJunc] of this.pJuncs.entries()) {
@@ -639,11 +645,7 @@ class SheetFold {
 			iJunc.jx = tjx;
 			iJunc.jy = tjy;
 		}
-		// profiles
-		if (this.pProfiles.length > 0) {
-			const faceName = this.nameFaceProfiles();
-			rfigs[faceName] = this.makeProfileFig();
-		}
+		// return
 		return rfigs;
 	}
 	makeVolume(): tVolume {
