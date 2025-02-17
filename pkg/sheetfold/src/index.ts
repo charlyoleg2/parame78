@@ -428,17 +428,45 @@ class SheetFold {
 	// external API
 	makePatternFigure(): Figure {
 		const rfig = figure();
-		const outerInner: tContour[] = [];
-		for (const iFacet of this.pFacets) {
-			for (const iCtr of iFacet.outerInner) {
-				if (iCtr instanceof ContourJ) {
-					outerInner.push(contourJ2contour(iCtr));
+		// second-layer
+		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
+			if (iFacetIdx > 0) {
+				let accx = 0;
+				let accy = 0;
+				let acca = 0;
+				let facIdx = iFacetIdx;
+				if (iFacet.attached) {
+					while (facIdx > 0) {
+						const jIdx = this.pFacets[facIdx].juncIdx;
+						const tJunc = this.pJuncs[jIdx];
+						const tJangle = Math.abs(tJunc.angle);
+						const tJlength = tJangle === 0 ? tJunc.radius : tJangle * tJunc.radius;
+						const tSign = tJSide.eABLeft === tJunc.a1Side ? -1 : 1;
+						const tJaz = tJunc.a1Teta + (tSign * Math.PI) / 2;
+						accx += tJunc.diffX - tJlength * Math.cos(tJaz);
+						accy += tJunc.diffY - tJlength * Math.sin(tJaz);
+						acca += tJunc.diffA;
+						facIdx = tJunc.a1FacetIdx;
+					}
 				} else {
-					outerInner.push(iCtr);
+					throw `err491: iFacetIdx ${iFacetIdx} is not attached!`;
+				}
+				for (const iCtr of iFacet.outerInner) {
+					const ctr1 = contourJ2contour(iCtr);
+					const ctr2 = ctr1.rotate(iFacet.ax, iFacet.ay, -acca).translate(-accx, -accy);
+					rfig.addSecond(ctr2);
+				}
+			} else {
+				if (iFacet.attached) {
+					throw `err490: iFacetIdx ${iFacetIdx} is attached!`;
+				}
+				for (const iCtr of iFacet.outerInner) {
+					rfig.addSecond(iCtr);
 				}
 			}
 		}
-		rfig.addMainOI(outerInner);
+		// main-layer
+		//rfig.addMainOI(outerInner);
 		return rfig;
 	}
 	/** @internal */
