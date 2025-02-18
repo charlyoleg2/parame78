@@ -419,7 +419,8 @@ class SheetFold {
 	}
 	// external API
 	makePatternFigure(): Figure {
-		const rfig = figure();
+		const ctrsJ: tContour[] = [];
+		const ctrsA: tContour[] = [];
 		// second-layer
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
 			if (iFacetIdx > 0) {
@@ -450,20 +451,33 @@ class SheetFold {
 				const az2 = tm2.getRotation();
 				const [xx2, yy2] = tm2.getTranslation();
 				for (const iCtr of iFacet.outerInner) {
-					const ctr1 = contourJ2contour(iCtr).rotate(0, 0, az2).translate(xx2, yy2);
-					rfig.addSecond(ctr1);
+					if (iCtr instanceof ContourJ) {
+						const ctrJ = contourJ2contour(iCtr).rotate(0, 0, az2).translate(xx2, yy2);
+						ctrsJ.push(ctrJ);
+					} else {
+						const ctrA = iCtr.rotate(0, 0, az2).translate(xx2, yy2);
+						ctrsA.push(ctrA);
+					}
 				}
 			} else {
 				if (iFacet.attached) {
 					throw `err490: iFacetIdx ${iFacetIdx} is attached!`;
 				}
 				for (const iCtr of iFacet.outerInner) {
-					rfig.addSecond(iCtr);
+					if (iCtr instanceof ContourJ) {
+						ctrsJ.push(contourJ2contour(iCtr));
+					} else {
+						ctrsA.push(iCtr);
+					}
 				}
 			}
 		}
 		// main-layer
-		//rfig.addMainOI(outerInner);
+		const rfig = figure();
+		rfig.addMainOI(ctrsA);
+		for (const iCtr of ctrsJ) {
+			rfig.addSecond(iCtr);
+		}
 		return rfig;
 	}
 	/** @internal */
