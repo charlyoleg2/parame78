@@ -17,6 +17,7 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
+import { transform2d } from './transform2d';
 
 enum tJDir {
 	eA,
@@ -431,30 +432,34 @@ class SheetFold {
 		// second-layer
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
 			if (iFacetIdx > 0) {
-				let accx = 0;
-				let accy = 0;
-				let acca = 0;
+				const tm2 = transform2d();
 				let facIdx = iFacetIdx;
 				if (iFacet.attached) {
 					while (facIdx > 0) {
 						const jIdx = this.pFacets[facIdx].juncIdx;
-						const tJunc = this.pJuncs[jIdx];
-						const tJangle = Math.abs(tJunc.angle);
-						const tJlength = tJangle === 0 ? tJunc.radius : tJangle * tJunc.radius;
-						const tSign = tJSide.eABLeft === tJunc.a1Side ? -1 : 1;
-						const tJaz = tJunc.a1Teta + (tSign * Math.PI) / 2;
-						accx += tJunc.diffX - tJlength * Math.cos(tJaz);
-						accy += tJunc.diffY - tJlength * Math.sin(tJaz);
-						acca += tJunc.diffA;
-						facIdx = tJunc.a1FacetIdx;
+						const junc = this.pJuncs[jIdx];
+						const [ta, tx, ty] = this.fromJunctionToAttach(junc);
+						tm2.addRotation(ta);
+						tm2.addTranslation(tx, ty);
+						const tJangle = Math.abs(junc.angle);
+						const tJlength = tJangle === 0 ? junc.radius : tJangle * junc.radius;
+						const tSign = tJSide.eABLeft === junc.a1Side ? -1 : 1;
+						const tJaz = junc.a1Teta + (tSign * Math.PI) / 2;
+						tm2.addTranslation(tJlength * Math.cos(tJaz), tJlength * Math.sin(tJaz));
+						facIdx = junc.a1FacetIdx;
 					}
 				} else {
 					throw `err491: iFacetIdx ${iFacetIdx} is not attached!`;
 				}
+				const az = tm2.getRotation();
+				const [xx, yy] = tm2.getTranslation();
 				for (const iCtr of iFacet.outerInner) {
-					const ctr1 = contourJ2contour(iCtr);
-					const ctr2 = ctr1.rotate(iFacet.ax, iFacet.ay, -acca).translate(-accx, -accy);
-					rfig.addSecond(ctr2);
+					const ctr1 = contourJ2contour(iCtr)
+						.rotate(iFacet.ax, iFacet.ay, -iFacet.aa)
+						.translate(-iFacet.ax, -iFacet.ay)
+						.rotate(0, 0, az)
+						.translate(xx, yy);
+					rfig.addSecond(ctr1);
 				}
 			} else {
 				if (iFacet.attached) {
