@@ -432,27 +432,26 @@ class SheetFold {
 		// second-layer
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
 			if (iFacetIdx > 0) {
-				const tm2 = transform2d();
+				const tm1 = transform2d();
 				let facIdx = iFacetIdx;
 				if (iFacet.attached) {
 					while (facIdx > 0) {
 						const jIdx = this.pFacets[facIdx].juncIdx;
 						const junc = this.pJuncs[jIdx];
-						const [ta, tx, ty] = this.fromJunctionToAttach(junc);
-						tm2.addRotation(ta);
-						tm2.addTranslation(tx, ty);
 						const tJangle = Math.abs(junc.angle);
 						const tJlength = tJangle === 0 ? junc.radius : tJangle * junc.radius;
 						const tSign = tJSide.eABLeft === junc.a1Side ? -1 : 1;
-						const tJaz = junc.a1Teta + (tSign * Math.PI) / 2;
-						tm2.addTranslation(tJlength * Math.cos(tJaz), tJlength * Math.sin(tJaz));
+						tm1.addTranslation(0, tSign * tJlength);
+						const [ta, tx, ty] = this.fromJunctionToAttach(junc);
+						tm1.addRotation(ta);
+						tm1.addTranslation(tx, ty);
 						facIdx = junc.a1FacetIdx;
 					}
 				} else {
 					throw `err491: iFacetIdx ${iFacetIdx} is not attached!`;
 				}
-				const az = tm2.getRotation();
-				const [xx, yy] = tm2.getTranslation();
+				const az = tm1.getRotation();
+				const [xx, yy] = tm1.getTranslation();
 				for (const iCtr of iFacet.outerInner) {
 					const ctr1 = contourJ2contour(iCtr)
 						.rotate(iFacet.ax, iFacet.ay, -iFacet.aa)
