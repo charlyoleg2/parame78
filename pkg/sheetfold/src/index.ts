@@ -61,9 +61,6 @@ interface tJunc2 {
 	a2y: number;
 	a2Teta: number;
 	jLength: number;
-	diffA: number;
-	diffX: number;
-	diffY: number;
 	jx: number;
 	jy: number;
 }
@@ -206,9 +203,6 @@ class SheetFold {
 									a2y: 0,
 									a2Teta: 0,
 									jLength: 0,
-									diffA: 0,
-									diffX: 0,
-									diffY: 0,
 									jx: 0,
 									jy: 0
 								});
@@ -340,9 +334,6 @@ class SheetFold {
 					iJunc.a2x = xx;
 					iJunc.a2y = yy;
 					iJunc.a2Teta = jTeta;
-					iJunc.diffA = withinPiPi(iJunc.a2Teta - iJunc.a1Teta);
-					iJunc.diffX = iJunc.a2x - iJunc.a1x;
-					iJunc.diffY = iJunc.a2y - iJunc.a1y;
 					if (this.pFacets[faIdx].attached === false) {
 						this.pFacets[faIdx].attached = true;
 						this.pFacets[faIdx].ax = xx;
