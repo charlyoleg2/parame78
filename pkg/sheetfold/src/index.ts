@@ -441,14 +441,16 @@ class SheetFold {
 				} else {
 					throw `err491: iFacetIdx ${iFacetIdx} is not attached!`;
 				}
-				const az = tm1.getRotation();
-				const [xx, yy] = tm1.getTranslation();
+				const az1 = tm1.getRotation();
+				const [xx1, yy1] = tm1.getTranslation();
+				const tm2 = transform2d()
+					.addTranslation(-iFacet.ax, -iFacet.ay)
+					.addRotation(-iFacet.aa + az1)
+					.addTranslation(xx1, yy1);
+				const az2 = tm2.getRotation();
+				const [xx2, yy2] = tm2.getTranslation();
 				for (const iCtr of iFacet.outerInner) {
-					const ctr1 = contourJ2contour(iCtr)
-						.rotate(iFacet.ax, iFacet.ay, -iFacet.aa)
-						.translate(-iFacet.ax, -iFacet.ay)
-						.rotate(0, 0, az)
-						.translate(xx, yy);
+					const ctr1 = contourJ2contour(iCtr).rotate(0, 0, az2).translate(xx2, yy2);
 					rfig.addSecond(ctr1);
 				}
 			} else {
