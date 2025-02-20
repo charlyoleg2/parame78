@@ -415,12 +415,25 @@ class SheetFold {
 				}
 			}
 		}
-		// main-layer
 		const rfig = figure();
-		rfig.addMainOI(ctrsA);
-		for (const iCtr of ctrsJ) {
+		// second layer
+		const ctrs1 = [...ctrsA, ...ctrsJ];
+		const ctrs2: tContour[] = [];
+		let ctrOuter = ctrs1[0];
+		let xMinOuter = ctrOuter.getEnvelop()[0];
+		for (const iCtr of ctrs1) {
 			rfig.addSecond(iCtr);
+			const xMin = iCtr.getEnvelop()[0];
+			if (xMin < xMinOuter) {
+				ctrs2.push(ctrOuter);
+				ctrOuter = iCtr;
+				xMinOuter = xMin;
+			} else {
+				ctrs2.push(iCtr);
+			}
 		}
+		// main layer
+		rfig.addMainOI([ctrOuter, ...ctrsA]);
 		return rfig;
 	}
 	/** @internal */
