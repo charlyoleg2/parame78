@@ -61,7 +61,7 @@
 		"clean": "rimraf dist dist2 node_modules"
 	},
 	"dependencies": {
-		"geometrix": "^1.0.7",
+		"geometrix": "^1.0.9",
 		"triangule": "^1.0.2"
 	},
 	"devDependencies": {
