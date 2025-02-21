@@ -431,9 +431,9 @@ class SheetFold {
 				ctrs2.push(iCtr);
 			}
 		}
-		if (!envTracker.check(ctrOuter.getEnvelop())) {
-			throw `err782: the outer-contour does not envelop all contours`;
-		}
+		//if (!envTracker.check(ctrOuter.getEnvelop())) {
+		//	throw `err782: the outer-contour does not envelop all contours`;
+		//}
 		// main layer
 		rfig.addMainOI([ctrOuter, ...ctrsA]);
 		return rfig;
