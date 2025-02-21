@@ -12,12 +12,12 @@ import {
 	isActiveCorner,
 	withinPiPi,
 	point,
+	transform2d,
 	transform3d,
 	Transform3d,
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-import { transform2d } from './transform2d';
 import type { Facet } from './facet';
 import { tJDir, tJSide, ContourJ, contourJ2contour } from './facet';
 
@@ -420,10 +420,10 @@ class SheetFold {
 		const ctrs1 = [...ctrsA, ...ctrsJ];
 		const ctrs2: tContour[] = [];
 		let ctrOuter = ctrs1[0];
-		let xMinOuter = ctrOuter.getEnvelop()[0];
+		let xMinOuter = ctrOuter.getEnvelop().xMin;
 		for (const iCtr of ctrs1) {
 			rfig.addSecond(iCtr);
-			const xMin = iCtr.getEnvelop()[0];
+			const xMin = iCtr.getEnvelop().xMin;
 			if (xMin < xMinOuter) {
 				ctrs2.push(ctrOuter);
 				ctrOuter = iCtr;
