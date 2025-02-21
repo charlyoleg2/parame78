@@ -7,6 +7,7 @@ import {
 	ctrRectRot,
 	Contour,
 	figure,
+	envelop,
 	ffix,
 	SegEnum,
 	isActiveCorner,
@@ -420,17 +421,18 @@ class SheetFold {
 		const ctrs1 = [...ctrsA, ...ctrsJ];
 		const ctrs2: tContour[] = [];
 		let ctrOuter = ctrs1[0];
-		let xMinOuter = ctrOuter.getEnvelop().xMin;
+		const envTracker = envelop(ctrOuter.getEnvelop());
 		for (const iCtr of ctrs1) {
 			rfig.addSecond(iCtr);
-			const xMin = iCtr.getEnvelop().xMin;
-			if (xMin < xMinOuter) {
+			if (envTracker.add(iCtr.getEnvelop())) {
 				ctrs2.push(ctrOuter);
 				ctrOuter = iCtr;
-				xMinOuter = xMin;
 			} else {
 				ctrs2.push(iCtr);
 			}
+		}
+		if (!envTracker.check(ctrOuter.getEnvelop())) {
+			throw `err782: the outer-contour does not envelop all contours`;
 		}
 		// main layer
 		rfig.addMainOI([ctrOuter, ...ctrsA]);
