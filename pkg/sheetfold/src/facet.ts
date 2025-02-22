@@ -24,6 +24,9 @@ class ContourJ extends Contour {
 	junctionSide: tJSide[] = [];
 	junctionPosition: number[] = [];
 	lastPosition = -1;
+	facetIdx = -1;
+	ctrIdx = -1;
+	used = 0;
 	startJunction(jName: string, aNb: tJDir, abSide: tJSide): this {
 		//console.log(`dbg822: jName: ${jName} aNb: ${aNb}`);
 		if (this.junctionID.includes(jName)) {
@@ -79,6 +82,17 @@ class ContourJ extends Contour {
 		const rCtrJ = this.cloneJ(ctrA);
 		return rCtrJ;
 	}
+	setIdx(iFacetIdx: number, iCtrIdx: number) {
+		this.facetIdx = iFacetIdx;
+		this.ctrIdx = iCtrIdx;
+	}
+	compareIdx(iFacetIdx: number, iCtrIdx: number): boolean {
+		let rCompare = false;
+		if (iFacetIdx === this.facetIdx && iCtrIdx === this.ctrIdx) {
+			rCompare = true;
+		}
+		return rCompare;
+	}
 }
 
 type tContourJ = tContour | ContourJ;
@@ -124,6 +138,16 @@ class Facet {
 		}
 		return ctrsPure;
 	}
+	getContourJ(iFacetIdx: number): ContourJ[] {
+		const ctrsJ: ContourJ[] = [];
+		for (const [iCtrIdx, iCtr] of this.outerInner.entries()) {
+			if (iCtr instanceof ContourJ) {
+				iCtr.setIdx(iFacetIdx, iCtrIdx);
+				ctrsJ.push(iCtr);
+			}
+		}
+		return ctrsJ;
+	}
 	getContourAll(): tContour[] {
 		const ctrsAll: tContour[] = [];
 		for (const iCtr of this.outerInner) {
@@ -143,7 +167,8 @@ function facet(iOuterInner: tContourJ[]): Facet {
 
 // other helper functions
 function contourJ2contour(iContoutJ: tContourJ): tContour {
-	return iContoutJ;
+	return iContoutJ.clone();
+	//return iContoutJ;
 }
 
 export type { tContourJ };

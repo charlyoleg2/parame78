@@ -396,6 +396,15 @@ class SheetFold {
 			.addTranslation(xx1, yy1);
 		return rTm2d;
 	}
+	generateNewContours(iCtrsJ: ContourJ[]): tContour[] {
+		const rCtrsNew: tContour[] = [];
+		for (const iCtr of iCtrsJ) {
+			if (iCtr.used === 0) {
+				rCtrsNew.push(contourJ2contour(iCtr));
+			}
+		}
+		return rCtrsNew;
+	}
 	// external API
 	makePatternFigure(): Figure {
 		const facetPlaced: Facet[] = [];
@@ -412,30 +421,40 @@ class SheetFold {
 				facetPlaced.push(iFacet.place(tm0));
 			}
 		}
-		// second layer
-		const rfig = figure();
+		// list of contours
 		const ctrsAll: tContour[] = [];
 		const ctrsPure: tContour[] = [];
-		for (const iFacet of facetPlaced) {
+		const ctrsJ: ContourJ[] = [];
+		for (const [iFacetIdx, iFacet] of facetPlaced.entries()) {
 			ctrsAll.push(...iFacet.getContourAll());
 			ctrsPure.push(...iFacet.getContourPure());
+			ctrsJ.push(...iFacet.getContourJ(iFacetIdx));
 		}
+		// second layer
+		const rfig = figure();
 		for (const iCtr of ctrsAll) {
 			rfig.addSecond(iCtr);
 		}
+		// make new contours
+		const ctrsNew = this.generateNewContours(ctrsJ);
 		// find ctrOuter
-		let ctrOuter = ctrsAll[0];
+		const ctrsAll2: tContour[] = [...ctrsNew, ...ctrsPure];
+		const ctrsRest2: tContour[] = [];
+		let ctrOuter = ctrsAll2[0];
 		const envTracker = envelop(ctrOuter.getEnvelop());
-		for (const iCtr of ctrsAll) {
+		for (const iCtr of ctrsAll2) {
 			if (envTracker.add(iCtr.getEnvelop())) {
+				ctrsRest2.push(ctrOuter);
 				ctrOuter = iCtr;
+			} else {
+				ctrsRest2.push(iCtr);
 			}
 		}
 		//if (!envTracker.check(ctrOuter.getEnvelop())) {
 		//	throw `err782: the outer-contour does not envelop all contours`;
 		//}
 		// main layer
-		rfig.addMainOI([ctrOuter, ...ctrsPure]);
+		rfig.addMainOI([ctrOuter, ...ctrsRest2]);
 		return rfig;
 	}
 	/** @internal */
