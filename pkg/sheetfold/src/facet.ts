@@ -1,7 +1,7 @@
 // facet.ts
 
 import type { tContour, Transform2d } from 'geometrix';
-import { Contour } from 'geometrix';
+import { Contour, SegEnum, isSeg } from 'geometrix';
 
 enum tJDir {
 	eA,
@@ -39,6 +39,45 @@ class ContourJ extends Contour {
 		this.junctionSide.push(abSide);
 		this.junctionPosition.push(newPosition);
 		return this;
+	}
+	cloneJ(iCtr: Contour): ContourJ {
+		const rctrJ = new ContourJ(iCtr.segments[0].px, iCtr.segments[0].py);
+		for (const seg of iCtr.segments) {
+			const nseg = seg.clone();
+			if (nseg.sType !== SegEnum.eStart) {
+				rctrJ.addSeg(nseg);
+				if (isSeg(nseg.sType)) {
+					rctrJ.setLastPoint(nseg.px, nseg.py);
+				}
+			}
+		}
+		for (const jPosition of this.junctionPosition) {
+			rctrJ.junctionPosition.push(jPosition);
+		}
+		for (const jID of this.junctionID) {
+			rctrJ.junctionID.push(jID);
+		}
+		for (const jDir of this.junctionDir) {
+			rctrJ.junctionDir.push(jDir);
+		}
+		for (const jSide of this.junctionSide) {
+			rctrJ.junctionSide.push(jSide);
+		}
+		rctrJ.lastPosition = this.lastPosition;
+		return rctrJ;
+	}
+	translate(ix: number, iy: number): ContourJ {
+		const ctrA = super.translate(ix, iy);
+		const rCtrJ = this.cloneJ(ctrA);
+		return rCtrJ;
+	}
+	translatePolar(ia: number, il: number): ContourJ {
+		return this.translate(il * Math.cos(ia), il * Math.sin(ia));
+	}
+	rotate(ix: number, iy: number, ia: number): ContourJ {
+		const ctrA = super.rotate(ix, iy, ia);
+		const rCtrJ = this.cloneJ(ctrA);
+		return rCtrJ;
 	}
 }
 
