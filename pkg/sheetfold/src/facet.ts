@@ -1,6 +1,6 @@
 // facet.ts
 
-import type { tContour } from 'geometrix';
+import type { tContour, Transform2d } from 'geometrix';
 import { Contour } from 'geometrix';
 
 enum tJDir {
@@ -24,7 +24,7 @@ class ContourJ extends Contour {
 	junctionSide: tJSide[] = [];
 	junctionPosition: number[] = [];
 	lastPosition = -1;
-	startJunction(jName: string, aNb: tJDir, abSide: tJSide): ContourJ {
+	startJunction(jName: string, aNb: tJDir, abSide: tJSide): this {
 		//console.log(`dbg822: jName: ${jName} aNb: ${aNb}`);
 		if (this.junctionID.includes(jName)) {
 			throw `err209: junctionID ${jName} already used`;
@@ -60,6 +60,37 @@ class Facet {
 		for (const iCtr of iOuterInner) {
 			this.outerInner.push(iCtr);
 		}
+	}
+	place(tm2: Transform2d): Facet {
+		const az2 = tm2.getRotation();
+		const [xx2, yy2] = tm2.getTranslation();
+		const ctrsJ: tContourJ[] = [];
+		for (const iCtr of this.outerInner) {
+			ctrsJ.push(iCtr.rotate(0, 0, az2).translate(xx2, yy2));
+		}
+		const rFacet = facet(ctrsJ);
+		rFacet.attached = this.attached;
+		rFacet.ax = this.ax;
+		rFacet.ay = this.ay;
+		rFacet.aa = this.aa;
+		rFacet.juncIdx = this.juncIdx;
+		return rFacet;
+	}
+	getContourPure(): tContour[] {
+		const ctrsPure: tContour[] = [];
+		for (const iCtr of this.outerInner) {
+			if (!(iCtr instanceof ContourJ)) {
+				ctrsPure.push(iCtr);
+			}
+		}
+		return ctrsPure;
+	}
+	getContourAll(): tContour[] {
+		const ctrsAll: tContour[] = [];
+		for (const iCtr of this.outerInner) {
+			ctrsAll.push(contourJ2contour(iCtr));
+		}
+		return ctrsAll;
 	}
 }
 

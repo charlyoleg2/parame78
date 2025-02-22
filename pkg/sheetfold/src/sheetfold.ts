@@ -1,6 +1,15 @@
 // sheetfold.ts
 
-import type { Figure, tFigures, tVolume, tContour, tExtrude, tBVolume } from 'geometrix';
+import type {
+	Figure,
+	tFigures,
+	tVolume,
+	tContour,
+	tExtrude,
+	tBVolume,
+	Transform2d,
+	Transform3d
+} from 'geometrix';
 import {
 	contour,
 	ctrRectangle,
@@ -15,7 +24,6 @@ import {
 	point,
 	transform2d,
 	transform3d,
-	Transform3d,
 	EExtrude,
 	EBVolume
 } from 'geometrix';
@@ -285,7 +293,7 @@ class SheetFold {
 						this.pFacets[faIdx].aa = jTeta;
 						this.pFacets[faIdx].juncIdx = iJuncIdx;
 					} else {
-						throw `err545: pFacet ${faIdx} ax is already set`;
+						throw `err545: pFacet ${faIdx} is already attached`;
 					}
 				} else {
 					iJunc.jLength = jLength;
@@ -361,81 +369,73 @@ class SheetFold {
 		}
 		return rTm;
 	}
+	positionF2d(iFacetIdx: number, iFacet: Facet): Transform2d {
+		const tm1 = transform2d();
+		let facIdx = iFacetIdx;
+		if (iFacet.attached) {
+			while (facIdx > 0) {
+				const jIdx = this.pFacets[facIdx].juncIdx;
+				const junc = this.pJuncs[jIdx];
+				const tJangle = Math.abs(junc.angle);
+				const tJlength = tJangle === 0 ? junc.radius : tJangle * junc.radius;
+				const tSign = tJSide.eABLeft === junc.a1Side ? -1 : 1;
+				tm1.addTranslation(0, tSign * tJlength);
+				const [ta, tx, ty] = this.fromJunctionToAttach(junc);
+				tm1.addRotation(ta);
+				tm1.addTranslation(tx, ty);
+				facIdx = junc.a1FacetIdx;
+			}
+		} else {
+			throw `err491: iFacetIdx ${iFacetIdx} is not attached!`;
+		}
+		const az1 = tm1.getRotation();
+		const [xx1, yy1] = tm1.getTranslation();
+		const rTm2d = transform2d()
+			.addTranslation(-iFacet.ax, -iFacet.ay)
+			.addRotation(-iFacet.aa + az1)
+			.addTranslation(xx1, yy1);
+		return rTm2d;
+	}
 	// external API
 	makePatternFigure(): Figure {
-		const ctrsJ: tContour[] = [];
-		const ctrsA: tContour[] = [];
-		// second-layer
+		const facetPlaced: Facet[] = [];
+		// place facets
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
 			if (iFacetIdx > 0) {
-				const tm1 = transform2d();
-				let facIdx = iFacetIdx;
-				if (iFacet.attached) {
-					while (facIdx > 0) {
-						const jIdx = this.pFacets[facIdx].juncIdx;
-						const junc = this.pJuncs[jIdx];
-						const tJangle = Math.abs(junc.angle);
-						const tJlength = tJangle === 0 ? junc.radius : tJangle * junc.radius;
-						const tSign = tJSide.eABLeft === junc.a1Side ? -1 : 1;
-						tm1.addTranslation(0, tSign * tJlength);
-						const [ta, tx, ty] = this.fromJunctionToAttach(junc);
-						tm1.addRotation(ta);
-						tm1.addTranslation(tx, ty);
-						facIdx = junc.a1FacetIdx;
-					}
-				} else {
-					throw `err491: iFacetIdx ${iFacetIdx} is not attached!`;
-				}
-				const az1 = tm1.getRotation();
-				const [xx1, yy1] = tm1.getTranslation();
-				const tm2 = transform2d()
-					.addTranslation(-iFacet.ax, -iFacet.ay)
-					.addRotation(-iFacet.aa + az1)
-					.addTranslation(xx1, yy1);
-				const az2 = tm2.getRotation();
-				const [xx2, yy2] = tm2.getTranslation();
-				for (const iCtr of iFacet.outerInner) {
-					if (iCtr instanceof ContourJ) {
-						const ctrJ = contourJ2contour(iCtr).rotate(0, 0, az2).translate(xx2, yy2);
-						ctrsJ.push(ctrJ);
-					} else {
-						const ctrA = iCtr.rotate(0, 0, az2).translate(xx2, yy2);
-						ctrsA.push(ctrA);
-					}
-				}
+				const tm2 = this.positionF2d(iFacetIdx, iFacet);
+				facetPlaced.push(iFacet.place(tm2));
 			} else {
 				if (iFacet.attached) {
 					throw `err490: iFacetIdx ${iFacetIdx} is attached!`;
 				}
-				for (const iCtr of iFacet.outerInner) {
-					if (iCtr instanceof ContourJ) {
-						ctrsJ.push(contourJ2contour(iCtr));
-					} else {
-						ctrsA.push(iCtr);
-					}
-				}
+				const tm0 = transform2d();
+				facetPlaced.push(iFacet.place(tm0));
 			}
 		}
-		const rfig = figure();
 		// second layer
-		const ctrs1 = [...ctrsA, ...ctrsJ];
-		const ctrs2: tContour[] = [];
-		let ctrOuter = ctrs1[0];
-		const envTracker = envelop(ctrOuter.getEnvelop());
-		for (const iCtr of ctrs1) {
+		const rfig = figure();
+		const ctrsAll: tContour[] = [];
+		const ctrsPure: tContour[] = [];
+		for (const iFacet of facetPlaced) {
+			ctrsAll.push(...iFacet.getContourAll());
+			ctrsPure.push(...iFacet.getContourPure());
+		}
+		for (const iCtr of ctrsAll) {
 			rfig.addSecond(iCtr);
+		}
+		// find ctrOuter
+		let ctrOuter = ctrsAll[0];
+		const envTracker = envelop(ctrOuter.getEnvelop());
+		for (const iCtr of ctrsAll) {
 			if (envTracker.add(iCtr.getEnvelop())) {
-				ctrs2.push(ctrOuter);
 				ctrOuter = iCtr;
-			} else {
-				ctrs2.push(iCtr);
 			}
 		}
 		//if (!envTracker.check(ctrOuter.getEnvelop())) {
 		//	throw `err782: the outer-contour does not envelop all contours`;
 		//}
 		// main layer
-		rfig.addMainOI([ctrOuter, ...ctrsA]);
+		rfig.addMainOI([ctrOuter, ...ctrsPure]);
 		return rfig;
 	}
 	/** @internal */
