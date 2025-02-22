@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-//import * as dut from './index';
+//import * as dut from './sheetfold';
 
 describe('sheetfold under tests', () => {
-	// angle conversion
+	// TODO sheetfold unit-test
 	it('a dummy test', () => {
 		expect(2 + 2).toBe(4);
 	});
