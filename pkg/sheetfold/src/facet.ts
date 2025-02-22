@@ -85,6 +85,7 @@ class ContourJ extends Contour {
 	setIdx(iFacetIdx: number, iCtrIdx: number) {
 		this.facetIdx = iFacetIdx;
 		this.ctrIdx = iCtrIdx;
+		this.used = 0;
 	}
 	compareIdx(iFacetIdx: number, iCtrIdx: number): boolean {
 		let rCompare = false;

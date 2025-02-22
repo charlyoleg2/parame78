@@ -400,6 +400,7 @@ class SheetFold {
 		const rCtrsNew: tContour[] = [];
 		for (const iCtr of iCtrsJ) {
 			if (iCtr.used === 0) {
+				// TODO
 				rCtrsNew.push(contourJ2contour(iCtr));
 			}
 		}
