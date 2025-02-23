@@ -94,6 +94,9 @@ class ContourJ extends Contour {
 		}
 		return rCompare;
 	}
+	incrementUsed() {
+		this.used += 1;
+	}
 }
 
 type tContourJ = tContour | ContourJ;
@@ -143,6 +146,9 @@ class Facet {
 		const ctrsJ: ContourJ[] = [];
 		for (const [iCtrIdx, iCtr] of this.outerInner.entries()) {
 			if (iCtr instanceof ContourJ) {
+				if (iCtr.getEnvelop().orientation !== true) {
+					throw `err890: orientation of ContourJ ${iFacetIdx} ${iCtrIdx} is not CCW`;
+				}
 				iCtr.setIdx(iFacetIdx, iCtrIdx);
 				ctrsJ.push(iCtr);
 			}

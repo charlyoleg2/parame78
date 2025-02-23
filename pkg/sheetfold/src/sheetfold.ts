@@ -66,6 +66,11 @@ interface tJunc2 {
 	jy: number;
 }
 
+interface tJunc3 {
+	jName: string;
+	segPosition: number;
+}
+
 type tHalfProfile = (string | number)[];
 interface tOneProfile {
 	x1: number;
@@ -396,12 +401,96 @@ class SheetFold {
 			.addTranslation(xx1, yy1);
 		return rTm2d;
 	}
+	findCtrJ(iCtrsJ: ContourJ[], iFacetIdx: number, iCtrIdx: number): ContourJ {
+		let rCtrJ = iCtrsJ[0];
+		let found = false;
+		for (const ctrJ of iCtrsJ) {
+			if (ctrJ.compareIdx(iFacetIdx, iCtrIdx)) {
+				rCtrJ = ctrJ;
+				found = true;
+			}
+		}
+		if (!found) {
+			throw `err612: not found ctrJ with iFacetIdx ${iFacetIdx} and iCtrIdx ${iCtrIdx}`;
+		}
+		return rCtrJ;
+	}
+	calcJuncList(iCtrJ: ContourJ, jName: string): tJunc3[] {
+		const startIdx = iCtrJ.junctionID.indexOf(jName);
+		if (startIdx < 0) {
+			throw `err324: junction ${jName} not found`;
+		}
+		const origList: tJunc3[] = [];
+		for (let idx = 0; idx < iCtrJ.junctionID.length; idx++) {
+			const j3: tJunc3 = {
+				jName: iCtrJ.junctionID[idx],
+				segPosition: iCtrJ.junctionPosition[idx]
+			};
+			origList.push(j3);
+		}
+		const rJuncList = [...origList.slice(startIdx), ...origList.slice(0, startIdx)];
+		return rJuncList;
+	}
+	incrSegIdx(idx: number, maxIdx: number): number {
+		let rIdx = idx + 1;
+		if (rIdx >= maxIdx) {
+			rIdx = 0;
+		}
+		return rIdx;
+	}
+	makePartialCtr(iCtrJ: ContourJ, iJuncList: tJunc3[], iCtrsJ: ContourJ[]): Contour {
+		const startIdx = iJuncList[0].segPosition;
+		const rCtr = contour(iCtrJ.segments[startIdx].px, iCtrJ.segments[startIdx].py);
+		let segIdx = startIdx;
+		for (let i1 = 1; i1 < iJuncList.length; i1++) {
+			iCtrJ.incrementUsed();
+			while (segIdx !== iJuncList[i1].segPosition) {
+				const seg = iCtrJ.segments[segIdx].clone();
+				if (seg.sType !== SegEnum.eStart) {
+					rCtr.addSeg(seg);
+				}
+				segIdx = this.incrSegIdx(segIdx, iCtrJ.segments.length);
+			}
+			const junc = this.pJuncs[this.getJuncIdx(iJuncList[i1].jName)];
+			const ctrJ2 = this.findCtrJ(iCtrsJ, junc.a2FacetIdx, junc.a2ContIdx);
+			const juncList2 = this.calcJuncList(ctrJ2, junc.jName);
+			const partialCtr = this.makePartialCtr(ctrJ2, juncList2, iCtrsJ);
+			rCtr.addSeg(iCtrJ.segments[segIdx].clone());
+			rCtr.addSegStrokeA(partialCtr.segments[0].px, partialCtr.segments[0].py);
+			for (const seg of partialCtr.segments) {
+				if (seg.sType !== SegEnum.eStart) {
+					rCtr.addSeg(seg);
+				}
+			}
+			segIdx = this.incrSegIdx(segIdx, iCtrJ.segments.length);
+			rCtr.addSegStrokeA(iCtrJ.segments[segIdx].px, iCtrJ.segments[segIdx].py);
+		}
+		const endIdx = this.incrSegIdx(startIdx, iCtrJ.segments.length);
+		while (segIdx !== endIdx) {
+			const seg = iCtrJ.segments[segIdx].clone();
+			if (seg.sType !== SegEnum.eStart) {
+				rCtr.addSeg(seg);
+			}
+			segIdx = this.incrSegIdx(segIdx, iCtrJ.segments.length);
+		}
+		return rCtr;
+	}
 	generateNewContours(iCtrsJ: ContourJ[]): tContour[] {
 		const rCtrsNew: tContour[] = [];
-		for (const iCtr of iCtrsJ) {
-			if (iCtr.used === 0) {
-				// TODO
-				rCtrsNew.push(contourJ2contour(iCtr));
+		for (const iCtrJ of iCtrsJ) {
+			if (iCtrJ.used === 0) {
+				const juncList1: tJunc3[] = [];
+				const j0: tJunc3 = { jName: '', segPosition: 0 };
+				juncList1.push(j0);
+				for (let idx = 0; idx < iCtrJ.junctionID.length; idx++) {
+					const j3: tJunc3 = {
+						jName: iCtrJ.junctionID[idx],
+						segPosition: iCtrJ.junctionPosition[idx]
+					};
+					juncList1.push(j3);
+				}
+				const ctrN = this.makePartialCtr(iCtrJ, juncList1, iCtrsJ);
+				rCtrsNew.push(ctrN);
 			}
 		}
 		return rCtrsNew;
