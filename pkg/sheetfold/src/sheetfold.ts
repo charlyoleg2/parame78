@@ -431,47 +431,66 @@ class SheetFold {
 		const rJuncList = [...origList.slice(startIdx), ...origList.slice(0, startIdx)];
 		return rJuncList;
 	}
-	incrSegIdx(idx: number, maxIdx: number): number {
-		let rIdx = idx + 1;
+	incrSegIdx(idx: number, delta: number, maxIdx: number): number {
+		let rIdx = idx + delta;
 		if (rIdx >= maxIdx) {
 			rIdx = 0;
+		} else if (rIdx < 0) {
+			rIdx = maxIdx + rIdx;
 		}
 		return rIdx;
 	}
-	makePartialCtr(iCtrJ: ContourJ, iJuncList: tJunc3[], iCtrsJ: ContourJ[]): Contour {
-		const startIdx = iJuncList[0].segPosition;
+	makePartialCtr(
+		iCtrJ: ContourJ,
+		iJuncList: tJunc3[],
+		first: boolean,
+		iCtrsJ: ContourJ[]
+	): Contour {
+		let startIdx = iJuncList[0].segPosition;
+		let endIdx = this.incrSegIdx(startIdx, 0, iCtrJ.segments.length);
+		if (!first) {
+			startIdx = this.incrSegIdx(iJuncList[0].segPosition, 1, iCtrJ.segments.length);
+			endIdx = this.incrSegIdx(startIdx, 0, iCtrJ.segments.length);
+		}
+		//console.log(`dbg391: partial1 ${iCtrJ.facetIdx} ${iCtrJ.ctrIdx}`);
+		//console.log(`dbg392: partial2 used ${iCtrJ.used} with startIdx ${startIdx}`);
+		//console.log(`dbg393: partial3 segNb ${iCtrJ.segments.length}`);
+		//console.log(`dbg394: partial4 juncNb ${iJuncList.length} ctrsNb ${iCtrsJ.length}`);
 		const rCtr = contour(iCtrJ.segments[startIdx].px, iCtrJ.segments[startIdx].py);
 		let segIdx = startIdx;
 		for (let i1 = 1; i1 < iJuncList.length; i1++) {
+			//console.log(`dbg212: i1 ${i1} segIdx ${segIdx}`);
 			iCtrJ.incrementUsed();
 			while (segIdx !== iJuncList[i1].segPosition) {
 				const seg = iCtrJ.segments[segIdx].clone();
 				if (seg.sType !== SegEnum.eStart) {
 					rCtr.addSeg(seg);
 				}
-				segIdx = this.incrSegIdx(segIdx, iCtrJ.segments.length);
+				segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
 			}
 			const junc = this.pJuncs[this.getJuncIdx(iJuncList[i1].jName)];
 			const ctrJ2 = this.findCtrJ(iCtrsJ, junc.a2FacetIdx, junc.a2ContIdx);
 			const juncList2 = this.calcJuncList(ctrJ2, junc.jName);
-			const partialCtr = this.makePartialCtr(ctrJ2, juncList2, iCtrsJ);
+			const partialCtr = this.makePartialCtr(ctrJ2, juncList2, false, iCtrsJ);
 			rCtr.addSeg(iCtrJ.segments[segIdx].clone());
 			rCtr.addSegStrokeA(partialCtr.segments[0].px, partialCtr.segments[0].py);
 			for (const seg of partialCtr.segments) {
 				if (seg.sType !== SegEnum.eStart) {
-					rCtr.addSeg(seg);
+					rCtr.addSeg(seg.clone());
+					//console.log(`dbg310: seg.px.py ${ffix(seg.px)} ${ffix(seg.py)}`);
 				}
 			}
-			segIdx = this.incrSegIdx(segIdx, iCtrJ.segments.length);
+			segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
 			rCtr.addSegStrokeA(iCtrJ.segments[segIdx].px, iCtrJ.segments[segIdx].py);
 		}
-		const endIdx = this.incrSegIdx(startIdx, iCtrJ.segments.length);
+		iCtrJ.incrementUsed();
+		segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
 		while (segIdx !== endIdx) {
 			const seg = iCtrJ.segments[segIdx].clone();
 			if (seg.sType !== SegEnum.eStart) {
 				rCtr.addSeg(seg);
 			}
-			segIdx = this.incrSegIdx(segIdx, iCtrJ.segments.length);
+			segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
 		}
 		return rCtr;
 	}
@@ -489,7 +508,11 @@ class SheetFold {
 					};
 					juncList1.push(j3);
 				}
-				const ctrN = this.makePartialCtr(iCtrJ, juncList1, iCtrsJ);
+				const ctrN = this.makePartialCtr(iCtrJ, juncList1, true, iCtrsJ);
+				console.log(`dbg325: ${iCtrsJ.length} ctrN segNb ${ctrN.segments.length}`);
+				for (const [idx, seg] of ctrN.segments.entries()) {
+					console.log(`dbg701: ${idx} : ${seg.sType} ${ffix(seg.px)} ${ffix(seg.py)}`);
+				}
 				rCtrsNew.push(ctrN);
 			}
 		}
@@ -540,11 +563,12 @@ class SheetFold {
 				ctrsRest2.push(iCtr);
 			}
 		}
-		//if (!envTracker.check(ctrOuter.getEnvelop())) {
-		//	throw `err782: the outer-contour does not envelop all contours`;
-		//}
+		if (!envTracker.check(ctrOuter.getEnvelop())) {
+			throw `err782: the outer-contour does not envelop all contours`;
+		}
 		// main layer
 		rfig.addMainOI([ctrOuter, ...ctrsRest2]);
+		//rfig.addMainOI([ctrOuter]);
 		return rfig;
 	}
 	/** @internal */
