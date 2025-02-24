@@ -1,6 +1,7 @@
 // sheetfold.ts
 
 import type {
+	Segment1,
 	Figure,
 	tFigures,
 	tVolume,
@@ -440,6 +441,11 @@ class SheetFold {
 		}
 		return rIdx;
 	}
+	addSeg(iCtr: Contour, iSeg: Segment1) {
+		if (iSeg.sType !== SegEnum.eStart) {
+			iCtr.addSeg(iSeg);
+		}
+	}
 	makePartialCtr(
 		iCtrJ: ContourJ,
 		iJuncList: tJunc3[],
@@ -457,28 +463,22 @@ class SheetFold {
 		//console.log(`dbg393: partial3 segNb ${iCtrJ.segments.length}`);
 		//console.log(`dbg394: partial4 juncNb ${iJuncList.length} ctrsNb ${iCtrsJ.length}`);
 		const rCtr = contour(iCtrJ.segments[startIdx].px, iCtrJ.segments[startIdx].py);
-		let segIdx = startIdx;
+		let segIdx = this.incrSegIdx(startIdx, 0, iCtrJ.segments.length);
 		for (let i1 = 1; i1 < iJuncList.length; i1++) {
 			//console.log(`dbg212: i1 ${i1} segIdx ${segIdx}`);
 			iCtrJ.incrementUsed();
 			while (segIdx !== iJuncList[i1].segPosition) {
-				const seg = iCtrJ.segments[segIdx].clone();
-				if (seg.sType !== SegEnum.eStart) {
-					rCtr.addSeg(seg);
-				}
 				segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
+				this.addSeg(rCtr, iCtrJ.segments[segIdx].clone());
 			}
 			const junc = this.pJuncs[this.getJuncIdx(iJuncList[i1].jName)];
 			const ctrJ2 = this.findCtrJ(iCtrsJ, junc.a2FacetIdx, junc.a2ContIdx);
 			const juncList2 = this.calcJuncList(ctrJ2, junc.jName);
 			const partialCtr = this.makePartialCtr(ctrJ2, juncList2, false, iCtrsJ);
-			rCtr.addSeg(iCtrJ.segments[segIdx].clone());
 			rCtr.addSegStrokeA(partialCtr.segments[0].px, partialCtr.segments[0].py);
 			for (const seg of partialCtr.segments) {
-				if (seg.sType !== SegEnum.eStart) {
-					rCtr.addSeg(seg.clone());
-					//console.log(`dbg310: seg.px.py ${ffix(seg.px)} ${ffix(seg.py)}`);
-				}
+				this.addSeg(rCtr, seg.clone());
+				//console.log(`dbg310: seg.px.py ${ffix(seg.px)} ${ffix(seg.py)}`);
 			}
 			segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
 			rCtr.addSegStrokeA(iCtrJ.segments[segIdx].px, iCtrJ.segments[segIdx].py);
@@ -486,10 +486,7 @@ class SheetFold {
 		iCtrJ.incrementUsed();
 		segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
 		while (segIdx !== endIdx) {
-			const seg = iCtrJ.segments[segIdx].clone();
-			if (seg.sType !== SegEnum.eStart) {
-				rCtr.addSeg(seg);
-			}
+			this.addSeg(rCtr, iCtrJ.segments[segIdx].clone());
 			segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
 		}
 		return rCtr;
@@ -509,10 +506,10 @@ class SheetFold {
 					juncList1.push(j3);
 				}
 				const ctrN = this.makePartialCtr(iCtrJ, juncList1, true, iCtrsJ);
-				console.log(`dbg325: ${iCtrsJ.length} ctrN segNb ${ctrN.segments.length}`);
-				for (const [idx, seg] of ctrN.segments.entries()) {
-					console.log(`dbg701: ${idx} : ${seg.sType} ${ffix(seg.px)} ${ffix(seg.py)}`);
-				}
+				//console.log(`dbg325: ${iCtrsJ.length} ctrN segNb ${ctrN.segments.length}`);
+				//for (const [idx, seg] of ctrN.segments.entries()) {
+				//	console.log(`dbg701: ${idx} : ${seg.sType} ${ffix(seg.px)} ${ffix(seg.py)}`);
+				//}
 				rCtrsNew.push(ctrN);
 			}
 		}
