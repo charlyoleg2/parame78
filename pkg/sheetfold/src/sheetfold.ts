@@ -515,6 +515,50 @@ class SheetFold {
 		}
 		return rCtrsNew;
 	}
+	generateOneMarker(iJunc: tJunc2): tContour {
+		const jLen = iJunc.angle === 0 ? iJunc.radius : iJunc.angle * iJunc.radius;
+		if (jLen < 2 * iJunc.mark) {
+			const ctrM = ctrRectangle(-iJunc.mark, 0, 2 * iJunc.mark, jLen);
+			return ctrM;
+		} else {
+			const ctrM = contour(-iJunc.mark, iJunc.mark)
+				.addPointA(0, 0)
+				.addPointA(iJunc.mark, iJunc.mark)
+				.addSegArc2()
+				.addSegStrokeA(iJunc.mark, jLen - iJunc.mark)
+				.addPointA(0, jLen)
+				.addPointA(-iJunc.mark, jLen - iJunc.mark)
+				.addSegArc2()
+				.closeSegStroke();
+			return ctrM;
+		}
+	}
+	generateMarkers(): tContour[] {
+		const rMarkers: tContour[] = [];
+		for (const iJunc of this.pJuncs) {
+			if (iJunc.mark > 0) {
+				const facetIdx = iJunc.a1FacetIdx;
+				if (facetIdx > 0) {
+					const tm2 = this.positionF2d(facetIdx, this.pFacets[facetIdx]);
+					const ctrM = this.generateOneMarker(iJunc)
+						.translate(iJunc.jLength / 2, 0)
+						.rotate(0, 0, tm2.getRotation())
+						.translate(...tm2.getTranslation());
+					rMarkers.push(ctrM);
+				} else {
+					const tm2 = transform2d()
+						.addRotation(iJunc.a1Teta)
+						.addTranslation(iJunc.a1x, iJunc.a1y);
+					const ctrM = this.generateOneMarker(iJunc)
+						.translate(iJunc.jLength / 2, 0)
+						.rotate(0, 0, tm2.getRotation())
+						.translate(...tm2.getTranslation());
+					rMarkers.push(ctrM);
+				}
+			}
+		}
+		return rMarkers;
+	}
 	// external API
 	makePatternFigure(): Figure {
 		const facetPlaced: Facet[] = [];
@@ -547,8 +591,9 @@ class SheetFold {
 		}
 		// make new contours
 		const ctrsNew = this.generateNewContours(ctrsJ);
+		const ctrsMaker = this.generateMarkers();
 		// find ctrOuter
-		const ctrsAll2: tContour[] = [...ctrsNew, ...ctrsPure];
+		const ctrsAll2: tContour[] = [...ctrsNew, ...ctrsPure, ...ctrsMaker];
 		const ctrsRest2: tContour[] = [];
 		let ctrOuter = ctrsAll2[0];
 		const envTracker = envelop(ctrOuter.getEnvelop());
