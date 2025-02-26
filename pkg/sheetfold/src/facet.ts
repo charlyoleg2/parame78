@@ -13,35 +13,52 @@ enum tJSide {
 	eABLeft
 }
 
+interface tJunction {
+	jName: string;
+	jDir: tJDir;
+	jSide: tJSide;
+	jPosition: number;
+}
+
 /**
  * class `ContourJ`
  *
  */
 class ContourJ extends Contour {
 	/** @internal */
-	junctionID: string[] = [];
-	junctionDir: tJDir[] = [];
-	junctionSide: tJSide[] = [];
-	junctionPosition: number[] = [];
+	pJuncs: tJunction[] = [];
 	lastPosition = -1;
 	facetIdx = -1;
 	ctrIdx = -1;
 	used = 0;
 	startJunction(jName: string, aNb: tJDir, abSide: tJSide): this {
 		//console.log(`dbg822: jName: ${jName} aNb: ${aNb}`);
-		if (this.junctionID.includes(jName)) {
-			throw `err209: junctionID ${jName} already used`;
+		for (const iJunc of this.pJuncs) {
+			if (iJunc.jName === jName) {
+				throw `err209: jName ${jName} already used`;
+			}
 		}
 		const newPosition = this.segments.length - 1;
 		if (newPosition === this.lastPosition) {
-			throw `err210: junctionID ${jName} overwrites previous junction`;
+			throw `err210: jName ${jName} overwrites previous position ${newPosition}`;
 		}
 		this.lastPosition = newPosition;
-		this.junctionID.push(jName);
-		this.junctionDir.push(aNb);
-		this.junctionSide.push(abSide);
-		this.junctionPosition.push(newPosition);
+		this.pJuncs.push({
+			jName: jName,
+			jDir: aNb,
+			jSide: abSide,
+			jPosition: newPosition
+		});
 		return this;
+	}
+	findIdx(jName: string): number {
+		let rIdx = -1;
+		for (const [idx, iJunc] of this.pJuncs.entries()) {
+			if (jName === iJunc.jName) {
+				rIdx = idx;
+			}
+		}
+		return rIdx;
 	}
 	cloneJ(iCtr: Contour): ContourJ {
 		const rctrJ = new ContourJ(iCtr.segments[0].px, iCtr.segments[0].py);
@@ -54,17 +71,13 @@ class ContourJ extends Contour {
 				}
 			}
 		}
-		for (const jPosition of this.junctionPosition) {
-			rctrJ.junctionPosition.push(jPosition);
-		}
-		for (const jID of this.junctionID) {
-			rctrJ.junctionID.push(jID);
-		}
-		for (const jDir of this.junctionDir) {
-			rctrJ.junctionDir.push(jDir);
-		}
-		for (const jSide of this.junctionSide) {
-			rctrJ.junctionSide.push(jSide);
+		for (const iJunc of this.pJuncs) {
+			rctrJ.pJuncs.push({
+				jName: iJunc.jName,
+				jDir: iJunc.jDir,
+				jSide: iJunc.jSide,
+				jPosition: iJunc.jPosition
+			});
 		}
 		rctrJ.lastPosition = this.lastPosition;
 		return rctrJ;

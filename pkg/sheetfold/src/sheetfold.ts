@@ -112,7 +112,8 @@ class SheetFold {
 			let backward = 0;
 			for (const [iCtrIdx, iCtr] of iFacet.outerInner.entries()) {
 				if (iCtr instanceof ContourJ) {
-					for (const [iJuncIdx, iJuncName] of iCtr.junctionID.entries()) {
+					for (const iJunc of iCtr.pJuncs) {
+						const iJuncName = iJunc.jName;
 						const jNames = this.pJuncs.map((item) => item.jName);
 						if (jNames.includes(iJuncName)) {
 							const jIdx = jNames.findIndex((item) => item === iJuncName);
@@ -124,9 +125,9 @@ class SheetFold {
 								this.pJuncs[jIdx].associated = 2;
 								this.pJuncs[jIdx].a2FacetIdx = iFacetIdx;
 								this.pJuncs[jIdx].a2ContIdx = iCtrIdx;
-								this.pJuncs[jIdx].a2SegIdx = iCtr.junctionPosition[iJuncIdx];
-								this.pJuncs[jIdx].a2Dir = iCtr.junctionDir[iJuncIdx];
-								this.pJuncs[jIdx].a2Side = iCtr.junctionSide[iJuncIdx];
+								this.pJuncs[jIdx].a2SegIdx = iJunc.jPosition;
+								this.pJuncs[jIdx].a2Dir = iJunc.jDir;
+								this.pJuncs[jIdx].a2Side = iJunc.jSide;
 								if (0 === backward) {
 									backward = 1;
 								} else {
@@ -146,9 +147,9 @@ class SheetFold {
 									associated: 1,
 									a1FacetIdx: iFacetIdx,
 									a1ContIdx: iCtrIdx,
-									a1SegIdx: iCtr.junctionPosition[iJuncIdx],
-									a1Dir: iCtr.junctionDir[iJuncIdx],
-									a1Side: iCtr.junctionSide[iJuncIdx],
+									a1SegIdx: iJunc.jPosition,
+									a1Dir: iJunc.jDir,
+									a1Side: iJunc.jSide,
 									a1x: 0,
 									a1y: 0,
 									a1Teta: 0,
@@ -421,19 +422,23 @@ class SheetFold {
 		}
 		return rCtrJ;
 	}
+	generateJunc3List(iCtrJ: ContourJ): tJunc3[] {
+		const rJ3List: tJunc3[] = [];
+		for (const iJunc of iCtrJ.pJuncs) {
+			const j3: tJunc3 = {
+				jName: iJunc.jName,
+				segPosition: iJunc.jPosition
+			};
+			rJ3List.push(j3);
+		}
+		return rJ3List;
+	}
 	calcJuncList(iCtrJ: ContourJ, jName: string): tJunc3[] {
-		const startIdx = iCtrJ.junctionID.indexOf(jName);
+		const startIdx = iCtrJ.findIdx(jName);
 		if (startIdx < 0) {
 			throw `err324: junction ${jName} not found`;
 		}
-		const origList: tJunc3[] = [];
-		for (let idx = 0; idx < iCtrJ.junctionID.length; idx++) {
-			const j3: tJunc3 = {
-				jName: iCtrJ.junctionID[idx],
-				segPosition: iCtrJ.junctionPosition[idx]
-			};
-			origList.push(j3);
-		}
+		const origList = this.generateJunc3List(iCtrJ);
 		const rJuncList = [...origList.slice(startIdx), ...origList.slice(0, startIdx)];
 		return rJuncList;
 	}
@@ -500,16 +505,8 @@ class SheetFold {
 		const rCtrsNew: tContour[] = [];
 		for (const iCtrJ of iCtrsJ) {
 			if (iCtrJ.used === 0) {
-				const juncList1: tJunc3[] = [];
 				const j0: tJunc3 = { jName: '', segPosition: 0 };
-				juncList1.push(j0);
-				for (let idx = 0; idx < iCtrJ.junctionID.length; idx++) {
-					const j3: tJunc3 = {
-						jName: iCtrJ.junctionID[idx],
-						segPosition: iCtrJ.junctionPosition[idx]
-					};
-					juncList1.push(j3);
-				}
+				const juncList1 = [j0, ...this.generateJunc3List(iCtrJ)];
 				const ctrN = this.makePartialCtr(iCtrJ, juncList1, true, iCtrsJ);
 				//console.log(`dbg325: ${iCtrsJ.length} ctrN segNb ${ctrN.segments.length}`);
 				//for (const [idx, seg] of ctrN.segments.entries()) {
