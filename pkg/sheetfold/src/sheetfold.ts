@@ -375,27 +375,32 @@ class SheetFold {
 		}
 		return rTm;
 	}
-	positionF2d(iFacetIdx: number, iFacet: Facet): Transform2d {
-		const tm1 = transform2d();
+	positionJ2d(iFacetIdx: number): Transform2d {
+		const rTm1 = transform2d();
 		let facIdx = iFacetIdx;
-		if (iFacet.attached) {
+		if (this.pFacets[iFacetIdx].attached) {
 			while (facIdx > 0) {
 				const jIdx = this.pFacets[facIdx].juncIdx;
 				const junc = this.pJuncs[jIdx];
 				const tJangle = Math.abs(junc.angle);
-				const tJlength = tJangle === 0 ? junc.radius : tJangle * junc.radius;
+				const tJWidth = tJangle === 0 ? junc.radius : tJangle * junc.radius;
 				const tSign = tJSide.eABLeft === junc.a1Side ? -1 : 1;
-				tm1.addTranslation(0, tSign * tJlength);
+				rTm1.addTranslation(0, tSign * tJWidth);
 				const [ta, tx, ty] = this.fromJunctionToAttach(junc);
-				tm1.addRotation(ta);
-				tm1.addTranslation(tx, ty);
+				rTm1.addRotation(ta);
+				rTm1.addTranslation(tx, ty);
 				facIdx = junc.a1FacetIdx;
 			}
 		} else {
 			throw `err491: iFacetIdx ${iFacetIdx} is not attached!`;
 		}
+		return rTm1;
+	}
+	positionF2d(iFacetIdx: number): Transform2d {
+		const tm1 = this.positionJ2d(iFacetIdx);
 		const az1 = tm1.getRotation();
 		const [xx1, yy1] = tm1.getTranslation();
+		const iFacet = this.pFacets[iFacetIdx];
 		const rTm2d = transform2d()
 			.addTranslation(-iFacet.ax, -iFacet.ay)
 			.addRotation(-iFacet.aa + az1)
@@ -536,25 +541,27 @@ class SheetFold {
 	generateMarkers(): tContour[] {
 		const rMarkers: tContour[] = [];
 		for (const iJunc of this.pJuncs) {
+			if (iJunc.associated === 0) {
+				throw `err509: junction ${iJunc.jName} is not associated`;
+			}
 			if (iJunc.mark > 0) {
 				const facetIdx = iJunc.a1FacetIdx;
+				const tJangle = Math.abs(iJunc.angle);
+				const tJWidth = tJangle === 0 ? iJunc.radius : tJangle * iJunc.radius;
+				const tSign = tJSide.eABLeft === iJunc.a1Side ? -1 : 0;
+				const tm1 = transform2d().addTranslation(iJunc.jLength / 2, tSign * tJWidth);
 				if (facetIdx > 0) {
-					const tm2 = this.positionF2d(facetIdx, this.pFacets[facetIdx]);
-					const ctrM = this.generateOneMarker(iJunc)
-						.translate(iJunc.jLength / 2, 0)
-						.rotate(0, 0, tm2.getRotation())
-						.translate(...tm2.getTranslation());
-					rMarkers.push(ctrM);
+					const [ta, tx, ty] = this.fromJunctionToAttach(iJunc);
+					tm1.addRotation(ta).addTranslation(tx, ty);
+					const tm2 = this.positionJ2d(facetIdx);
+					tm1.addRotation(tm2.getRotation()).addTranslation(...tm2.getTranslation());
 				} else {
-					const tm2 = transform2d()
-						.addRotation(iJunc.a1Teta)
-						.addTranslation(iJunc.a1x, iJunc.a1y);
-					const ctrM = this.generateOneMarker(iJunc)
-						.translate(iJunc.jLength / 2, 0)
-						.rotate(0, 0, tm2.getRotation())
-						.translate(...tm2.getTranslation());
-					rMarkers.push(ctrM);
+					tm1.addRotation(iJunc.a1Teta).addTranslation(iJunc.a1x, iJunc.a1y);
 				}
+				const ctrM = this.generateOneMarker(iJunc)
+					.rotate(0, 0, tm1.getRotation())
+					.translate(...tm1.getTranslation());
+				rMarkers.push(ctrM);
 			}
 		}
 		return rMarkers;
@@ -565,7 +572,7 @@ class SheetFold {
 		// place facets
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
 			if (iFacetIdx > 0) {
-				const tm2 = this.positionF2d(iFacetIdx, iFacet);
+				const tm2 = this.positionF2d(iFacetIdx);
 				facetPlaced.push(iFacet.place(tm2));
 			} else {
 				if (iFacet.attached) {
