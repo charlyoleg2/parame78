@@ -44,7 +44,7 @@
 		<a href="https://www.npmjs.com/package/geomui">geomui</a>.
 		<code>
 			<br />
-			{#each detailed_versions as dversion}
+			{#each detailed_versions as dversion, idx (idx)}
 				{dversion}<br />
 			{/each}
 		</code>
