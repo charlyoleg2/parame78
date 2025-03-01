@@ -108,10 +108,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R1 = param.D1;
 		const R2 = param.D2;
 		const R3A = param.D3A / 2;
-		const R3B = param.D3B / 2;
+		let R3B = param.D3B / 2;
 		const JRext = param.Jradius + param.T1 * (1 - aJn);
 		const W1A = param.W2A - 2 * JRext;
-		const W1B = param.W2B - 2 * JRext;
+		let W1B = param.W2B - 2 * JRext;
+		if (param.eqWAB) {
+			R3B = R3A;
+			W1B = W1A;
+		}
 		const aCorner = Math.PI / 2;
 		// step-5 : checks on the parameter values
 		if (W1A < param.D3A) {
