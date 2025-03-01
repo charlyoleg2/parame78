@@ -454,6 +454,7 @@ class SheetFold {
 	addSeg(iCtr: Contour, iSeg: Segment1) {
 		if (iSeg.sType !== SegEnum.eStart) {
 			iCtr.addSeg(iSeg);
+			iCtr.setLastPoint(iSeg.px, iSeg.py); // required for addSegStrokeRP()
 		}
 	}
 	makePartialCtr(
@@ -482,16 +483,36 @@ class SheetFold {
 				this.addSeg(rCtr, iCtrJ.segments[segIdx].clone());
 			}
 			const junc = this.pJuncs[this.getJuncIdx(iJuncList[i1].jName)];
-			const ctrJ2 = this.findCtrJ(iCtrsJ, junc.a2FacetIdx, junc.a2ContIdx);
-			const juncList2 = this.calcJuncList(ctrJ2, junc.jName);
-			const partialCtr = this.makePartialCtr(ctrJ2, juncList2, false, iCtrsJ);
-			rCtr.addSegStrokeA(partialCtr.segments[0].px, partialCtr.segments[0].py);
-			for (const seg of partialCtr.segments) {
-				this.addSeg(rCtr, seg.clone());
-				//console.log(`dbg310: seg.px.py ${ffix(seg.px)} ${ffix(seg.py)}`);
+			if (junc.a2FacetIdx === -1) {
+				// junction with no facet-2
+				const Ax = iCtrJ.segments[segIdx].px;
+				const Ay = iCtrJ.segments[segIdx].py;
+				segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
+				const Bx = iCtrJ.segments[segIdx].px;
+				const By = iCtrJ.segments[segIdx].py;
+				const vABx = Bx - Ax;
+				const vABy = By - Ay;
+				const lAB = Math.sqrt(vABx ** 2 + vABy ** 2);
+				const aAB = Math.atan2(vABy, vABx);
+				const jLen = junc.angle === 0 ? junc.radius : Math.abs(junc.angle) * junc.radius;
+				//console.log(`dbg312: jLen ${ffix(jLen)} aAB ${ffix(aAB)} lAB ${ffix(lAB)}`);
+				const a90 = junc.a1Side === tJSide.eABLeft ? -Math.PI / 2 : Math.PI / 2;
+				//console.log(`dbg313: jLen ${ffix(jLen)} aAB ${ffix(aAB)} a90 ${ffix(a90)}`);
+				rCtr.addSegStrokeRP(aAB + a90, jLen);
+				rCtr.addSegStrokeRP(aAB, lAB);
+				rCtr.addSegStrokeA(Bx, By);
+			} else {
+				const ctrJ2 = this.findCtrJ(iCtrsJ, junc.a2FacetIdx, junc.a2ContIdx);
+				const juncList2 = this.calcJuncList(ctrJ2, junc.jName);
+				const partialCtr = this.makePartialCtr(ctrJ2, juncList2, false, iCtrsJ);
+				rCtr.addSegStrokeA(partialCtr.segments[0].px, partialCtr.segments[0].py);
+				for (const seg of partialCtr.segments) {
+					this.addSeg(rCtr, seg.clone());
+					//console.log(`dbg310: seg.px.py ${ffix(seg.px)} ${ffix(seg.py)}`);
+				}
+				segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
+				rCtr.addSegStrokeA(iCtrJ.segments[segIdx].px, iCtrJ.segments[segIdx].py);
 			}
-			segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
-			rCtr.addSegStrokeA(iCtrJ.segments[segIdx].px, iCtrJ.segments[segIdx].py);
 		}
 		iCtrJ.incrementUsed();
 		segIdx = this.incrSegIdx(segIdx, 1, iCtrJ.segments.length);
@@ -518,7 +539,7 @@ class SheetFold {
 		return rCtrsNew;
 	}
 	generateOneMarker(iJunc: tJunc2): tContour {
-		const jLen = iJunc.angle === 0 ? iJunc.radius : iJunc.angle * iJunc.radius;
+		const jLen = iJunc.angle === 0 ? iJunc.radius : Math.abs(iJunc.angle) * iJunc.radius;
 		if (jLen < 2 * iJunc.mark) {
 			const ctrM = ctrRectangle(-iJunc.mark, 0, 2 * iJunc.mark, jLen);
 			return ctrM;

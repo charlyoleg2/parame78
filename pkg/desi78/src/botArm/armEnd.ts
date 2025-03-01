@@ -137,6 +137,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.startJunction('J1', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeR(0, param.L1)
 			.addSegStrokeR(-W1A, 0)
+			//.startJunction('J4', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
 		const hollow1A: tContour[] = [];
 		if (R3A > 0) {
@@ -146,6 +147,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// facet fa2
 		const ctr2 = contourJ(0, 0)
 			.addSegStrokeR(W1B, 0)
+			.startJunction('J2', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeR(0, param.L1)
 			.addSegStrokeR(-W1B, 0)
 			.startJunction('J1', tJDir.eB, tJSide.eABRight)
@@ -155,18 +157,63 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			hollow1B.push(contourCircle(W1B / 2, param.L1 / 2, R3B));
 		}
 		const fa2 = facet([ctr2, ...hollow1B]);
+		// facet fa3
+		const ctr3 = contourJ(0, 0)
+			.addSegStrokeR(W1A, 0)
+			.startJunction('J3', tJDir.eA, tJSide.eABLeft)
+			.addSegStrokeR(0, param.L1)
+			.addSegStrokeR(-W1A, 0)
+			.startJunction('J2', tJDir.eB, tJSide.eABRight)
+			.closeSegStroke();
+		const fa3 = facet([ctr3, ...hollow1A]);
+		// facet fa4
+		const ctr4 = contourJ(0, 0)
+			.addSegStrokeR(W1A, 0)
+			.startJunction('J4', tJDir.eA, tJSide.eABLeft)
+			.addSegStrokeR(0, param.L1)
+			.addSegStrokeR(-W1A, 0)
+			.startJunction('J3', tJDir.eB, tJSide.eABRight)
+			.closeSegStroke();
+		const fa4 = facet([ctr4, ...hollow1B]);
 		// sheetFold
 		const sFold = sheetFold(
-			[fa1, fa2],
+			[fa1, fa2, fa3, fa4],
 			{
 				J1: {
 					angle: aCorner,
 					radius: param.Jradius,
 					neutral: aJn,
 					mark: param.Jmark
+				},
+				J2: {
+					angle: aCorner,
+					radius: param.Jradius,
+					neutral: aJn,
+					mark: param.Jmark
+				},
+				J3: {
+					angle: aCorner,
+					radius: param.Jradius,
+					neutral: aJn,
+					mark: param.Jmark
+				},
+				J4: {
+					angle: aCorner,
+					radius: param.Jradius,
+					neutral: aJn,
+					mark: param.Jmark
 				}
 			},
-			[{ x1: 0, y1: 0, a1: 0, l1: W1A, ante: [], post: ['J1', W1B] }],
+			[
+				{
+					x1: 0,
+					y1: 0,
+					a1: 0,
+					l1: W1A,
+					ante: [],
+					post: ['J1', W1B, 'J2', W1A, 'J3', W1B, 'J4']
+				}
+			],
 			param.T1,
 			rGeome.partName
 		);
