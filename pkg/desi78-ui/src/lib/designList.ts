@@ -16,7 +16,7 @@ import {
 	demoSheetFoldDef,
 	demoSheetFoldDef2,
 	sfDieDef,
-	armEnd,
+	armEndDef,
 	railDef
 } from 'desi78';
 
