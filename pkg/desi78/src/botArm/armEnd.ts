@@ -66,7 +66,7 @@ const pDef: tParamDef = {
 		pNumber('D1', 'mm', 20, 1, 200, 1),
 		pNumber('S1', 'mm', 10, 1, 200, 1),
 		pSectionSeparator('Hollow'),
-		pNumber('D2', 'mm', 20, 0, 200, 1),
+		pNumber('D2', 'mm', 10, 0, 200, 1),
 		pNumber('D3A', 'mm', 30, 0, 200, 1),
 		pNumber('D3B', 'mm', 30, 0, 200, 1),
 		pSectionSeparator('Thickness and corners'),
@@ -107,8 +107,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aJn = param.Jneutral / 100;
 		const R1 = param.D1;
 		const R2 = param.D2;
-		const R3A = param.D3A;
-		//const R3B = param.D3B;
+		const R3A = param.D3A / 2;
+		const R3B = param.D3B / 2;
 		const JRext = param.Jradius + param.T1 * (1 - aJn);
 		const W1A = param.W2A - 2 * JRext;
 		const W1B = param.W2B - 2 * JRext;
@@ -127,6 +127,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `W1A ${ffix(W1A)}, W1B ${ffix(W1B)}\n`;
 		// step-7 : drawing of the figures
 		// facets
+		// facet fa1
 		const ctr1 = contourJ(0, 0)
 			.addSegStrokeR(W1A, 0)
 			.startJunction('J1', tJDir.eA, tJSide.eABLeft)
@@ -138,14 +139,26 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			hollow1A.push(contourCircle(W1A / 2, param.L1 / 2, R3A));
 		}
 		const fa1 = facet([ctr1, ...hollow1A]);
+		// facet fa2
+		const ctr2 = contourJ(0, 0)
+			.addSegStrokeR(W1B, 0)
+			.addSegStrokeR(0, param.L1)
+			.addSegStrokeR(-W1B, 0)
+			.startJunction('J1', tJDir.eB, tJSide.eABRight)
+			.closeSegStroke();
+		const hollow1B: tContour[] = [];
+		if (R3B > 0) {
+			hollow1B.push(contourCircle(W1B / 2, param.L1 / 2, R3B));
+		}
+		const fa2 = facet([ctr2, ...hollow1B]);
 		// sheetFold
 		const sFold = sheetFold(
-			[fa1],
+			[fa1, fa2],
 			{
 				J1: {
 					angle: aCorner,
 					radius: param.Jradius,
-					neutral: param.Jneutral,
+					neutral: aJn,
 					mark: param.Jmark
 				}
 			},
