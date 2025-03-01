@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="411.57516"
+   width="428.13904"
    height="351.63904"
-   viewBox="0 0 108.89593 93.037829"
+   viewBox="0 0 113.27845 93.037829"
    version="1.1"
    id="svg1"
    inkscape:version="1.4 (1:1.4+202410161351+e7c3feb100)"
@@ -25,7 +25,7 @@
      inkscape:document-units="px"
      inkscape:zoom="1.5696829"
      inkscape:cx="303.24596"
-     inkscape:cy="143.65959"
+     inkscape:cy="348.15949"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -35,7 +35,7 @@
     <inkscape:page
        x="0"
        y="0"
-       width="108.89593"
+       width="113.27845"
        height="93.037827"
        id="page2"
        margin="0"
@@ -43,6 +43,12 @@
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="49.054493"
+       y="523.03558"
+       width="145.25227"
+       height="74.537346"
+       id="rect10" />
     <rect
        x="421.93329"
        y="172.99397"
@@ -179,20 +185,40 @@
        width="73.900276"
        height="44.594994"
        id="rect5-2" />
+    <marker
+       style="overflow:visible"
+       id="ArrowWide-9-7"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path3-73-5" />
+    </marker>
   </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-24.927032,-37.895821)">
+     transform="translate(-20.544517,-37.895821)">
     <rect
        style="fill:#ffffff;stroke:#ffffff;stroke-width:0.264583;stroke-linejoin:round"
        id="rect7"
-       width="108.63135"
+       width="113.01387"
        height="92.773247"
-       x="25.059324"
+       x="20.676805"
        y="38.028114"
-       inkscape:export-filename="End_section.svg"
+       inkscape:export-filename="armEnd_section.svg"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <text
@@ -248,7 +274,7 @@
        d="m 80.814957,124.78285 v -7.29183"
        id="path1-2-7" />
     <path
-       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-3);marker-end:url(#ArrowWide-3)"
+       style="fill:none;stroke:#666666;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-3);marker-end:url(#ArrowWide-3)"
        d="M 60.859976,123.58917 H 80.592312"
        id="path2-2" />
     <path
@@ -267,7 +293,7 @@
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,17.651655,-17.447252)"
        id="text5"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;white-space:pre;shape-inside:url(#rect5);shape-padding:0;shape-margin:0;inline-size:0;display:inline;opacity:1;vector-effect:none;fill:#0000ff;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;white-space:pre;shape-inside:url(#rect5);shape-padding:0;shape-margin:0;inline-size:0;display:inline;opacity:1;vector-effect:none;fill:#666666;fill-opacity:1;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"><tspan
          x="187.93555"
          y="548.10168"
          id="tspan3">W1A</tspan></text>
@@ -319,5 +345,26 @@
          x="187.93555"
          y="548.10168"
          id="tspan6">W1B</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,8.9335984,-25.283769)"
+       id="text7"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect10);fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="49.054688"
+         y="537.2716"
+         id="tspan7">Jradius
+</tspan><tspan
+         x="49.054688"
+         y="557.2716"
+         id="tspan8">Jneutral
+</tspan><tspan
+         x="49.054688"
+         y="577.2716"
+         id="tspan9">Jmark</tspan></text>
+    <path
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide-9-7)"
+       d="m 46.636764,114.07292 -5.118159,3.89283"
+       id="path13-1-5"
+       sodipodi:nodetypes="cc" />
   </g>
 </svg>

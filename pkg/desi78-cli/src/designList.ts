@@ -16,6 +16,7 @@ import {
 	demoSheetFoldDef,
 	demoSheetFoldDef2,
 	sfDieDef,
+	armEnd,
 	railDef
 } from 'desi78';
 
@@ -34,6 +35,7 @@ const designList: tAllPageDef = {
 	'desi78/demoTriangule': demoTrianguleDef,
 	'desi78/demoSheetFold': demoSheetFoldDef,
 	'desi78/demoSheetFold2': demoSheetFoldDef2,
+	'desi78/armEnd': armEnd,
 	'desi78/rail': railDef
 };
 
