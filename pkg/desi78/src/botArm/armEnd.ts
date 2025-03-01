@@ -23,10 +23,10 @@ import {
 	//ShapePoint,
 	//line,
 	//vector,
-	contour,
+	//contour,
 	contourCircle,
 	//ctrRectangle,
-	figure,
+	//figure,
 	//degToRad,
 	//radToDeg,
 	//pointCoord,
@@ -44,9 +44,9 @@ import {
 	tJSide,
 	contourJ,
 	facet,
-	sheetFold,
-	contourJ2contour,
-	facet2figure
+	//contourJ2contour,
+	//facet2figure,
+	sheetFold
 } from 'sheetfold';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
@@ -108,7 +108,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const R1 = param.D1;
 		const R2 = param.D2;
 		const R3A = param.D3A;
-		const R3B = param.D3B;
+		//const R3B = param.D3B;
 		const JRext = param.Jradius + param.T1 * (1 - aJn);
 		const W1A = param.W2A - 2 * JRext;
 		const W1B = param.W2B - 2 * JRext;
