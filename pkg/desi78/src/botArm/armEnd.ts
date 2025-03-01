@@ -117,6 +117,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			W1B = W1A;
 		}
 		const aCorner = Math.PI / 2;
+		const W1A2 = W1A / 2;
+		const W1B2 = W1B / 2;
+		const lDiag = Math.sqrt(param.L2 ** 2 + W1A2 ** 2);
+		const a1 = Math.atan2(W1A2, param.L2);
+		const Rext = R1 + param.S1;
+		if (Rext >= lDiag) {
+			throw `err123: lDiag ${ffix(lDiag)} too small compare to D1 ${param.D1} and S1 ${param.S1}`;
+		}
+		const a2 = Math.acos(Rext / lDiag);
+		const a3 = -Math.PI / 2 + a1 + a2;
+		const p1x = Rext * Math.cos(a3);
+		const p1y = Rext * Math.sin(a3);
+		const R2y = (param.L2 - R1) / 2;
 		// step-5 : checks on the parameter values
 		if (W1A < param.D3A) {
 			throw `err118: W1A ${W1A} too small compare to D3A ${param.D3A}`;
@@ -132,20 +145,31 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-7 : drawing of the figures
 		// facets
 		// facet fa1
-		const ctr1 = contourJ(0, 0)
+		const ctr1 = contourJ(-W1A2, 0)
 			.addSegStrokeR(W1A, 0)
 			.startJunction('J1', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeR(0, param.L1)
-			.addSegStrokeR(-W1A, 0)
+			//.addSegStrokeR(-W1A, 0)
+			.addSegStrokeA(p1x, param.L1 + param.L2 + p1y)
+			.addPointA(0, param.L1 + param.L2 + Rext)
+			.addPointA(-p1x, param.L1 + param.L2 + p1y)
+			.addSegArc2()
+			.addSegStrokeA(-W1A2, param.L1)
 			//.startJunction('J4', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
 		const hollow1A: tContour[] = [];
 		if (R3A > 0) {
-			hollow1A.push(contourCircle(W1A / 2, param.L1 / 2, R3A));
+			hollow1A.push(contourCircle(0, param.L1 / 2, R3A));
+		}
+		if (R1 > 0) {
+			hollow1A.push(contourCircle(0, param.L1 + param.L2, R1));
+		}
+		if (R2 > 0) {
+			hollow1A.push(contourCircle(0, param.L1 + R2y, R2));
 		}
 		const fa1 = facet([ctr1, ...hollow1A]);
 		// facet fa2
-		const ctr2 = contourJ(0, 0)
+		const ctr2 = contourJ(-W1B2, 0)
 			.addSegStrokeR(W1B, 0)
 			.startJunction('J2', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeR(0, param.L1)
@@ -154,24 +178,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		const hollow1B: tContour[] = [];
 		if (R3B > 0) {
-			hollow1B.push(contourCircle(W1B / 2, param.L1 / 2, R3B));
+			hollow1B.push(contourCircle(0, param.L1 / 2, R3B));
 		}
 		const fa2 = facet([ctr2, ...hollow1B]);
 		// facet fa3
-		const ctr3 = contourJ(0, 0)
+		const ctr3 = contourJ(-W1A2, 0)
 			.addSegStrokeR(W1A, 0)
 			.startJunction('J3', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeR(0, param.L1)
-			.addSegStrokeR(-W1A, 0)
+			//.addSegStrokeR(-W1A, 0)
+			.addSegStrokeA(p1x, param.L1 + param.L2 + p1y)
+			.addPointA(0, param.L1 + param.L2 + Rext)
+			.addPointA(-p1x, param.L1 + param.L2 + p1y)
+			.addSegArc2()
+			.addSegStrokeA(-W1A2, param.L1)
 			.startJunction('J2', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
 		const fa3 = facet([ctr3, ...hollow1A]);
 		// facet fa4
-		const ctr4 = contourJ(0, 0)
+		const ctr4 = contourJ(-W1B2, 0)
 			.addSegStrokeR(W1A, 0)
 			.startJunction('J4', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeR(0, param.L1)
-			.addSegStrokeR(-W1A, 0)
+			.addSegStrokeR(-W1B, 0)
 			.startJunction('J3', tJDir.eB, tJSide.eABRight)
 			.closeSegStroke();
 		const fa4 = facet([ctr4, ...hollow1B]);
