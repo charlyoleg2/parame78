@@ -134,8 +134,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (W1A < param.D3A) {
 			throw `err118: W1A ${W1A} too small compare to D3A ${param.D3A}`;
 		}
+		if (param.L1 < param.D3A) {
+			throw `err119: param.L1 ${param.L1} too small compare to D3A ${param.D3A}`;
+		}
 		if (W1B < param.D3B) {
 			throw `err121: W1B ${W1B} too small compare to D3B ${param.D3B}`;
+		}
+		if (param.L1 < param.D3B) {
+			throw `err122: param.L1 ${param.L1} too small compare to D3B ${param.D3B}`;
 		}
 		if (param.L2 < R1 + 2 * R2) {
 			throw `err124: L2 ${param.L2} too small compare to D1 ${param.D1} and D2 ${param.D2}`;
