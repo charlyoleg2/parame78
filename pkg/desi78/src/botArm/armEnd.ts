@@ -39,6 +39,7 @@ import {
 	//EExtrude,
 	//EBVolume
 } from 'geometrix';
+import type { tContourJ } from 'sheetfold';
 import {
 	tJDir,
 	tJSide,
@@ -149,21 +150,41 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-6 : any logs
 		rGeome.logstr += `W1A ${ffix(W1A)}, W1B ${ffix(W1B)}\n`;
 		//rGeome.logstr += `W1A2 ${ffix(W1A2)}, W1B2 ${ffix(W1B2)}\n`;
+		//rGeome.logstr += `p1x ${ffix(p1x)}, p1y ${ffix(p1y)}\n`;
 		// step-7 : drawing of the figures
 		// facets
-		// facet fa1
-		const ctr1 = contourJ(-W1A2, 0)
-			.addSegStrokeR(W1A, 0)
-			.startJunction('J1', tJDir.eA, tJSide.eABLeft)
-			.addSegStrokeR(0, param.L1)
-			//.addSegStrokeR(-W1A, 0)
-			.addSegStrokeA(p1x, param.L1 + param.L2 + p1y)
-			.addPointA(0, param.L1 + param.L2 + Rext)
-			.addPointA(-p1x, param.L1 + param.L2 + p1y)
-			.addSegArc2()
-			.addSegStrokeA(-W1A2, param.L1)
-			//.startJunction('J4', tJDir.eB, tJSide.eABRight)
-			.closeSegStroke();
+		// sub-contourJ
+		function ctrLeg(jName: string[]): tContourJ {
+			const rCtr = contourJ(-W1A2, 0).addSegStrokeR(W1A, 0);
+			if (jName.length > 0) {
+				rCtr.startJunction(jName[0], tJDir.eA, tJSide.eABLeft);
+			}
+			rCtr.addSegStrokeR(0, param.L1)
+				//.addSegStrokeR(-W1A, 0)
+				.addSegStrokeA(p1x, param.L1 + param.L2 + p1y)
+				.addPointA(0, param.L1 + param.L2 + Rext)
+				.addPointA(-p1x, param.L1 + param.L2 + p1y)
+				.addSegArc2()
+				.addSegStrokeA(-W1A2, param.L1);
+			if (jName.length > 1) {
+				rCtr.startJunction(jName[1], tJDir.eB, tJSide.eABRight);
+			}
+			rCtr.closeSegStroke();
+			return rCtr;
+		}
+		function ctrSide(jName: string[]): tContourJ {
+			const rCtr = contourJ(-W1B2, 0).addSegStrokeR(W1B, 0);
+			if (jName.length > 0) {
+				rCtr.startJunction(jName[0], tJDir.eA, tJSide.eABLeft);
+			}
+			rCtr.addSegStrokeR(0, param.L1).addSegStrokeR(-W1B, 0);
+			if (jName.length > 1) {
+				rCtr.startJunction(jName[1], tJDir.eB, tJSide.eABRight);
+			}
+			rCtr.closeSegStroke();
+			return rCtr;
+		}
+		// hollow
 		const hollow1A: tContour[] = [];
 		if (R3A > 0) {
 			hollow1A.push(contourCircle(0, param.L1 / 2, R3A));
@@ -174,42 +195,21 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (R2 > 0) {
 			hollow1A.push(contourCircle(0, param.L1 + R2y, R2));
 		}
-		const fa1 = facet([ctr1, ...hollow1A]);
-		// facet fa2
-		const ctr2 = contourJ(-W1B2, 0)
-			.addSegStrokeR(W1B, 0)
-			.startJunction('J2', tJDir.eA, tJSide.eABLeft)
-			.addSegStrokeR(0, param.L1)
-			.addSegStrokeR(-W1B, 0)
-			.startJunction('J1', tJDir.eB, tJSide.eABRight)
-			.closeSegStroke();
 		const hollow1B: tContour[] = [];
 		if (R3B > 0) {
 			hollow1B.push(contourCircle(0, param.L1 / 2, R3B));
 		}
+		// facet fa1
+		const ctr1 = ctrLeg(['J1']);
+		const fa1 = facet([ctr1, ...hollow1A]);
+		// facet fa2
+		const ctr2 = ctrSide(['J2', 'J1']);
 		const fa2 = facet([ctr2, ...hollow1B]);
 		// facet fa3
-		const ctr3 = contourJ(-W1A2, 0)
-			.addSegStrokeR(W1A, 0)
-			.startJunction('J3', tJDir.eA, tJSide.eABLeft)
-			.addSegStrokeR(0, param.L1)
-			//.addSegStrokeR(-W1A, 0)
-			.addSegStrokeA(p1x, param.L1 + param.L2 + p1y)
-			.addPointA(0, param.L1 + param.L2 + Rext)
-			.addPointA(-p1x, param.L1 + param.L2 + p1y)
-			.addSegArc2()
-			.addSegStrokeA(-W1A2, param.L1)
-			.startJunction('J2', tJDir.eB, tJSide.eABRight)
-			.closeSegStroke();
+		const ctr3 = ctrLeg(['J3', 'J2']);
 		const fa3 = facet([ctr3, ...hollow1A]);
 		// facet fa4
-		const ctr4 = contourJ(-W1B2, 0)
-			.addSegStrokeR(W1B, 0)
-			.startJunction('J4', tJDir.eA, tJSide.eABLeft)
-			.addSegStrokeR(0, param.L1)
-			.addSegStrokeR(-W1B, 0)
-			.startJunction('J3', tJDir.eB, tJSide.eABRight)
-			.closeSegStroke();
+		const ctr4 = ctrSide(['J4', 'J3']);
 		const fa4 = facet([ctr4, ...hollow1B]);
 		// sheetFold
 		const sFold = sheetFold(
