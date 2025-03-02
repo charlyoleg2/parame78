@@ -142,6 +142,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `W1A ${ffix(W1A)}, W1B ${ffix(W1B)}\n`;
+		//rGeome.logstr += `W1A2 ${ffix(W1A2)}, W1B2 ${ffix(W1B2)}\n`;
 		// step-7 : drawing of the figures
 		// facets
 		// facet fa1
@@ -197,7 +198,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const fa3 = facet([ctr3, ...hollow1A]);
 		// facet fa4
 		const ctr4 = contourJ(-W1B2, 0)
-			.addSegStrokeR(W1A, 0)
+			.addSegStrokeR(W1B, 0)
 			.startJunction('J4', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeR(0, param.L1)
 			.addSegStrokeR(-W1B, 0)

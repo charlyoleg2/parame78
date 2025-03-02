@@ -290,7 +290,8 @@ class SheetFold {
 				if (1 === idx) {
 					const absDiffL = Math.abs(lAB - iJunc.jLength);
 					if (absDiffL > cPrecision) {
-						throw `err908: junction ${iJuncIdx} jLength ${ffix(iJunc.jLength)} ${ffix(lAB)} differs of ${absDiffL}\n${ABLog}`;
+						const ABLog2 = `jName ${iJunc.jName} ${ABLog}`;
+						throw `err908: junction ${iJuncIdx} jLength ${ffix(iJunc.jLength)} ${ffix(lAB)} differs of ${absDiffL}\n${ABLog2}`;
 					}
 					if (iJunc.a1Side === iJunc.a2Side) {
 						throw `err905: jSide ${iJunc.a1Side} ${iJunc.a2Side} must be opposite`;
