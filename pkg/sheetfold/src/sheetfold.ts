@@ -234,7 +234,11 @@ class SheetFold {
 		}
 	}
 	/** @internal */
-	oneTetaLength(faIdx: number, coIdx: number, segIdx: number): [number, number, number, number] {
+	oneTetaLength(
+		faIdx: number,
+		coIdx: number,
+		segIdx: number
+	): [number, number, number, number, string] {
 		const ctr = this.pFacets[faIdx].outerInner[coIdx];
 		if (!(ctr instanceof Contour)) {
 			throw `err234: faIdx ${faIdx}, coIdx ${coIdx} is not a Contour but a ContourCircle`;
@@ -255,7 +259,8 @@ class SheetFold {
 		const rLength = Math.sqrt((segB.px - segA.px) ** 2 + (segB.py - segA.py) ** 2);
 		//console.log(`dbg320: ${faIdx} ${coIdx} ${segIdx} has a length of ${ffix(rLength)}`);
 		const rTeta = Math.atan2(segB.py - segA.py, segB.px - segA.px);
-		return [segA.px, segA.py, rTeta, rLength];
+		const rLog = `Ax ${ffix(segA.px)} Ay ${ffix(segA.py)} Bx ${ffix(segB.px)} By ${ffix(segB.py)}`;
+		return [segA.px, segA.py, rTeta, rLength, rLog];
 	}
 	/** @internal */
 	computeLength() {
@@ -272,20 +277,20 @@ class SheetFold {
 					segIdx = iJunc.a2SegIdx;
 					jDir = iJunc.a2Dir;
 				}
-				const [xxPre, yyPre, jTetaPre, jLength] = this.oneTetaLength(faIdx, coIdx, segIdx);
-				let jTeta = jTetaPre;
-				let xx = xxPre;
-				let yy = yyPre;
+				const [Ax, Ay, aAB, lAB, ABLog] = this.oneTetaLength(faIdx, coIdx, segIdx);
+				let jTeta = aAB;
+				let xx = Ax;
+				let yy = Ay;
 				if (tJDir.eB === jDir) {
-					const pA = point(xxPre, yyPre).translatePolar(jTetaPre, jLength);
+					const pA = point(Ax, Ay).translatePolar(aAB, lAB);
 					xx = pA.cx;
 					yy = pA.cy;
-					jTeta = withinPiPi(jTetaPre + Math.PI);
+					jTeta = withinPiPi(aAB + Math.PI);
 				}
 				if (1 === idx) {
-					const absDiffL = Math.abs(jLength - iJunc.jLength);
+					const absDiffL = Math.abs(lAB - iJunc.jLength);
 					if (absDiffL > cPrecision) {
-						throw `err908: junction ${iJuncIdx} jLength ${ffix(iJunc.jLength)} ${ffix(jLength)} differs of ${absDiffL}`;
+						throw `err908: junction ${iJuncIdx} jLength ${ffix(iJunc.jLength)} ${ffix(lAB)} differs of ${absDiffL}\n${ABLog}`;
 					}
 					if (iJunc.a1Side === iJunc.a2Side) {
 						throw `err905: jSide ${iJunc.a1Side} ${iJunc.a2Side} must be opposite`;
@@ -303,7 +308,7 @@ class SheetFold {
 						throw `err545: pFacet ${faIdx} is already attached`;
 					}
 				} else {
-					iJunc.jLength = jLength;
+					iJunc.jLength = lAB;
 					iJunc.a1Teta = jTeta;
 					iJunc.a1x = xx;
 					iJunc.a1y = yy;
