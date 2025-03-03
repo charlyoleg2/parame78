@@ -25,7 +25,7 @@ import {
 	//vector,
 	//contour,
 	contourCircle,
-	//ctrRectangle,
+	ctrRectangle,
 	figure,
 	//degToRad,
 	//radToDeg,
@@ -81,12 +81,14 @@ const pDef: tParamDef = {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figAxis = figure();
+	const figHoleS = figure();
+	const figHoleL = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
 		const R1 = param.D1 / 2;
 		const R1b = R1 - param.T1;
-		//const R2 = param.D2 / 2;
+		const R2 = param.D2 / 2;
 		const R3 = param.D3 / 2;
 		// step-5 : checks on the parameter values
 		if (R1b <= 0) {
@@ -105,10 +107,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `D1 ${ffix(param.D1)}, R1 ${ffix(R1)}\n`;
 		rGeome.logstr += `D1b ${ffix(2 * R1b)}, R1b ${ffix(R1b)}\n`;
 		// step-7 : drawing of the figures
+		// figAxis
 		figAxis.addMainOI([contourCircle(0, 0, R1), contourCircle(0, 0, R1b)]);
+		figAxis.addSecond(ctrRectangle(1, -R2, 2 * R1, 2 * R2));
+		figAxis.addSecond(ctrRectangle(-R1 - R3, -param.D1, 2 * R3, 2 * param.D1));
+		// figHoleS
+		figHoleS.addMainO(contourCircle(0, 0, R2));
+		figHoleS.addSecond(ctrRectangle(-param.L1 / 2, -R1, param.L1, 2 * R1));
+		figHoleS.addSecond(ctrRectangle(-param.L1 / 2, -R1b, param.L1, 2 * R1b));
+		// figHoleL
+		figHoleL.addMainO(contourCircle(0, 0, R3));
+		figHoleL.addSecond(ctrRectangle(-param.L1 / 2, 0, param.L1, 2 * R1));
+		figHoleL.addSecond(ctrRectangle(-param.L1 / 2, param.T1, param.L1, 2 * R1b));
 		// final figure list
 		rGeome.fig = {
-			faceAxis: figAxis
+			faceAxis: figAxis,
+			faceHoleS: figHoleS,
+			faceHoleL: figHoleL
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
@@ -121,13 +136,33 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					length: param.L1,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
+				},
+				{
+					outName: `subpax_${designName}_HoleS`,
+					face: `${designName}_faceHoleS`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: 2 * param.D1,
+					rotate: [0, Math.PI / 2, 0],
+					translate: [0, 0, param.L1 / 2]
+				},
+				{
+					outName: `subpax_${designName}_HoleL`,
+					face: `${designName}_faceHoleL`,
+					extrudeMethod: EExtrude.eLinearOrtho,
+					length: 2 * param.D1,
+					rotate: [-Math.PI / 2, 0, 0],
+					translate: [-R1, -param.D1, param.L1 / 2]
 				}
 			],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
-					boolMethod: EBVolume.eIdentity,
-					inList: [`subpax_${designName}_Axis`]
+					boolMethod: EBVolume.eSubstraction,
+					inList: [
+						`subpax_${designName}_Axis`,
+						`subpax_${designName}_HoleS`,
+						`subpax_${designName}_HoleL`
+					]
 				}
 			]
 		};
