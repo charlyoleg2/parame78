@@ -106,8 +106,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	try {
 		// step-4 : some preparation calculation
 		const aJn = param.Jneutral / 100;
-		const R1 = param.D1;
-		const R2 = param.D2;
+		const R1 = param.D1 / 2;
+		const R2 = param.D2 / 2;
 		const R3A = param.D3A / 2;
 		let R3B = param.D3B / 2;
 		const JRext = param.Jradius + param.T1 * (1 - aJn);
