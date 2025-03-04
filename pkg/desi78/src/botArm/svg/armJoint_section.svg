@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="338"
-   height="302"
-   viewBox="0 0 89.429167 79.904167"
+   width="348.49997"
+   height="335"
+   viewBox="0 0 92.207284 88.635417"
    version="1.1"
    id="svg1"
    inkscape:version="1.4 (1:1.4+202410161351+e7c3feb100)"
@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="1.3113356"
-     inkscape:cx="306.55768"
-     inkscape:cy="406.07454"
+     inkscape:zoom="1"
+     inkscape:cx="303"
+     inkscape:cy="1077.5"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -35,14 +35,40 @@
     <inkscape:page
        x="0"
        y="0"
-       width="89.429169"
-       height="79.904167"
+       width="92.207283"
+       height="88.635414"
        id="page2"
        margin="0"
        bleed="0" />
   </sodipodi:namedview>
   <defs
      id="defs1">
+    <rect
+       x="446"
+       y="1013"
+       width="109"
+       height="82"
+       id="rect22" />
+    <marker
+       style="overflow:visible"
+       id="ArrowWide"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc"
+         id="path7" />
+    </marker>
     <marker
        style="overflow:visible"
        id="ArrowWide-3-8-1"
@@ -271,20 +297,26 @@
        width="47.661331"
        height="34.697449"
        id="rect31-3" />
+    <rect
+       x="446"
+       y="1013"
+       width="109"
+       height="82"
+       id="rect22-7" />
   </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-39.026043,-284.03021)">
+     transform="translate(-37.703125,-275.29895)">
     <rect
        style="opacity:1;fill:#ffffff;stroke:#ffffff;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
        id="rect40"
-       width="89.164581"
-       height="79.639587"
-       x="39.158333"
-       y="284.16251"
-       inkscape:export-filename="armJoint_top.svg"
+       width="91.942703"
+       height="88.370834"
+       x="37.835415"
+       y="275.43124"
+       inkscape:export-filename="armJoint_section.svg"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <rect
@@ -388,12 +420,12 @@
        id="path24-6" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,27.286565,101.57032)"
+       transform="matrix(0.26458333,0,0,0.26458333,25.699064,101.57032)"
        id="text28-2"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect28-7);display:inline;fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="172.34375"
          y="973.18175"
-         id="tspan2">W1B</tspan></text>
+         id="tspan2">W12B</tspan></text>
     <path
        style="opacity:0.5;fill:#ffdd55;stroke:#1a1a1a;stroke-width:0.264583;stroke-linejoin:round"
        d="M 58.3468,288.30748 H 50.97602"
@@ -408,12 +440,12 @@
        id="path6-6-0" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-25.97166,192.92981)"
+       transform="matrix(0.26458333,0,0,0.26458333,-27.559161,192.92981)"
        id="text13-3"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect13-1);display:inline;fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="254.32031"
          y="480.17394"
-         id="tspan3">W1A</tspan></text>
+         id="tspan3">W12A</tspan></text>
     <path
        style="opacity:0.5;fill:#ffdd55;stroke:#1a1a1a;stroke-width:0.264583;stroke-linejoin:round"
        d="M 117.53615,301.97109 H 90.248735"
@@ -424,16 +456,16 @@
        id="path5-6-9-3-0-3-3-5" />
     <path
        style="fill:#0000ff;fill-opacity:0.602007;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-5-8-4);marker-end:url(#ArrowWide-5-8-4)"
-       d="m 117.53615,302.07151 -0.1323,33.1525"
+       d="m 113.83196,302.07151 -0.1323,33.1525"
        id="path6-6-0-6" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,50.710252,192.13091)"
+       transform="matrix(0.26458333,0,0,0.26458333,47.006083,192.13091)"
        id="text13-3-6"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect13-1-7);display:inline;fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="254.32031"
          y="480.17394"
-         id="tspan4">W2A</tspan></text>
+         id="tspan4">W22A</tspan></text>
     <path
        style="fill:#ffe680;stroke:#999999;stroke-width:0.264583;stroke-linejoin:round"
        d="m 62.712429,296.64395 v 5.19483"
@@ -448,12 +480,12 @@
        id="path24-8-9" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,4.078655,147.10548)"
+       transform="matrix(0.26458333,0,0,0.26458333,3.5494883,147.10548)"
        id="text29-9"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect29-1);display:inline;fill:#666666;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="256.99023"
          y="567.48839"
-         id="tspan5">W2B</tspan></text>
+         id="tspan5">W22B</tspan></text>
     <path
        style="fill:#ffe680;stroke:#0000ff;stroke-width:0.264584;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide-49-10);marker-end:url(#ArrowWide-49-10)"
        d="m 91.332109,341.94602 h 2.959974"
@@ -494,5 +526,45 @@
          x="82.359375"
          y="789.01964"
          id="tspan8">E12</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-13.49375,9.525)"
+       id="text2"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect22);fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="446"
+         y="1027.2364"
+         id="tspan9">J1radius
+</tspan><tspan
+         x="446"
+         y="1047.2364"
+         id="tspan10">J1Neutral
+</tspan><tspan
+         x="446"
+         y="1067.2364"
+         id="tspan11">J1Mark</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,-12.534637,72.325786)"
+       id="text2-3"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect22-7);display:inline;fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="446"
+         y="1027.2364"
+         id="tspan12">J2radius
+</tspan><tspan
+         x="446"
+         y="1047.2364"
+         id="tspan13">J2Neutral
+</tspan><tspan
+         x="446"
+         y="1067.2364"
+         id="tspan14">J2Mark</tspan></text>
+    <path
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
+       d="M 90.355207,335.35937 105.17187,342.9"
+       id="path38" />
+    <path
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
+       d="m 95.38229,287.60208 9.39271,-2.64583"
+       id="path39" />
   </g>
 </svg>

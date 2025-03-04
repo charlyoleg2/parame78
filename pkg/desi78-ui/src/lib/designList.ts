@@ -18,6 +18,7 @@ import {
 	sfDieDef,
 	armEndDef,
 	armAxisDef,
+	armJointDef,
 	railDef
 } from 'desi78';
 
@@ -38,6 +39,7 @@ const designList: tAllPageDef = {
 	'desi78/demoSheetFold2': demoSheetFoldDef2,
 	'desi78/armEnd': armEndDef,
 	'desi78/armAxis': armAxisDef,
+	'desi78/armJoint': armJointDef,
 	'desi78/rail': railDef
 };
 

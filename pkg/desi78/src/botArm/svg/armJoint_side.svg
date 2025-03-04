@@ -23,9 +23,9 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
-     inkscape:zoom="1.3113356"
-     inkscape:cx="306.55768"
-     inkscape:cy="406.07454"
+     inkscape:zoom="1"
+     inkscape:cx="303"
+     inkscape:cy="996.5"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -497,20 +497,20 @@
        id="path13" />
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,4.2370923,-6.9609373)"
+       transform="matrix(0.26458333,0,0,0.26458333,2.1204255,-6.9609373)"
        id="text13"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect13);display:inline;fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="254.32031"
          y="480.17394"
-         id="tspan4">W1A</tspan></text>
+         id="tspan4">W12A</tspan></text>
     <text
        xml:space="preserve"
-       transform="matrix(0.26458333,0,0,0.26458333,-24.91626,-8.2724183)"
+       transform="matrix(0.26458333,0,0,0.26458333,-27.032928,-8.2724183)"
        id="text14"
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect14);display:inline;fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="362.22656"
          y="132.43566"
-         id="tspan5">W2A</tspan></text>
+         id="tspan5">W22A</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-80.101221,-38.335597)"
