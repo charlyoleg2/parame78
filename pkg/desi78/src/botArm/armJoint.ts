@@ -37,7 +37,7 @@ import {
 	pSectionSeparator,
 	initGeom,
 	transform2d,
-	//transform3d,
+	transform3d,
 	//EExtrude,
 	EBVolume
 } from 'geometrix';
@@ -95,7 +95,9 @@ const pDef: tParamDef = {
 		pNumber('J2mark', 'mm', 1, 0, 20, 0.1),
 		pNumber('J2radius', 'mm', 5, 0, 50, 1),
 		pNumber('J2neutral', '%', 50, 0, 100, 1),
-		pNumber('E12', 'mm', 1, 0, 10, 0.1)
+		pNumber('E12', 'mm', 1, 0, 10, 0.1),
+		pSectionSeparator('Joint angle'),
+		pNumber('JointA', 'degree', 0, -90, 90, 1)
 	],
 	paramSvg: {
 		W12A: 'armJoint_section.svg',
@@ -123,7 +125,8 @@ const pDef: tParamDef = {
 		J2mark: 'armJoint_section.svg',
 		J2radius: 'armJoint_section.svg',
 		J2neutral: 'armJoint_section.svg',
-		E12: 'armJoint_section.svg'
+		E12: 'armJoint_section.svg',
+		JointA: 'armJoint_side.svg'
 	},
 	sim: {
 		tMax: 360,
@@ -165,7 +168,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const L1total = param.L11 + param.L12 + param.D1 / 2 + param.S1;
 		const L2total = param.L21 + param.L22 + param.D1 / 2 + param.S1;
 		const L12total = param.L11 + param.L12 + param.L21 + param.L22;
-		const jointAngleDeg = timeToAngle(t);
+		const jointAngleDeg = timeToAngle(param.JointA + t);
 		const jointAngle = degToRad(jointAngleDeg);
 		// step-5 : checks on the parameter values
 		if (W11A <= 0) {
@@ -290,6 +293,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faceSection: figSection
 		};
 		// step-8 : recipes of the 3D construction
+		const end1T3d = transform3d();
+		const end2T3d = transform3d()
+			.addRotation(0, 0, Math.PI)
+			.addTranslation(0, param.L21 + param.L22, 0)
+			.addRotation(0, 0, jointAngle + Math.PI / 2)
+			.addTranslation(0, param.L11 + param.L12, 0);
+		const axisT3d = transform3d()
+			.addRotation(0, 0, jointAngle + Math.PI / 2)
+			.addTranslation(0, param.L11 + param.L12, 0);
 		const designName = rGeome.partName;
 		rGeome.vol = {
 			inherits: [
@@ -297,22 +309,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					outName: `inpax_${designName}_end1`,
 					subdesign: 'pax_armEnd',
 					subgeom: armEnd1Geom,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
+					rotate: end1T3d.getRotation(),
+					translate: end1T3d.getTranslation()
 				},
 				{
 					outName: `inpax_${designName}_end2`,
 					subdesign: 'pax_armEnd',
 					subgeom: armEnd2Geom,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
+					rotate: end2T3d.getRotation(),
+					translate: end2T3d.getTranslation()
 				},
 				{
 					outName: `inpax_${designName}_axis`,
 					subdesign: 'pax_armAxis',
 					subgeom: armAxisGeom,
-					rotate: [0, 0, 0],
-					translate: [0, 0, 0]
+					rotate: axisT3d.getRotation(),
+					translate: axisT3d.getTranslation()
 				}
 			],
 			extrudes: [],
@@ -333,20 +345,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const subEnd1: tSubInst = {
 			partName: armEnd1Param.getPartName(),
 			dparam: armEnd1Param.getDesignParamList(),
-			orientation: [0, 0, 0],
-			position: [0, 0, 0]
+			orientation: end1T3d.getRotation(),
+			position: end1T3d.getTranslation()
 		};
 		const subEnd2: tSubInst = {
 			partName: armEnd2Param.getPartName(),
 			dparam: armEnd2Param.getDesignParamList(),
-			orientation: [0, 0, 0],
-			position: [0, 0, 0]
+			orientation: end2T3d.getRotation(),
+			position: end2T3d.getTranslation()
 		};
 		const subAxis: tSubInst = {
 			partName: armAxisParam.getPartName(),
 			dparam: armAxisParam.getDesignParamList(),
-			orientation: [0, 0, 0],
-			position: [0, 0, 0]
+			orientation: axisT3d.getRotation(),
+			position: axisT3d.getTranslation()
 		};
 		rGeome.sub = {
 			armEnd_1: subEnd1,

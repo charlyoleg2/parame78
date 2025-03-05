@@ -25,7 +25,7 @@
      inkscape:document-units="px"
      inkscape:zoom="2"
      inkscape:cx="303"
-     inkscape:cy="295.25"
+     inkscape:cy="256.25"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -34,6 +34,12 @@
      inkscape:current-layer="layer1" />
   <defs
      id="defs1">
+    <rect
+       x="2.5"
+       y="274"
+       width="81.5"
+       height="62"
+       id="rect23" />
     <rect
        x="446"
        y="1013"
@@ -1762,5 +1768,18 @@
        style="fill:#0000ff;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide)"
        d="m 95.38229,287.60208 9.39271,-2.64583"
        id="path39" />
+    <path
+       style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
+       d="m 63.367708,67.601041 c 0,0 -1.734883,2.518868 -2.116667,3.96875 -0.449298,1.706276 -0.516185,3.569495 -0.132292,5.291666 0.30035,1.347392 1.852084,3.704167 1.852084,3.704167"
+       id="path2"
+       sodipodi:nodetypes="caac" />
+    <text
+       xml:space="preserve"
+       transform="matrix(0.26458333,0,0,0.26458333,45.905208,-7.8052083)"
+       id="text3"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect23);fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
+         x="2.5"
+         y="288.23644"
+         id="tspan44">JointA</tspan></text>
   </g>
 </svg>
