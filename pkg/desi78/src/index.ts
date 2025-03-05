@@ -18,3 +18,4 @@ export * from './codeExample/demoSheetFold2';
 export * from './botArm/armEnd';
 export * from './botArm/armAxis';
 export * from './botArm/armJoint';
+export * from './botArm/armBone';
