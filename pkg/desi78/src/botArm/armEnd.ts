@@ -25,8 +25,8 @@ import {
 	//vector,
 	//contour,
 	contourCircle,
-	//ctrRectangle,
-	//figure,
+	ctrRectangle,
+	figure,
 	//degToRad,
 	//radToDeg,
 	//pointCoord,
@@ -46,7 +46,7 @@ import {
 	contourJ,
 	facet,
 	//contourJ2contour,
-	//facet2figure,
+	facet2figure,
 	sheetFold
 } from 'sheetfold';
 
@@ -102,6 +102,8 @@ const pDef: tParamDef = {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
+	const figSide = figure();
+	const figTop = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -253,8 +255,25 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			param.T1,
 			rGeome.partName
 		);
+		// figSide
+		figSide.mergeFigure(facet2figure(fa1));
+		figSide.addSecond(ctrRectangle(-param.W2A / 2, 0, (param.W2A - W1A) / 2, param.L1));
+		figSide.addSecond(ctrRectangle(W1A / 2, 0, (param.W2A - W1A) / 2, param.L1));
+		figTop.mergeFigure(facet2figure(fa2));
+		figTop.addSecond(ctrRectangle(-param.W2B / 2, 0, (param.W2B - W1B) / 2, param.L1));
+		figTop.addSecond(ctrRectangle(W1B / 2, 0, (param.W2B - W1B) / 2, param.L1));
+		figTop.addMainO(
+			ctrRectangle(-param.W2B / 2, 0, param.T1, param.L1 + param.L2 + R1 + param.S1)
+		);
+		figTop.addMainO(
+			ctrRectangle(param.W2B / 2 - param.T1, 0, param.T1, param.L1 + param.L2 + R1 + param.S1)
+		);
+		// figTop
 		// final figure list
-		//rGeome.fig = {};
+		rGeome.fig = {
+			faceSide: figSide,
+			faceTop: figTop
+		};
 		const ffObj = sFold.makeFigures();
 		for (const iFace of Object.keys(ffObj)) {
 			rGeome.fig[iFace] = ffObj[iFace];
