@@ -205,7 +205,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		checkGeom(armAxisGeom);
 		rGeome.logstr += prefixLog(armAxisGeom.logstr, armAxisParam.getPartNameSuffix());
 		// sub-armEnd1
-		const armEnd1Param = designParam(armEndDef.pDef);
+		const armEnd1Param = designParam(armEndDef.pDef, '1');
 		armEnd1Param.setVal('W2A', param.W12A);
 		armEnd1Param.setVal('W2B', param.W12B);
 		armEnd1Param.setVal('eqWAB', 0);
@@ -226,9 +226,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			armEnd1Param.getSuffix()
 		);
 		checkGeom(armEnd1Geom);
-		rGeome.logstr += prefixLog(armEnd1Geom.logstr, armEnd1Param.getPartNameSuffix() + '-1');
+		rGeome.logstr += prefixLog(armEnd1Geom.logstr, armEnd1Param.getPartNameSuffix());
 		// sub-armEnd2
-		const armEnd2Param = designParam(armEndDef.pDef);
+		const armEnd2Param = designParam(armEndDef.pDef, '2');
 		armEnd2Param.setVal('W2A', param.W22A);
 		armEnd2Param.setVal('W2B', W22B);
 		armEnd2Param.setVal('eqWAB', 0);
@@ -249,7 +249,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			armEnd2Param.getSuffix()
 		);
 		checkGeom(armEnd2Geom);
-		rGeome.logstr += prefixLog(armEnd2Geom.logstr, armEnd2Param.getPartNameSuffix() + '-2');
+		rGeome.logstr += prefixLog(armEnd2Geom.logstr, armEnd2Param.getPartNameSuffix());
 		// figures
 		// figSide
 		const axisT2d = transform2d()
@@ -297,8 +297,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const end2T3d = transform3d()
 			.addRotation(0, 0, Math.PI)
 			.addTranslation(0, param.L21 + param.L22, 0)
-			.addRotation(0, 0, jointAngle + Math.PI / 2)
-			.addTranslation(0, param.L11 + param.L12, 0);
+			.addRotation(0, 0, jointAngle)
+			.addTranslation(0, param.L11 + param.L12, param.T1 + param.E12);
 		const axisT3d = transform3d()
 			.addRotation(0, 0, jointAngle + Math.PI / 2)
 			.addTranslation(0, param.L11 + param.L12, 0);
@@ -307,14 +307,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			inherits: [
 				{
 					outName: `inpax_${designName}_end1`,
-					subdesign: 'pax_armEnd',
+					subdesign: 'pax_armEnd1',
 					subgeom: armEnd1Geom,
 					rotate: end1T3d.getRotation(),
 					translate: end1T3d.getTranslation()
 				},
 				{
 					outName: `inpax_${designName}_end2`,
-					subdesign: 'pax_armEnd',
+					subdesign: 'pax_armEnd2',
 					subgeom: armEnd2Geom,
 					rotate: end2T3d.getRotation(),
 					translate: end2T3d.getTranslation()
