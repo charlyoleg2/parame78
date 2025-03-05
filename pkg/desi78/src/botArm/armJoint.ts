@@ -148,6 +148,8 @@ function timeToAngle(iTime: number): number {
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
 	const figSide = figure();
+	const figTop = figure();
+	const figSection = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -158,7 +160,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const W11A = param.W12A - 2 * J1Rext;
 		const W11B = param.W12B - 2 * J1Rext;
 		const W21A = param.W22A - 2 * J2Rext;
-		const W22B = param.W22A - 2 * param.T1 - 2 * param.E12;
+		const W22B = param.W12B - 2 * param.T1 - 2 * param.E12;
 		const W21B = W22B - 2 * J2Rext;
 		const L1total = param.L11 + param.L12 + param.D1 / 2 + param.S1;
 		const L2total = param.L21 + param.L22 + param.D1 / 2 + param.S1;
@@ -246,6 +248,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		checkGeom(armEnd2Geom);
 		rGeome.logstr += prefixLog(armEnd2Geom.logstr, armEnd2Param.getPartNameSuffix() + '-2');
 		// figures
+		// figSide
 		const axisT2d = transform2d()
 			.addRotation(jointAngle + Math.PI / 2)
 			.addTranslation(0, param.L11 + param.L12);
@@ -258,14 +261,33 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addTranslation(0, param.L11 + param.L12);
 		const end2Ta = end2T2d.getRotation();
 		const [end2Tx, end2Ty] = end2T2d.getTranslation();
-		figSide.mergeFigure(armEnd1Geom.fig.SFG_f00);
+		//figSide.mergeFigure(armEnd1Geom.fig.SFG_f00);
+		figSide.mergeFigure(armEnd1Geom.fig.faceSide);
 		figSide.mergeFigure(
 			armAxisGeom.fig.faceAxis.rotate(0, 0, axisTa).translate(axisTx, axisTy)
 		);
-		figSide.mergeFigure(armEnd2Geom.fig.SFG_f00.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
+		//figSide.mergeFigure(armEnd2Geom.fig.SFG_f00.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
+		figSide.mergeFigure(
+			armEnd2Geom.fig.faceSide.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty)
+		);
+		// figTop
+		const end2Ty2 = param.L11 + param.L12 + param.L21 + param.L22;
+		figTop.mergeFigure(armEnd1Geom.fig.faceTop);
+		figTop.mergeFigure(armEnd2Geom.fig.faceTop.rotate(0, 0, Math.PI).translate(0, end2Ty2));
+		figTop.mergeFigure(armAxisGeom.fig.faceHoleS.translate(0, param.L11 + param.L12));
+		// figSection
+		figSection.mergeFigure(armAxisGeom.fig.faceHoleS.rotate(0, 0, Math.PI / 2));
+		figSection.mergeFigure(
+			armEnd1Geom.fig.SFG_profiles.translate(-param.W12A / 2 + J1Rext, -param.W12B / 2)
+		);
+		figSection.mergeFigure(
+			armEnd2Geom.fig.SFG_profiles.translate(-param.W22A / 2 + J2Rext, -W22B / 2)
+		);
 		// final figure list
 		rGeome.fig = {
-			faceSide: figSide
+			faceSide: figSide,
+			faceTop: figTop,
+			faceSection: figSection
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
