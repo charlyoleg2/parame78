@@ -50,6 +50,7 @@ import {
 //	sheetFold
 //} from 'sheetfold';
 import { armAxisDef } from './armAxis';
+import { armEndDef } from './armEnd';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -182,7 +183,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `jointAngle ${ffix(jointAngleDeg)} degree  ${ffix(jointAngle)} rad\n`;
 		// step-7 : drawing of the figures
 		// sub-designs
-		// armAxis
+		// sub-armAxis
 		const armAxisParam = designParam(armAxisDef.pDef);
 		armAxisParam.setVal('D1', param.D1);
 		armAxisParam.setVal('T1', param.Taxis);
@@ -196,6 +197,29 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		);
 		checkGeom(armAxisGeom);
 		rGeome.logstr += prefixLog(armAxisGeom.logstr, armAxisParam.getPartNameSuffix());
+		// sub-armEnd1
+		const armEnd1Param = designParam(armEndDef.pDef);
+		armEnd1Param.setVal('W2A', param.W12A);
+		armEnd1Param.setVal('W2B', param.W12B);
+		armEnd1Param.setVal('eqWAB', 0);
+		armEnd1Param.setVal('L1', param.L11);
+		armEnd1Param.setVal('L2', param.L12);
+		armEnd1Param.setVal('D1', param.D1);
+		armEnd1Param.setVal('S1', param.S1);
+		armEnd1Param.setVal('D2', param.D12);
+		armEnd1Param.setVal('D3A', param.D13A);
+		armEnd1Param.setVal('D3B', param.D13B);
+		armEnd1Param.setVal('T1', param.T1);
+		armEnd1Param.setVal('Jmark', param.J1mark);
+		armEnd1Param.setVal('Jradius', param.J1radius);
+		armEnd1Param.setVal('Jneutral', param.J1neutral);
+		const armEnd1Geom = armEndDef.pGeom(
+			0,
+			armEnd1Param.getParamVal(),
+			armEnd1Param.getSuffix()
+		);
+		checkGeom(armEnd1Geom);
+		rGeome.logstr += prefixLog(armEnd1Geom.logstr, armEnd1Param.getPartNameSuffix());
 		// figures
 		figSide.mergeFigure(armAxisGeom.fig.faceAxis);
 		//figSide.mergeFigure(armAxisGeom.fig.faceAxis.translate(0, rakePosY));
@@ -209,6 +233,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.vol = {
 			inherits: [
 				{
+					outName: `inpax_${designName}_end1`,
+					subdesign: 'pax_armEnd',
+					subgeom: armEnd1Geom,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
 					outName: `inpax_${designName}_axis`,
 					subdesign: 'pax_armAxis',
 					subgeom: armAxisGeom,
@@ -221,12 +252,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`inpax_${designName}_axis`]
+					inList: [`inpax_${designName}_end1`, `inpax_${designName}_axis`]
 				}
 			]
 		};
 		// step-9 : optional sub-design parameter export
 		// sub-design
+		const subEnd1: tSubInst = {
+			partName: armEnd1Param.getPartName(),
+			dparam: armEnd1Param.getDesignParamList(),
+			orientation: [0, 0, 0],
+			position: [0, 0, 0]
+		};
 		const subAxis: tSubInst = {
 			partName: armAxisParam.getPartName(),
 			dparam: armAxisParam.getDesignParamList(),
@@ -234,6 +271,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			position: [0, 0, 0]
 		};
 		rGeome.sub = {
+			end_1: subEnd1,
 			axis_1: subAxis
 		};
 		// step-10 : final log message
