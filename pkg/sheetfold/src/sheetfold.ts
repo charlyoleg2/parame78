@@ -861,7 +861,7 @@ class SheetFold {
 				tm2 = this.positionF(tm1, iFacetIdx);
 			}
 			const subM: tExtrude = {
-				outName: `subpax_${this.nameFace(iFacetIdx)}`,
+				outName: `subpax_${this.pPartName}_${this.nameFace(iFacetIdx)}`,
 				face: `${this.pPartName}_${this.nameFace(iFacetIdx)}`,
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: this.pThickness,
@@ -882,7 +882,7 @@ class SheetFold {
 			}
 			const tm2 = this.positionJ(tm1, iJuncIdx);
 			const subM: tExtrude = {
-				outName: `subpax_${this.nameFaceJ(iJuncIdx)}`,
+				outName: `subpax_${this.pPartName}_${this.nameFaceJ(iJuncIdx)}`,
 				face: `${this.pPartName}_${this.nameFaceJ(iJuncIdx)}`,
 				extrudeMethod: EExtrude.eLinearOrtho,
 				length: iJunc.jLength,
