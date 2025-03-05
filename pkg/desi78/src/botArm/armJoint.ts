@@ -36,6 +36,8 @@ import {
 	//pDropdown,
 	pSectionSeparator,
 	initGeom,
+	transform2d,
+	//transform3d,
 	//EExtrude,
 	EBVolume
 } from 'geometrix';
@@ -244,9 +246,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		checkGeom(armEnd2Geom);
 		rGeome.logstr += prefixLog(armEnd2Geom.logstr, armEnd2Param.getPartNameSuffix() + '-2');
 		// figures
-		figSide.mergeFigure(armAxisGeom.fig.faceAxis);
-		//figSide.mergeFigure(armAxisGeom.fig.faceAxis.translate(0, rakePosY));
-
+		const axisT2d = transform2d()
+			.addRotation(jointAngle + Math.PI / 2)
+			.addTranslation(0, param.L11 + param.L12);
+		const axisTa = axisT2d.getRotation();
+		const [axisTx, axisTy] = axisT2d.getTranslation();
+		const end2T2d = transform2d()
+			.addRotation(Math.PI)
+			.addTranslation(0, param.L21 + param.L22)
+			.addRotation(jointAngle)
+			.addTranslation(0, param.L11 + param.L12);
+		const end2Ta = end2T2d.getRotation();
+		const [end2Tx, end2Ty] = end2T2d.getTranslation();
+		figSide.mergeFigure(armEnd1Geom.fig.SFG_f00);
+		figSide.mergeFigure(
+			armAxisGeom.fig.faceAxis.rotate(0, 0, axisTa).translate(axisTx, axisTy)
+		);
+		figSide.mergeFigure(armEnd2Geom.fig.SFG_f00.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
 		// final figure list
 		rGeome.fig = {
 			faceSide: figSide
