@@ -219,7 +219,30 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			armEnd1Param.getSuffix()
 		);
 		checkGeom(armEnd1Geom);
-		rGeome.logstr += prefixLog(armEnd1Geom.logstr, armEnd1Param.getPartNameSuffix());
+		rGeome.logstr += prefixLog(armEnd1Geom.logstr, armEnd1Param.getPartNameSuffix() + '-1');
+		// sub-armEnd2
+		const armEnd2Param = designParam(armEndDef.pDef);
+		armEnd2Param.setVal('W2A', param.W22A);
+		armEnd2Param.setVal('W2B', W22B);
+		armEnd2Param.setVal('eqWAB', 0);
+		armEnd2Param.setVal('L1', param.L21);
+		armEnd2Param.setVal('L2', param.L22);
+		armEnd2Param.setVal('D1', param.D1);
+		armEnd2Param.setVal('S1', param.S1);
+		armEnd2Param.setVal('D2', param.D22);
+		armEnd2Param.setVal('D3A', param.D23A);
+		armEnd2Param.setVal('D3B', param.D23B);
+		armEnd2Param.setVal('T1', param.T2);
+		armEnd2Param.setVal('Jmark', param.J2mark);
+		armEnd2Param.setVal('Jradius', param.J2radius);
+		armEnd2Param.setVal('Jneutral', param.J2neutral);
+		const armEnd2Geom = armEndDef.pGeom(
+			0,
+			armEnd2Param.getParamVal(),
+			armEnd2Param.getSuffix()
+		);
+		checkGeom(armEnd2Geom);
+		rGeome.logstr += prefixLog(armEnd2Geom.logstr, armEnd2Param.getPartNameSuffix() + '-2');
 		// figures
 		figSide.mergeFigure(armAxisGeom.fig.faceAxis);
 		//figSide.mergeFigure(armAxisGeom.fig.faceAxis.translate(0, rakePosY));
@@ -240,6 +263,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					translate: [0, 0, 0]
 				},
 				{
+					outName: `inpax_${designName}_end2`,
+					subdesign: 'pax_armEnd',
+					subgeom: armEnd2Geom,
+					rotate: [0, 0, 0],
+					translate: [0, 0, 0]
+				},
+				{
 					outName: `inpax_${designName}_axis`,
 					subdesign: 'pax_armAxis',
 					subgeom: armAxisGeom,
@@ -252,7 +282,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`inpax_${designName}_end1`, `inpax_${designName}_axis`]
+					inList: [
+						`inpax_${designName}_end1`,
+						`inpax_${designName}_end2`,
+						`inpax_${designName}_axis`
+					]
 				}
 			]
 		};
@@ -264,6 +298,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			orientation: [0, 0, 0],
 			position: [0, 0, 0]
 		};
+		const subEnd2: tSubInst = {
+			partName: armEnd2Param.getPartName(),
+			dparam: armEnd2Param.getDesignParamList(),
+			orientation: [0, 0, 0],
+			position: [0, 0, 0]
+		};
 		const subAxis: tSubInst = {
 			partName: armAxisParam.getPartName(),
 			dparam: armAxisParam.getDesignParamList(),
@@ -271,8 +311,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			position: [0, 0, 0]
 		};
 		rGeome.sub = {
-			end_1: subEnd1,
-			axis_1: subAxis
+			armEnd_1: subEnd1,
+			armEnd_2: subEnd2,
+			armAxis_1: subAxis
 		};
 		// step-10 : final log message
 		// finalize
