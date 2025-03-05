@@ -10,14 +10,14 @@ import type {
 	tParamVal,
 	tGeom,
 	//tExtrude,
-	tPageDef
-	//tSubInst
+	tPageDef,
+	tSubInst
 	//tSubDesign
 } from 'geometrix';
 import {
-	//designParam,
-	//checkGeom,
-	//prefixLog,
+	designParam,
+	checkGeom,
+	prefixLog,
 	//point,
 	//Point,
 	//ShapePoint,
@@ -25,18 +25,18 @@ import {
 	//vector,
 	//contour,
 	//contourCircle,
-	ctrRectangle,
+	//ctrRectangle,
 	figure,
-	//degToRad,
+	degToRad,
 	//radToDeg,
 	//pointCoord,
-	//ffix,
+	ffix,
 	pNumber,
 	//pCheckbox,
 	//pDropdown,
 	pSectionSeparator,
 	initGeom,
-	EExtrude,
+	//EExtrude,
 	EBVolume
 } from 'geometrix';
 //import type { tContourJ } from 'sheetfold';
@@ -49,6 +49,7 @@ import {
 //	//facet2figure,
 //	sheetFold
 //} from 'sheetfold';
+import { armAxisDef } from './armAxis';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -122,92 +123,119 @@ const pDef: tParamDef = {
 		E12: 'armJoint_section.svg'
 	},
 	sim: {
-		tMax: 100,
-		tStep: 0.5,
+		tMax: 360,
+		tStep: 1,
 		tUpdate: 500 // every 0.5 second
 	}
 };
 
+function timeToAngle(iTime: number): number {
+	let rAngle = iTime;
+	if (iTime > 90) {
+		if (iTime < 270) {
+			rAngle = 180 - iTime;
+		} else {
+			rAngle = iTime - 360;
+		}
+	}
+	return rAngle;
+}
+
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figFake = figure();
+	const figSide = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		//const aJ1n = param.J1neutral / 100;
-		//const aJ2n = param.J2neutral / 100;
-		//const R1 = param.D1 / 2;
-		//const R12 = param.D12 / 2;
-		//const R22 = param.D22 / 2;
-		//const R13A = param.D13A / 2;
-		//const R23A = param.D23A / 2;
-		//const R3B = param.D3B / 2;
-		//const JRext = param.Jradius + param.T1 * (1 - aJn);
-		//const W1A = param.W2A - 2 * JRext;
-		//const W1B = param.W2B - 2 * JRext;
-		//const aCorner = Math.PI / 2;
-		//const W1A2 = W1A / 2;
-		//const W1B2 = W1B / 2;
-		//const lDiag = Math.sqrt(param.L2 ** 2 + W1A2 ** 2);
-		//const a1 = Math.atan2(W1A2, param.L2);
-		//const Rext = R1 + param.S1;
-		//if (Rext >= lDiag) {
-		//	throw `err123: lDiag ${ffix(lDiag)} too small compare to D1 ${param.D1} and S1 ${param.S1}`;
-		//}
-		//const a2 = Math.acos(Rext / lDiag);
-		//const a3 = -Math.PI / 2 + a1 + a2;
-		//const p1x = Rext * Math.cos(a3);
-		//const p1y = Rext * Math.sin(a3);
-		//const R2y = (param.L2 - R1) / 2;
-		//// step-5 : checks on the parameter values
-		//if (W1A < param.D3A) {
-		//	throw `err118: W1A ${W1A} too small compare to D3A ${param.D3A}`;
-		//}
-		//if (param.L1 < param.D3A) {
-		//	throw `err119: param.L1 ${param.L1} too small compare to D3A ${param.D3A}`;
-		//}
-		//if (W1B < param.D3B) {
-		//	throw `err121: W1B ${W1B} too small compare to D3B ${param.D3B}`;
-		//}
-		//if (param.L1 < param.D3B) {
-		//	throw `err122: param.L1 ${param.L1} too small compare to D3B ${param.D3B}`;
-		//}
-		//if (param.L2 < R1 + 2 * R2) {
-		//	throw `err124: L2 ${param.L2} too small compare to D1 ${param.D1} and D2 ${param.D2}`;
-		//}
-		//// step-6 : any logs
-		//rGeome.logstr += `W1A ${ffix(W1A)}, W1B ${ffix(W1B)}\n`;
+		const aJ1n = param.J1neutral / 100;
+		const aJ2n = param.J2neutral / 100;
+		const J1Rext = param.J1radius + param.T1 * (1 - aJ1n);
+		const J2Rext = param.J2radius + param.T2 * (1 - aJ2n);
+		const W11A = param.W12A - 2 * J1Rext;
+		const W11B = param.W12B - 2 * J1Rext;
+		const W21A = param.W22A - 2 * J2Rext;
+		const W22B = param.W22A - 2 * param.T1 - 2 * param.E12;
+		const W21B = W22B - 2 * J2Rext;
+		const L1total = param.L11 + param.L12 + param.D1 / 2 + param.S1;
+		const L2total = param.L21 + param.L22 + param.D1 / 2 + param.S1;
+		const L12total = param.L11 + param.L12 + param.L21 + param.L22;
+		const jointAngleDeg = timeToAngle(t);
+		const jointAngle = degToRad(jointAngleDeg);
+		// step-5 : checks on the parameter values
+		if (W11A <= 0) {
+			throw `err150: W11A ${W11A} is negative because of J1Rext ${ffix(J1Rext)}`;
+		}
+		if (W11B <= 0) {
+			throw `err153: W11B ${W11B} is negative because of J1Rext ${ffix(J1Rext)}`;
+		}
+		if (W21A <= 0) {
+			throw `err156: W21A ${W21A} is negative because of J2Rext ${ffix(J2Rext)}`;
+		}
+		if (W21B <= 0) {
+			throw `err159: W21B ${W21B} is negative because of J2Rext ${ffix(J2Rext)}`;
+		}
+		// step-6 : any logs
+		rGeome.logstr += `armEnd-1 W12A ${ffix(param.W12A)}, W12B ${ffix(param.W12B)}, L1total ${ffix(L1total)}\n`;
+		rGeome.logstr += `armEnd-2 W22A ${ffix(param.W22A)}, W22B ${ffix(W22B)}, L2total ${ffix(L2total)}\n`;
+		rGeome.logstr += `L12total ${ffix(L12total)} mm\n`;
+		rGeome.logstr += `jointAngle ${ffix(jointAngleDeg)} degree  ${ffix(jointAngle)} rad\n`;
 		// step-7 : drawing of the figures
-		figFake.addMainO(ctrRectangle(0, 0, param.W12A, param.W12B));
+		// sub-designs
+		// armAxis
+		const armAxisParam = designParam(armAxisDef.pDef);
+		armAxisParam.setVal('D1', param.D1);
+		armAxisParam.setVal('T1', param.Taxis);
+		armAxisParam.setVal('L1', param.W12B);
+		armAxisParam.setVal('D2', param.D2axis);
+		armAxisParam.setVal('D3', param.D3axis);
+		const armAxisGeom = armAxisDef.pGeom(
+			0,
+			armAxisParam.getParamVal(),
+			armAxisParam.getSuffix()
+		);
+		checkGeom(armAxisGeom);
+		rGeome.logstr += prefixLog(armAxisGeom.logstr, armAxisParam.getPartNameSuffix());
+		// figures
+		figSide.mergeFigure(armAxisGeom.fig.faceAxis);
+		//figSide.mergeFigure(armAxisGeom.fig.faceAxis.translate(0, rakePosY));
+
 		// final figure list
 		rGeome.fig = {
-			faceFake: figFake
+			faceSide: figSide
 		};
 		// step-8 : recipes of the 3D construction
 		const designName = rGeome.partName;
 		rGeome.vol = {
-			extrudes: [
+			inherits: [
 				{
-					outName: `subpax_${designName}_fake`,
-					face: `${designName}_faceFake`,
-					extrudeMethod: EExtrude.eLinearOrtho,
-					length: param.T1,
+					outName: `inpax_${designName}_axis`,
+					subdesign: 'pax_armAxis',
+					subgeom: armAxisGeom,
 					rotate: [0, 0, 0],
 					translate: [0, 0, 0]
 				}
 			],
+			extrudes: [],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
-					boolMethod: EBVolume.eIdentity,
-					inList: [`subpax_${designName}_fake`]
+					boolMethod: EBVolume.eUnion,
+					inList: [`inpax_${designName}_axis`]
 				}
 			]
 		};
 		// step-9 : optional sub-design parameter export
 		// sub-design
-		rGeome.sub = {};
+		const subAxis: tSubInst = {
+			partName: armAxisParam.getPartName(),
+			dparam: armAxisParam.getDesignParamList(),
+			orientation: [0, 0, 0],
+			position: [0, 0, 0]
+		};
+		rGeome.sub = {
+			axis_1: subAxis
+		};
 		// step-10 : final log message
 		// finalize
 		rGeome.logstr += 'armJoint drawn successfully!\n';
