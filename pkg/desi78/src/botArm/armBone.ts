@@ -125,8 +125,8 @@ function calcPxy(iL2: number, iW1A2: number, iRext: number): [number, number] {
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figSide = figure();
-	const figTop = figure();
+	const figA = figure();
+	const figB = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
@@ -244,9 +244,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (R5 > 0) {
 			if (param.twist === 1) {
-				hollow1B.push(contourCircle(0, -param.L2, R5));
+				hollow1B.push(contourCircle(0, -param.L3, R5));
 			} else {
-				hollow1A.push(contourCircle(0, -param.L2, R5));
+				hollow1A.push(contourCircle(0, -param.L3, R5));
 			}
 		}
 		if (R4 > 0) {
@@ -310,24 +310,26 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			param.T1,
 			rGeome.partName
 		);
-		// figSide
-		figSide.mergeFigure(facet2figure(fa1));
-		figSide.addSecond(ctrRectangle(-param.W2A / 2, 0, (param.W2A - W1A) / 2, param.L1));
-		figSide.addSecond(ctrRectangle(W1A / 2, 0, (param.W2A - W1A) / 2, param.L1));
-		figTop.mergeFigure(facet2figure(fa2));
-		figTop.addSecond(ctrRectangle(-param.W2B / 2, 0, (param.W2B - W1B) / 2, param.L1));
-		figTop.addSecond(ctrRectangle(W1B / 2, 0, (param.W2B - W1B) / 2, param.L1));
-		figTop.addMainO(
-			ctrRectangle(-param.W2B / 2, 0, param.T1, param.L1 + param.L2 + R1 + param.S1)
-		);
-		figTop.addMainO(
-			ctrRectangle(param.W2B / 2 - param.T1, 0, param.T1, param.L1 + param.L2 + R1 + param.S1)
-		);
-		// figTop
+		// figA
+		figA.mergeFigure(facet2figure(fa1));
+		figA.addSecond(ctrRectangle(-param.W2A / 2, 0, (param.W2A - W1A) / 2, param.L1));
+		figA.addSecond(ctrRectangle(W1A / 2, 0, (param.W2A - W1A) / 2, param.L1));
+		if (param.twist === 1) {
+			const yLA = param.L3 + R5 + param.S2;
+			figA.addMainO(ctrRectangle(-param.W2A / 2, -yLA, param.T1, yLA + param.L1));
+			figA.addMainO(ctrRectangle(param.W2A / 2 - param.T1, -yLA, param.T1, yLA + param.L1));
+		}
+		// figB
+		figB.mergeFigure(facet2figure(fa2));
+		figB.addSecond(ctrRectangle(-param.W2B / 2, 0, (param.W2B - W1B) / 2, param.L1));
+		figB.addSecond(ctrRectangle(W1B / 2, 0, (param.W2B - W1B) / 2, param.L1));
+		const yLB = param.L1 + param.L2 + R1 + param.S1;
+		figB.addMainO(ctrRectangle(-param.W2B / 2, 0, param.T1, yLB));
+		figB.addMainO(ctrRectangle(param.W2B / 2 - param.T1, 0, param.T1, yLB));
 		// final figure list
 		rGeome.fig = {
-			faceSide: figSide,
-			faceTop: figTop
+			faceA: figA,
+			faceB: figB
 		};
 		const ffObj = sFold.makeFigures(true);
 		for (const iFace of Object.keys(ffObj)) {
