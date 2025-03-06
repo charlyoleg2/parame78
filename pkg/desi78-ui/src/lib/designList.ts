@@ -20,6 +20,7 @@ import {
 	armAxisDef,
 	armJointDef,
 	armBoneDef,
+	armChainDef,
 	railDef
 } from 'desi78';
 
@@ -42,6 +43,7 @@ const designList: tAllPageDef = {
 	'desi78/armAxis': armAxisDef,
 	'desi78/armJoint': armJointDef,
 	'desi78/armBone': armBoneDef,
+	'desi78/armChain': armChainDef,
 	'desi78/rail': railDef
 };
 

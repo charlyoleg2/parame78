@@ -19,3 +19,4 @@ export * from './botArm/armEnd';
 export * from './botArm/armAxis';
 export * from './botArm/armJoint';
 export * from './botArm/armBone';
+export * from './botArm/armChain';
