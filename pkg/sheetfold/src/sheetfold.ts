@@ -591,7 +591,7 @@ class SheetFold {
 		return rMarkers;
 	}
 	// external API
-	makePatternFigure(): Figure {
+	makePatternFigure(iCheck: boolean): Figure {
 		const facetPlaced: Facet[] = [];
 		// place facets
 		for (const [iFacetIdx, iFacet] of this.pFacets.entries()) {
@@ -636,8 +636,10 @@ class SheetFold {
 				ctrsRest2.push(iCtr);
 			}
 		}
-		if (!envTracker.check(ctrOuter.getEnvelop())) {
-			throw `err782: the outer-contour does not envelop all contours`;
+		if (iCheck) {
+			if (!envTracker.check(ctrOuter.getEnvelop())) {
+				throw `err782: the outer-contour does not envelop all contours`;
+			}
 		}
 		// main layer
 		rfig.addMainOI([ctrOuter, ...ctrsRest2]);
@@ -815,14 +817,14 @@ class SheetFold {
 		}
 		return rfig;
 	}
-	makeFigures(): tFigures {
+	makeFigures(iCheck = true): tFigures {
 		const rfigs: tFigures = {};
 		// check
 		if (this.pThickness <= 0) {
 			throw `err822: thickness ${this.pThickness} is negative`;
 		}
 		// pattern
-		rfigs[this.nameFacePattern()] = this.makePatternFigure();
+		rfigs[this.nameFacePattern()] = this.makePatternFigure(iCheck);
 		// profiles
 		if (this.pProfiles.length > 0) {
 			const faceName = this.nameFaceProfiles();

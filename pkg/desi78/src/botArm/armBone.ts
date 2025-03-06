@@ -109,6 +109,19 @@ const pDef: tParamDef = {
 	}
 };
 
+function calcPxy(iL2: number, iW1A2: number, iRext: number): [number, number] {
+	const lDiag = Math.sqrt(iL2 ** 2 + iW1A2 ** 2);
+	const a1 = Math.atan2(iW1A2, iL2);
+	if (iRext >= lDiag) {
+		throw `err123: lDiag ${ffix(lDiag)} too small compare to iRext ${ffix(iRext)}`;
+	}
+	const a2 = Math.acos(iRext / lDiag);
+	const a3 = -Math.PI / 2 + a1 + a2;
+	const rP1x = iRext * Math.cos(a3);
+	const rP1y = iRext * Math.sin(a3);
+	return [rP1x, rP1y];
+}
+
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
@@ -120,6 +133,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aJn = param.Jneutral / 100;
 		const R1 = param.D1 / 2;
 		const R2 = param.D2 / 2;
+		const R4 = param.D4 / 2;
+		const R5 = param.D5 / 2;
 		const R3A = param.D3A / 2;
 		let R3B = param.D3B / 2;
 		const JRext = param.Jradius + param.T1 * (1 - aJn);
@@ -132,17 +147,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aCorner = Math.PI / 2;
 		const W1A2 = W1A / 2;
 		const W1B2 = W1B / 2;
-		const lDiag = Math.sqrt(param.L2 ** 2 + W1A2 ** 2);
-		const a1 = Math.atan2(W1A2, param.L2);
-		const Rext = R1 + param.S1;
-		if (Rext >= lDiag) {
-			throw `err123: lDiag ${ffix(lDiag)} too small compare to D1 ${param.D1} and S1 ${param.S1}`;
-		}
-		const a2 = Math.acos(Rext / lDiag);
-		const a3 = -Math.PI / 2 + a1 + a2;
-		const p1x = Rext * Math.cos(a3);
-		const p1y = Rext * Math.sin(a3);
+		const [p1x, p1y] = calcPxy(param.L2, W1A2, R1 + param.S1);
 		const R2y = (param.L2 - R1) / 2;
+		const [p5x, p5y] = calcPxy(param.L3, param.twist === 1 ? W1B2 : W1A2, R5 + param.S2);
+		const R5y = (param.L3 - R5) / 2;
+		const yLength = param.L1 + param.L2 + param.L3 + R1 + param.S1 + R5 + param.S2;
 		// step-5 : checks on the parameter values
 		if (W1A < param.D3A) {
 			throw `err118: W1A ${W1A} too small compare to D3A ${param.D3A}`;
@@ -159,22 +168,35 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.L2 < R1 + 2 * R2) {
 			throw `err124: L2 ${param.L2} too small compare to D1 ${param.D1} and D2 ${param.D2}`;
 		}
+		if (param.L3 < R5 + 2 * R4) {
+			throw `err127: L3 ${param.L3} too small compare to D5 ${param.D5} and D4 ${param.D4}`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `W1A ${ffix(W1A)}, W1B ${ffix(W1B)}\n`;
+		rGeome.logstr += `Y-length ${ffix(yLength)}\n`;
 		//rGeome.logstr += `W1A2 ${ffix(W1A2)}, W1B2 ${ffix(W1B2)}\n`;
 		//rGeome.logstr += `p1x ${ffix(p1x)}, p1y ${ffix(p1y)}\n`;
 		// step-7 : drawing of the figures
 		// facets
 		// sub-contourJ
-		function ctrLeg(jName: string[]): tContourJ {
-			const rCtr = contourJ(-W1A2, 0).addSegStrokeR(W1A, 0);
+		function ctrA(jName: string[], iTwist: number): tContourJ {
+			const rCtr = contourJ(-W1A2, 0);
+			if (iTwist === 1) {
+				rCtr.addSegStrokeR(W1A, 0);
+			} else {
+				rCtr.addSegStrokeA(-p5x, -param.L3 - p5y)
+					.addPointA(0, -param.L3 - R5 - param.S2)
+					.addPointA(p5x, -param.L3 - p5y)
+					.addSegArc2()
+					.addSegStrokeA(W1A2, 0);
+			}
 			if (jName.length > 0) {
 				rCtr.startJunction(jName[0], tJDir.eA, tJSide.eABLeft);
 			}
 			rCtr.addSegStrokeR(0, param.L1)
 				//.addSegStrokeR(-W1A, 0)
 				.addSegStrokeA(p1x, param.L1 + param.L2 + p1y)
-				.addPointA(0, param.L1 + param.L2 + Rext)
+				.addPointA(0, param.L1 + param.L2 + R1 + param.S1)
 				.addPointA(-p1x, param.L1 + param.L2 + p1y)
 				.addSegArc2()
 				.addSegStrokeA(-W1A2, param.L1);
@@ -184,8 +206,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			rCtr.closeSegStroke();
 			return rCtr;
 		}
-		function ctrSide(jName: string[]): tContourJ {
-			const rCtr = contourJ(-W1B2, 0).addSegStrokeR(W1B, 0);
+		function ctrB(jName: string[], iTwist: number): tContourJ {
+			const rCtr = contourJ(-W1B2, 0);
+			if (iTwist === 1) {
+				rCtr.addSegStrokeA(-p5x, -param.L3 - p5y)
+					.addPointA(0, -param.L3 - R5 - param.S2)
+					.addPointA(p5x, -param.L3 - p5y)
+					.addSegArc2()
+					.addSegStrokeA(W1B2, 0);
+			} else {
+				rCtr.addSegStrokeR(W1B, 0);
+			}
 			if (jName.length > 0) {
 				rCtr.startJunction(jName[0], tJDir.eA, tJSide.eABLeft);
 			}
@@ -211,17 +242,31 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (R3B > 0) {
 			hollow1B.push(contourCircle(0, param.L1 / 2, R3B));
 		}
+		if (R5 > 0) {
+			if (param.twist === 1) {
+				hollow1B.push(contourCircle(0, -param.L2, R5));
+			} else {
+				hollow1A.push(contourCircle(0, -param.L2, R5));
+			}
+		}
+		if (R4 > 0) {
+			if (param.twist === 1) {
+				hollow1B.push(contourCircle(0, -R5y, R4));
+			} else {
+				hollow1A.push(contourCircle(0, -R5y, R4));
+			}
+		}
 		// facet fa1
-		const ctr1 = ctrLeg(['J1']);
+		const ctr1 = ctrA(['J1'], param.twist);
 		const fa1 = facet([ctr1, ...hollow1A]);
 		// facet fa2
-		const ctr2 = ctrSide(['J2', 'J1']);
+		const ctr2 = ctrB(['J2', 'J1'], param.twist);
 		const fa2 = facet([ctr2, ...hollow1B]);
 		// facet fa3
-		const ctr3 = ctrLeg(['J3', 'J2']);
+		const ctr3 = ctrA(['J3', 'J2'], param.twist);
 		const fa3 = facet([ctr3, ...hollow1A]);
 		// facet fa4
-		const ctr4 = ctrSide(['J4', 'J3']);
+		const ctr4 = ctrB(['J4', 'J3'], param.twist);
 		const fa4 = facet([ctr4, ...hollow1B]);
 		// sheetFold
 		const sFold = sheetFold(
@@ -284,7 +329,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faceSide: figSide,
 			faceTop: figTop
 		};
-		const ffObj = sFold.makeFigures();
+		const ffObj = sFold.makeFigures(true);
 		for (const iFace of Object.keys(ffObj)) {
 			rGeome.fig[iFace] = ffObj[iFace];
 		}
