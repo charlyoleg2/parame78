@@ -62,7 +62,7 @@
 		"geometrix": "^1.0.13"
 	},
 	"devDependencies": {
-		"@eslint/js": "^9.10.0",
+		"@eslint/js": "^9.22.0",
 		"@types/eslint__js": "^8.42.3",
 		"bats": "^1.11.1",
 		"eslint": "^9.21.0",
