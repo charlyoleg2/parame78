@@ -262,10 +262,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figB.mergeFigure(armEnd2Geom.fig.faceTop.rotate(0, 0, Math.PI).translate(0, end2Ty2));
 		// figSection
 		figSection.mergeFigure(
-			armEnd1Geom.fig.SFG_profiles.translate(-param.W2A / 2 + JRext, -param.W2Bhand / 2)
+			armEnd1Geom.fig.SFG_profiles.translate(-param.W2Ahand / 2 + JRext, -param.W2Bhand / 2)
 		);
 		figSection.mergeFigure(
-			armEnd2Geom.fig.SFG_profiles.translate(-param.W2A / 2 + JRext, -param.W2Bhand / 2)
+			armEnd2Geom.fig.SFG_profiles.translate(-param.W2Ahand / 2 + JRext, -param.W2Bhand / 2)
 		);
 		// final figure list
 		rGeome.fig = {
