@@ -118,12 +118,22 @@ function timeToAngle(iTime: number): number {
 	}
 	return rAngle;
 }
+function calcD3(iL1: number, iW1: number, iS1: number): number {
+	const rD3 = Math.min(iL1 - iS1, iW1); // Math.min(iL1 - 2 * iS1, iW1);
+	if (rD3 < 0) {
+		throw `err124: rD3 ${rD3} is negative because of L1 ${iL1}, iW1 ${iW1} and iS1 ${iS1}`;
+	}
+	return rD3;
+}
 
 interface tBJSize {
 	W1A2: number;
 	W1B2: number;
 	R1: number;
 	S1: number;
+	L1: number;
+	D3A: number;
+	D3B: number;
 }
 
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
@@ -149,31 +159,38 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				W1A2: W1A / 2,
 				W1B2: W1B / 2,
 				R1: param.D1hand / 2,
-				S1: param.S1hand
+				S1: param.S1hand,
+				L1: param.L1,
+				D3A: calcD3(param.L1, W1A, param.S1hand),
+				D3B: calcD3(param.L1, W1B, param.S1hand)
 			}
 		];
 		const progA = param.progressionA / 100;
 		for (let idx = 1; idx < param.jointNb + 1; idx++) {
+			const zW1A2 = BJsize[idx - 1].W1A2 * progA + param.progressionB;
+			const zW1B2 = BJsize[idx - 1].W1B2 * progA + param.progressionB;
+			const zR1 = BJsize[idx - 1].R1 * progA + param.progressionB;
+			const zS1 = BJsize[idx - 1].S1 * progA + param.progressionB;
+			const zL1 = param.L1;
+			const zD3A = calcD3(zL1, zW1A2 * 2, zS1);
+			const zD3B = calcD3(zL1, zW1B2 * 2, zS1);
 			const nBJsize = {
-				W1A2: BJsize[idx - 1].W1A2 * progA + param.progressionB,
-				W1B2: BJsize[idx - 1].W1B2 * progA + param.progressionB,
-				R1: BJsize[idx - 1].R1 * progA + param.progressionB,
-				S1: BJsize[idx - 1].S1 * progA + param.progressionB
+				W1A2: zW1A2,
+				W1B2: zW1B2,
+				R1: zR1,
+				S1: zS1,
+				L1: zL1,
+				D3A: zD3A,
+				D3B: zD3B
 			};
 			BJsize.push(nBJsize);
 		}
-		const D3AB = param.L1 - 2 * BJsize[param.jointNb].S1;
-		const end1D3A = Math.min(D3AB, BJsize[param.jointNb].W1A2 * 2);
-		rGeome.logstr += `dbg421: end1D3A ${ffix(end1D3A)} mm\n`;
 		// step-5 : checks on the parameter values
 		if (W1A <= 0) {
 			throw `err150: W1A ${W1A} is negative because of JRext ${ffix(JRext)}`;
 		}
 		if (W1B <= 0) {
 			throw `err153: W1B ${W1B} is negative because of JRext ${ffix(JRext)}`;
-		}
-		if (D3AB < 0) {
-			throw `err156: D3AB ${D3AB} is negative because of L1 ${param.L1} and S1 ${param.S1}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `hand armEnd W2Ahand ${ffix(param.W2Ahand)}, W2Bhand ${ffix(param.W2Bhand)}\n`;
@@ -185,13 +202,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		armEnd1Param.setVal('W2A', (BJsize[param.jointNb].W1A2 + JRext) * 2);
 		armEnd1Param.setVal('W2B', (BJsize[param.jointNb].W1B2 + JRext) * 2);
 		armEnd1Param.setVal('eqWAB', 0);
-		armEnd1Param.setVal('L1', param.L1);
+		armEnd1Param.setVal('L1', BJsize[param.jointNb].L1);
 		armEnd1Param.setVal('L2', BJsize[param.jointNb - 1].W1A2 + JRext);
 		armEnd1Param.setVal('D1', BJsize[param.jointNb - 1].R1 * 2);
 		armEnd1Param.setVal('S1', BJsize[param.jointNb - 1].S1);
 		armEnd1Param.setVal('D2', 0);
-		armEnd1Param.setVal('D3A', end1D3A);
-		armEnd1Param.setVal('D3B', Math.min(D3AB, BJsize[param.jointNb].W1B2 * 2));
+		armEnd1Param.setVal('D3A', BJsize[param.jointNb].D3A);
+		armEnd1Param.setVal('D3B', BJsize[param.jointNb].D3B);
 		armEnd1Param.setVal('T1', param.T1);
 		armEnd1Param.setVal('Jmark', param.Jmark);
 		armEnd1Param.setVal('Jradius', param.Jradius);
@@ -208,13 +225,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		armEnd2Param.setVal('W2A', (BJsize[0].W1A2 + JRext) * 2);
 		armEnd2Param.setVal('W2B', (BJsize[0].W1B2 + JRext) * 2);
 		armEnd2Param.setVal('eqWAB', 0);
-		armEnd2Param.setVal('L1', param.L1);
+		armEnd2Param.setVal('L1', BJsize[0].L1);
 		armEnd2Param.setVal('L2', BJsize[0].R1);
 		armEnd2Param.setVal('D1', BJsize[0].R1 * 2);
 		armEnd2Param.setVal('S1', BJsize[0].S1);
 		armEnd2Param.setVal('D2', 0);
-		armEnd2Param.setVal('D3A', Math.min(D3AB, BJsize[0].W1A2 * 2));
-		armEnd2Param.setVal('D3B', Math.min(D3AB, BJsize[0].W1B2 * 2));
+		armEnd2Param.setVal('D3A', BJsize[0].D3A);
+		armEnd2Param.setVal('D3B', BJsize[0].D3B);
 		armEnd2Param.setVal('T1', param.T1);
 		armEnd2Param.setVal('Jmark', param.Jmark);
 		armEnd2Param.setVal('Jradius', param.Jradius);
