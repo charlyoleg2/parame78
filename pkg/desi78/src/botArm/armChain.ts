@@ -74,8 +74,6 @@ const pDef: tParamDef = {
 		pNumber('S1hand', 'mm', 10, 1, 200, 1),
 		pSectionSeparator('Middle'),
 		pNumber('L1', 'mm', 50, 1, 500, 1),
-		pNumber('D3A', 'mm', 30, 0, 200, 1),
-		pNumber('D3B', 'mm', 30, 0, 200, 1),
 		pSectionSeparator('Thickness and corners'),
 		pNumber('T1', 'mm', 3, 0.5, 10, 0.25),
 		pNumber('Jmark', 'mm', 1, 0, 20, 0.1),
@@ -95,8 +93,6 @@ const pDef: tParamDef = {
 		W2Bhand: 'armChain_initSection.svg',
 		S1hand: 'armChain_overview.svg',
 		L1: 'armChain_overview.svg',
-		D3A: 'armChain_overview.svg',
-		D3B: 'armChain_overview.svg',
 		T1: 'armChain_initSection.svg',
 		Jmark: 'armChain_initSection.svg',
 		Jradius: 'armChain_initSection.svg',
@@ -166,7 +162,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			};
 			BJsize.push(nBJsize);
 		}
-
+		const D3AB = param.L1 - 2 * BJsize[param.jointNb].S1;
+		const end1D3A = Math.min(D3AB, BJsize[param.jointNb].W1A2 * 2);
+		rGeome.logstr += `dbg421: end1D3A ${ffix(end1D3A)} mm\n`;
 		// step-5 : checks on the parameter values
 		if (W1A <= 0) {
 			throw `err150: W1A ${W1A} is negative because of JRext ${ffix(JRext)}`;
@@ -174,23 +172,26 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (W1B <= 0) {
 			throw `err153: W1B ${W1B} is negative because of JRext ${ffix(JRext)}`;
 		}
+		if (D3AB < 0) {
+			throw `err156: D3AB ${D3AB} is negative because of L1 ${param.L1} and S1 ${param.S1}`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `hand armEnd W2Ahand ${ffix(param.W2Ahand)}, W2Bhand ${ffix(param.W2Bhand)}\n`;
 		rGeome.logstr += `jointAngle ${ffix(jointAngleDeg)} degree  ${ffix(jointAngle)} rad\n`;
 		// step-7 : drawing of the figures
 		// sub-designs
-		// sub-armEnd1 hand
+		// sub-armEnd1 shoulder
 		const armEnd1Param = designParam(armEndDef.pDef, '1');
-		armEnd1Param.setVal('W2A', (BJsize[0].W1A2 + JRext) * 2);
-		armEnd1Param.setVal('W2B', (BJsize[0].W1B2 + JRext) * 2);
+		armEnd1Param.setVal('W2A', (BJsize[param.jointNb].W1A2 + JRext) * 2);
+		armEnd1Param.setVal('W2B', (BJsize[param.jointNb].W1B2 + JRext) * 2);
 		armEnd1Param.setVal('eqWAB', 0);
 		armEnd1Param.setVal('L1', param.L1);
-		armEnd1Param.setVal('L2', BJsize[0].R1);
-		armEnd1Param.setVal('D1', BJsize[0].R1 * 2);
-		armEnd1Param.setVal('S1', BJsize[0].S1);
+		armEnd1Param.setVal('L2', BJsize[param.jointNb - 1].W1A2 + JRext);
+		armEnd1Param.setVal('D1', BJsize[param.jointNb - 1].R1 * 2);
+		armEnd1Param.setVal('S1', BJsize[param.jointNb - 1].S1);
 		armEnd1Param.setVal('D2', 0);
-		armEnd1Param.setVal('D3A', param.D3A);
-		armEnd1Param.setVal('D3B', param.D3B);
+		armEnd1Param.setVal('D3A', end1D3A);
+		armEnd1Param.setVal('D3B', Math.min(D3AB, BJsize[param.jointNb].W1B2 * 2));
 		armEnd1Param.setVal('T1', param.T1);
 		armEnd1Param.setVal('Jmark', param.Jmark);
 		armEnd1Param.setVal('Jradius', param.Jradius);
@@ -202,18 +203,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		);
 		checkGeom(armEnd1Geom);
 		rGeome.logstr += prefixLog(armEnd1Geom.logstr, armEnd1Param.getPartNameSuffix());
-		// sub-armEnd2 shoulder
+		// sub-armEnd2 hand
 		const armEnd2Param = designParam(armEndDef.pDef, '2');
-		armEnd2Param.setVal('W2A', (BJsize[param.jointNb].W1A2 + JRext) * 2);
-		armEnd2Param.setVal('W2B', (BJsize[param.jointNb].W1B2 + JRext) * 2);
+		armEnd2Param.setVal('W2A', (BJsize[0].W1A2 + JRext) * 2);
+		armEnd2Param.setVal('W2B', (BJsize[0].W1B2 + JRext) * 2);
 		armEnd2Param.setVal('eqWAB', 0);
 		armEnd2Param.setVal('L1', param.L1);
-		armEnd2Param.setVal('L2', BJsize[param.jointNb - 1].W1A2);
-		armEnd2Param.setVal('D1', BJsize[param.jointNb - 1].R1 * 2);
-		armEnd2Param.setVal('S1', BJsize[param.jointNb - 1].S1);
+		armEnd2Param.setVal('L2', BJsize[0].R1);
+		armEnd2Param.setVal('D1', BJsize[0].R1 * 2);
+		armEnd2Param.setVal('S1', BJsize[0].S1);
 		armEnd2Param.setVal('D2', 0);
-		armEnd2Param.setVal('D3A', param.D3A);
-		armEnd2Param.setVal('D3B', param.D3B);
+		armEnd2Param.setVal('D3A', Math.min(D3AB, BJsize[0].W1A2 * 2));
+		armEnd2Param.setVal('D3B', Math.min(D3AB, BJsize[0].W1B2 * 2));
 		armEnd2Param.setVal('T1', param.T1);
 		armEnd2Param.setVal('Jmark', param.Jmark);
 		armEnd2Param.setVal('Jradius', param.Jradius);
@@ -229,9 +230,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figA
 		const end2T2d = transform2d()
 			.addRotation(Math.PI)
-			.addTranslation(0, param.L1 + BJsize[param.jointNb - 1].W1A2)
+			.addTranslation(0, param.L1 + BJsize[0].R1)
 			.addRotation(jointAngle)
-			.addTranslation(0, param.L1 + BJsize[0].R1);
+			.addTranslation(0, param.L1 + BJsize[0].W1A2 + JRext);
 		const end2Ta = end2T2d.getRotation();
 		const [end2Tx, end2Ty] = end2T2d.getTranslation();
 		//figA.mergeFigure(armEnd1Geom.fig.SFG_f00);
