@@ -132,6 +132,8 @@ interface tBJSize {
 	R1: number;
 	S1: number;
 	L1: number;
+	L2b: number;
+	L2f: number;
 	D3A: number;
 	D3B: number;
 }
@@ -161,6 +163,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				R1: param.D1hand / 2,
 				S1: param.S1hand,
 				L1: param.L1,
+				L2b: param.D1hand / 2 + param.S1hand,
+				L2f: 0,
 				D3A: calcD3(param.L1, W1A, param.S1hand),
 				D3B: calcD3(param.L1, W1B, param.S1hand)
 			}
@@ -168,18 +172,25 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const progA = param.progressionA / 100;
 		for (let idx = 1; idx < param.jointNb + 1; idx++) {
 			const zW1A2 = BJsize[idx - 1].W1A2 * progA + param.progressionB;
-			const zW1B2 = BJsize[idx - 1].W1B2 * progA + param.progressionB;
+			//const zW1B2 = BJsize[idx - 1].W1B2 * progA + param.progressionB;
+			const zW1B2 = BJsize[idx - 1].W1B2 + param.T1 + param.E12;
 			const zR1 = BJsize[idx - 1].R1 * progA + param.progressionB;
 			const zS1 = BJsize[idx - 1].S1 * progA + param.progressionB;
 			const zL1 = param.L1;
-			const zD3A = calcD3(zL1, zW1A2 * 2, zS1);
-			const zD3B = calcD3(zL1, zW1B2 * 2, zS1);
+			const zL2f = Math.max(
+				BJsize[idx - 1].W1A2 + JRext,
+				BJsize[idx - 1].R1 + BJsize[idx - 1].S1
+			);
+			const zD3A = calcD3(zL1, zW1A2 * 2, BJsize[idx - 1].S1);
+			const zD3B = calcD3(zL1, zW1B2 * 2, BJsize[idx - 1].S1);
 			const nBJsize = {
 				W1A2: zW1A2,
 				W1B2: zW1B2,
 				R1: zR1,
 				S1: zS1,
 				L1: zL1,
+				L2b: zR1 + zS1,
+				L2f: zL2f,
 				D3A: zD3A,
 				D3B: zD3B
 			};
@@ -203,7 +214,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		armEnd1Param.setVal('W2B', (BJsize[param.jointNb].W1B2 + JRext) * 2);
 		armEnd1Param.setVal('eqWAB', 0);
 		armEnd1Param.setVal('L1', BJsize[param.jointNb].L1);
-		armEnd1Param.setVal('L2', BJsize[param.jointNb - 1].W1A2 + JRext);
+		armEnd1Param.setVal('L2', BJsize[param.jointNb].L2f);
 		armEnd1Param.setVal('D1', BJsize[param.jointNb - 1].R1 * 2);
 		armEnd1Param.setVal('S1', BJsize[param.jointNb - 1].S1);
 		armEnd1Param.setVal('D2', 0);
@@ -226,7 +237,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		armEnd2Param.setVal('W2B', (BJsize[0].W1B2 + JRext) * 2);
 		armEnd2Param.setVal('eqWAB', 0);
 		armEnd2Param.setVal('L1', BJsize[0].L1);
-		armEnd2Param.setVal('L2', BJsize[0].R1);
+		armEnd2Param.setVal('L2', BJsize[0].L2b);
 		armEnd2Param.setVal('D1', BJsize[0].R1 * 2);
 		armEnd2Param.setVal('S1', BJsize[0].S1);
 		armEnd2Param.setVal('D2', 0);
@@ -245,11 +256,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += prefixLog(armEnd2Geom.logstr, armEnd2Param.getPartNameSuffix());
 		// figures
 		// figA
+		const trY1 = param.L1 + BJsize[0].L2b;
+		const trY2 = param.L1 + BJsize[1].L2f;
 		const end2T2d = transform2d()
 			.addRotation(Math.PI)
-			.addTranslation(0, param.L1 + BJsize[0].R1)
+			.addTranslation(0, trY1)
 			.addRotation(jointAngle)
-			.addTranslation(0, param.L1 + BJsize[0].W1A2 + JRext);
+			.addTranslation(0, trY2);
 		const end2Ta = end2T2d.getRotation();
 		const [end2Tx, end2Ty] = end2T2d.getTranslation();
 		//figA.mergeFigure(armEnd1Geom.fig.SFG_f00);
@@ -257,15 +270,18 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		//figA.mergeFigure(armEnd2Geom.fig.SFG_f00.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
 		figA.mergeFigure(armEnd2Geom.fig.faceSide.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
 		// figB
-		const end2Ty2 = param.L1;
+		const end2Ty2 = trY1 + trY2;
 		figB.mergeFigure(armEnd1Geom.fig.faceTop);
 		figB.mergeFigure(armEnd2Geom.fig.faceTop.rotate(0, 0, Math.PI).translate(0, end2Ty2));
 		// figSection
 		figSection.mergeFigure(
-			armEnd1Geom.fig.SFG_profiles.translate(-param.W2Ahand / 2 + JRext, -param.W2Bhand / 2)
+			armEnd1Geom.fig.SFG_profiles.translate(
+				-BJsize[param.jointNb].W1A2,
+				-BJsize[param.jointNb].W1B2 - JRext
+			)
 		);
 		figSection.mergeFigure(
-			armEnd2Geom.fig.SFG_profiles.translate(-param.W2Ahand / 2 + JRext, -param.W2Bhand / 2)
+			armEnd2Geom.fig.SFG_profiles.translate(-BJsize[0].W1A2, -BJsize[0].W1B2 - JRext)
 		);
 		// final figure list
 		rGeome.fig = {
