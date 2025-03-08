@@ -72,7 +72,6 @@ const pDef: tParamDef = {
 		pNumber('W2Bhand', 'mm', 60, 1, 500, 1),
 		pCheckbox('eqWAB', true),
 		pNumber('S1hand', 'mm', 10, 1, 200, 1),
-		pNumber('D2hand', 'mm', 20, 0, 200, 1),
 		pSectionSeparator('Middle'),
 		pNumber('L1', 'mm', 50, 1, 500, 1),
 		pNumber('D3A', 'mm', 30, 0, 200, 1),
@@ -95,7 +94,6 @@ const pDef: tParamDef = {
 		W2Ahand: 'armChain_initSection.svg',
 		W2Bhand: 'armChain_initSection.svg',
 		S1hand: 'armChain_overview.svg',
-		D2hand: 'armChain_overview.svg',
 		L1: 'armChain_overview.svg',
 		D3A: 'armChain_overview.svg',
 		D3B: 'armChain_overview.svg',
@@ -125,22 +123,50 @@ function timeToAngle(iTime: number): number {
 	return rAngle;
 }
 
+interface tBJSize {
+	W1A2: number;
+	W1B2: number;
+	R1: number;
+	S1: number;
+}
+
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
 function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	const rGeome = initGeom(pDef.partName + suffix);
-	const figSide = figure();
-	const figTop = figure();
+	const figA = figure();
+	const figB = figure();
 	const figSection = figure();
 	rGeome.logstr += `${rGeome.partName} simTime: ${t}\n`;
 	try {
 		// step-4 : some preparation calculation
-		const R1hand = param.D1hand / 2;
 		const aJn = param.Jneutral / 100;
 		const JRext = param.Jradius + param.T1 * (1 - aJn);
 		const W1A = param.W2Ahand - 2 * JRext;
-		const W1B = param.W2Bhand - 2 * JRext;
+		let W1B = param.W2Bhand - 2 * JRext;
+		if (param.eqWAB) {
+			W1B = W1A;
+		}
 		const jointAngleDeg = timeToAngle(param.JointA + t);
 		const jointAngle = degToRad(jointAngleDeg);
+		const BJsize: tBJSize[] = [
+			{
+				W1A2: W1A / 2,
+				W1B2: W1B / 2,
+				R1: param.D1hand / 2,
+				S1: param.S1hand
+			}
+		];
+		const progA = param.progressionA / 100;
+		for (let idx = 1; idx < param.jointNb + 1; idx++) {
+			const nBJsize = {
+				W1A2: BJsize[idx - 1].W1A2 * progA + param.progressionB,
+				W1B2: BJsize[idx - 1].W1B2 * progA + param.progressionB,
+				R1: BJsize[idx - 1].R1 * progA + param.progressionB,
+				S1: BJsize[idx - 1].S1 * progA + param.progressionB
+			};
+			BJsize.push(nBJsize);
+		}
+
 		// step-5 : checks on the parameter values
 		if (W1A <= 0) {
 			throw `err150: W1A ${W1A} is negative because of JRext ${ffix(JRext)}`;
@@ -155,13 +181,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// sub-designs
 		// sub-armEnd1 hand
 		const armEnd1Param = designParam(armEndDef.pDef, '1');
-		armEnd1Param.setVal('W2A', param.W2Ahand);
-		armEnd1Param.setVal('W2B', param.W2Bhand);
+		armEnd1Param.setVal('W2A', (BJsize[0].W1A2 + JRext) * 2);
+		armEnd1Param.setVal('W2B', (BJsize[0].W1B2 + JRext) * 2);
 		armEnd1Param.setVal('eqWAB', 0);
 		armEnd1Param.setVal('L1', param.L1);
-		armEnd1Param.setVal('L2', R1hand);
-		armEnd1Param.setVal('D1', param.D1hand);
-		armEnd1Param.setVal('S1', param.S1hand);
+		armEnd1Param.setVal('L2', BJsize[0].R1);
+		armEnd1Param.setVal('D1', BJsize[0].R1 * 2);
+		armEnd1Param.setVal('S1', BJsize[0].S1);
 		armEnd1Param.setVal('D2', 0);
 		armEnd1Param.setVal('D3A', param.D3A);
 		armEnd1Param.setVal('D3B', param.D3B);
@@ -178,13 +204,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += prefixLog(armEnd1Geom.logstr, armEnd1Param.getPartNameSuffix());
 		// sub-armEnd2 shoulder
 		const armEnd2Param = designParam(armEndDef.pDef, '2');
-		armEnd2Param.setVal('W2A', param.W2Ahand);
-		armEnd2Param.setVal('W2B', param.W2Bhand);
+		armEnd2Param.setVal('W2A', (BJsize[param.jointNb].W1A2 + JRext) * 2);
+		armEnd2Param.setVal('W2B', (BJsize[param.jointNb].W1B2 + JRext) * 2);
 		armEnd2Param.setVal('eqWAB', 0);
 		armEnd2Param.setVal('L1', param.L1);
-		armEnd2Param.setVal('L2', R1hand);
-		armEnd2Param.setVal('D1', param.D1hand);
-		armEnd2Param.setVal('S1', param.S1hand);
+		armEnd2Param.setVal('L2', BJsize[param.jointNb - 1].W1A2);
+		armEnd2Param.setVal('D1', BJsize[param.jointNb - 1].R1 * 2);
+		armEnd2Param.setVal('S1', BJsize[param.jointNb - 1].S1);
 		armEnd2Param.setVal('D2', 0);
 		armEnd2Param.setVal('D3A', param.D3A);
 		armEnd2Param.setVal('D3B', param.D3B);
@@ -200,24 +226,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		checkGeom(armEnd2Geom);
 		rGeome.logstr += prefixLog(armEnd2Geom.logstr, armEnd2Param.getPartNameSuffix());
 		// figures
-		// figSide
+		// figA
 		const end2T2d = transform2d()
 			.addRotation(Math.PI)
-			.addTranslation(0, param.L1)
+			.addTranslation(0, param.L1 + BJsize[param.jointNb - 1].W1A2)
 			.addRotation(jointAngle)
-			.addTranslation(0, param.L1);
+			.addTranslation(0, param.L1 + BJsize[0].R1);
 		const end2Ta = end2T2d.getRotation();
 		const [end2Tx, end2Ty] = end2T2d.getTranslation();
-		//figSide.mergeFigure(armEnd1Geom.fig.SFG_f00);
-		figSide.mergeFigure(armEnd1Geom.fig.faceSide);
-		//figSide.mergeFigure(armEnd2Geom.fig.SFG_f00.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
-		figSide.mergeFigure(
-			armEnd2Geom.fig.faceSide.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty)
-		);
-		// figTop
+		//figA.mergeFigure(armEnd1Geom.fig.SFG_f00);
+		figA.mergeFigure(armEnd1Geom.fig.faceSide);
+		//figA.mergeFigure(armEnd2Geom.fig.SFG_f00.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
+		figA.mergeFigure(armEnd2Geom.fig.faceSide.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
+		// figB
 		const end2Ty2 = param.L1;
-		figTop.mergeFigure(armEnd1Geom.fig.faceTop);
-		figTop.mergeFigure(armEnd2Geom.fig.faceTop.rotate(0, 0, Math.PI).translate(0, end2Ty2));
+		figB.mergeFigure(armEnd1Geom.fig.faceTop);
+		figB.mergeFigure(armEnd2Geom.fig.faceTop.rotate(0, 0, Math.PI).translate(0, end2Ty2));
 		// figSection
 		figSection.mergeFigure(
 			armEnd1Geom.fig.SFG_profiles.translate(-param.W2A / 2 + JRext, -param.W2Bhand / 2)
@@ -227,8 +251,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		);
 		// final figure list
 		rGeome.fig = {
-			faceSide: figSide,
-			faceTop: figTop,
+			faceA: figA,
+			faceB: figB,
 			faceSection: figSection
 		};
 		// step-8 : recipes of the 3D construction
