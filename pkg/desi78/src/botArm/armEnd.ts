@@ -125,10 +125,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const lDiag = Math.sqrt(param.L2 ** 2 + W1A2 ** 2);
 		const a1 = Math.atan2(W1A2, param.L2);
 		const Rext = R1 + param.S1;
-		if (Rext >= lDiag) {
+		let a2 = 0;
+		const Epsilon = 0.01;
+		if (Rext > lDiag + Epsilon) {
 			throw `err123: lDiag ${ffix(lDiag)} too small compare to D1 ${param.D1} and S1 ${param.S1}`;
+		} else if (Rext < lDiag - Epsilon) {
+			a2 = Math.acos(Rext / lDiag);
 		}
-		const a2 = Math.acos(Rext / lDiag);
 		const a3 = -Math.PI / 2 + a1 + a2;
 		const p1x = Rext * Math.cos(a3);
 		const p1y = Rext * Math.sin(a3);
@@ -161,13 +164,23 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			if (jName.length > 0) {
 				rCtr.startJunction(jName[0], tJDir.eA, tJSide.eABLeft);
 			}
-			rCtr.addSegStrokeR(0, param.L1)
-				//.addSegStrokeR(-W1A, 0)
-				.addSegStrokeA(p1x, param.L1 + param.L2 + p1y)
-				.addPointA(0, param.L1 + param.L2 + Rext)
+			rCtr.addSegStrokeA(W1A2, param.L1);
+			//.addSegStrokeR(-W1A, 0)
+			const p1yA = param.L1 + param.L2 + p1y;
+			let addStroke = true;
+			const Epsilon = 0.1;
+			if (Math.abs(p1x - W1A2) < Epsilon && Math.abs(p1yA - param.L1) < Epsilon) {
+				addStroke = false;
+			}
+			if (addStroke) {
+				rCtr.addSegStrokeA(p1x, p1yA);
+			}
+			rCtr.addPointA(0, param.L1 + param.L2 + Rext)
 				.addPointA(-p1x, param.L1 + param.L2 + p1y)
-				.addSegArc2()
-				.addSegStrokeA(-W1A2, param.L1);
+				.addSegArc2();
+			if (addStroke) {
+				rCtr.addSegStrokeA(-W1A2, param.L1);
+			}
 			if (jName.length > 1) {
 				rCtr.startJunction(jName[1], tJDir.eB, tJSide.eABRight);
 			}

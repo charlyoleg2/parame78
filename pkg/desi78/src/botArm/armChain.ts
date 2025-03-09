@@ -125,6 +125,15 @@ function calcD3(iL1: number, iW1: number, iS1: number): number {
 	}
 	return rD3;
 }
+function calcL2b(iR1: number, iS1: number, iW1: number): number {
+	let rL2b = iR1;
+	const R1S1 = iR1 + iS1;
+	const W1Limit = Math.sqrt(R1S1 ** 2 - iR1 ** 2);
+	if (iW1 < W1Limit) {
+		rL2b = Math.sqrt(R1S1 ** 2 - iW1 ** 2);
+	}
+	return rL2b;
+}
 
 interface tBJSize {
 	W1A2: number;
@@ -163,7 +172,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				R1: param.D1hand / 2,
 				S1: param.S1hand,
 				L1: param.L1,
-				L2b: param.D1hand / 2 + param.S1hand,
+				L2b: calcL2b(param.D1hand / 2, param.S1hand, W1A / 2),
 				L2f: 0,
 				D3A: calcD3(param.L1, W1A, param.S1hand),
 				D3B: calcD3(param.L1, W1B, param.S1hand)
@@ -189,7 +198,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				R1: zR1,
 				S1: zS1,
 				L1: zL1,
-				L2b: zR1 + zS1,
+				L2b: calcL2b(zR1, zS1, zW1A2),
 				L2f: zL2f,
 				D3A: zD3A,
 				D3B: zD3B
