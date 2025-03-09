@@ -112,10 +112,13 @@ const pDef: tParamDef = {
 function calcPxy(iL2: number, iW1A2: number, iRext: number): [number, number] {
 	const lDiag = Math.sqrt(iL2 ** 2 + iW1A2 ** 2);
 	const a1 = Math.atan2(iW1A2, iL2);
-	if (iRext >= lDiag) {
+	let a2 = 0;
+	const Epsilon = 0.01;
+	if (iRext > lDiag + Epsilon) {
 		throw `err123: lDiag ${ffix(lDiag)} too small compare to iRext ${ffix(iRext)}`;
+	} else if (iRext < lDiag - Epsilon) {
+		a2 = Math.acos(iRext / lDiag);
 	}
-	const a2 = Math.acos(iRext / lDiag);
 	const a3 = -Math.PI / 2 + a1 + a2;
 	const rP1x = iRext * Math.cos(a3);
 	const rP1y = iRext * Math.sin(a3);
@@ -184,22 +187,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			if (iTwist === 1) {
 				rCtr.addSegStrokeR(W1A, 0);
 			} else {
-				rCtr.addSegStrokeA(-p5x, -param.L3 - p5y)
+				rCtr.addSegStrokeAifBig(-p5x, -param.L3 - p5y, 0.1, false)
 					.addPointA(0, -param.L3 - R5 - param.S2)
 					.addPointA(p5x, -param.L3 - p5y)
 					.addSegArc2()
-					.addSegStrokeA(W1A2, 0);
+					.addSegStrokeAifBig(W1A2, 0, 0.1, true);
 			}
 			if (jName.length > 0) {
 				rCtr.startJunction(jName[0], tJDir.eA, tJSide.eABLeft);
 			}
 			rCtr.addSegStrokeR(0, param.L1)
 				//.addSegStrokeR(-W1A, 0)
-				.addSegStrokeA(p1x, param.L1 + param.L2 + p1y)
+				.addSegStrokeAifBig(p1x, param.L1 + param.L2 + p1y, 0.1, false)
 				.addPointA(0, param.L1 + param.L2 + R1 + param.S1)
 				.addPointA(-p1x, param.L1 + param.L2 + p1y)
 				.addSegArc2()
-				.addSegStrokeA(-W1A2, param.L1);
+				.addSegStrokeAifBig(-W1A2, param.L1, 0.1, true);
 			if (jName.length > 1) {
 				rCtr.startJunction(jName[1], tJDir.eB, tJSide.eABRight);
 			}
@@ -209,11 +212,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		function ctrB(jName: string[], iTwist: number): tContourJ {
 			const rCtr = contourJ(-W1B2, 0);
 			if (iTwist === 1) {
-				rCtr.addSegStrokeA(-p5x, -param.L3 - p5y)
+				rCtr.addSegStrokeAifBig(-p5x, -param.L3 - p5y, 0.1, false)
 					.addPointA(0, -param.L3 - R5 - param.S2)
 					.addPointA(p5x, -param.L3 - p5y)
 					.addSegArc2()
-					.addSegStrokeA(W1B2, 0);
+					.addSegStrokeAifBig(W1B2, 0, 0.1, true);
 			} else {
 				rCtr.addSegStrokeR(W1B, 0);
 			}
