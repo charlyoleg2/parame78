@@ -164,23 +164,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			if (jName.length > 0) {
 				rCtr.startJunction(jName[0], tJDir.eA, tJSide.eABLeft);
 			}
-			rCtr.addSegStrokeA(W1A2, param.L1);
-			//.addSegStrokeR(-W1A, 0)
-			const p1yA = param.L1 + param.L2 + p1y;
-			let addStroke = true;
-			const Epsilon = 0.1;
-			if (Math.abs(p1x - W1A2) < Epsilon && Math.abs(p1yA - param.L1) < Epsilon) {
-				addStroke = false;
-			}
-			if (addStroke) {
-				rCtr.addSegStrokeA(p1x, p1yA);
-			}
-			rCtr.addPointA(0, param.L1 + param.L2 + Rext)
+			rCtr.addSegStrokeA(W1A2, param.L1)
+				//.addSegStrokeR(-W1A, 0)
+				.addSegStrokeAifBig(p1x, param.L1 + param.L2 + p1y, 0.5, false)
+				.addPointA(0, param.L1 + param.L2 + Rext)
 				.addPointA(-p1x, param.L1 + param.L2 + p1y)
-				.addSegArc2();
-			if (addStroke) {
-				rCtr.addSegStrokeA(-W1A2, param.L1);
-			}
+				.addSegArc2()
+				.addSegStrokeAifBig(-W1A2, param.L1, 0.5, true);
 			if (jName.length > 1) {
 				rCtr.startJunction(jName[1], tJDir.eB, tJSide.eABRight);
 			}
