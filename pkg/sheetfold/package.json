@@ -69,6 +69,6 @@
 		"vitest": "^3.0.8"
 	},
 	"dependencies": {
-		"geometrix": "^1.0.15"
+		"geometrix": "^1.0.16"
 	}
 }
