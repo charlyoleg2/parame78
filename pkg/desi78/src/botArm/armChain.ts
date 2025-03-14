@@ -9,6 +9,7 @@ import type {
 	tParamDef,
 	tParamVal,
 	tGeom,
+	DesignParam,
 	//tExtrude,
 	tPageDef,
 	tSubInst,
@@ -83,7 +84,16 @@ const pDef: tParamDef = {
 		pNumber('Jneutral', '%', 50, 0, 100, 1),
 		pNumber('E12', 'mm', 1, 0, 10, 0.1),
 		pSectionSeparator('Joint angle'),
-		pNumber('JointA', 'degree', 0, -90, 90, 1)
+		pNumber('JointA0', 'degree', 0, -90, 90, 1),
+		pNumber('JointA1', 'degree', 0, -90, 90, 1),
+		pNumber('JointA2', 'degree', 0, -90, 90, 1),
+		pNumber('JointA3', 'degree', 0, -90, 90, 1),
+		pNumber('JointA4', 'degree', 0, -90, 90, 1),
+		pNumber('JointA5', 'degree', 0, -90, 90, 1),
+		pNumber('JointA6', 'degree', 0, -90, 90, 1),
+		pNumber('JointA7', 'degree', 0, -90, 90, 1),
+		pNumber('JointA8', 'degree', 0, -90, 90, 1),
+		pNumber('JointA9', 'degree', 0, -90, 90, 1)
 	],
 	paramSvg: {
 		jointNb: 'armChain_overview.svg',
@@ -100,7 +110,16 @@ const pDef: tParamDef = {
 		Jradius: 'armChain_initSection.svg',
 		Jneutral: 'armChain_initSection.svg',
 		E12: 'armChain_initSection.svg',
-		JointA: 'armChain_overview.svg'
+		JointA0: 'armChain_overview.svg',
+		JointA1: 'armChain_overview.svg',
+		JointA2: 'armChain_overview.svg',
+		JointA3: 'armChain_overview.svg',
+		JointA4: 'armChain_overview.svg',
+		JointA5: 'armChain_overview.svg',
+		JointA6: 'armChain_overview.svg',
+		JointA7: 'armChain_overview.svg',
+		JointA8: 'armChain_overview.svg',
+		JointA9: 'armChain_overview.svg'
 	},
 	sim: {
 		tMax: 360,
@@ -169,8 +188,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (param.eqWAB) {
 			W1B = W1A;
 		}
-		const jointAngleDeg = timeToAngle(param.JointA + t);
-		const jointAngle = degToRad(jointAngleDeg);
+		const jointAngle: number[] = [];
+		jointAngle.push(degToRad(timeToAngle(param.JointA0 + t)));
+		jointAngle.push(degToRad(timeToAngle(param.JointA1 + t)));
+		jointAngle.push(degToRad(timeToAngle(param.JointA2 + t)));
+		jointAngle.push(degToRad(timeToAngle(param.JointA3 + t)));
+		jointAngle.push(degToRad(timeToAngle(param.JointA4 + t)));
+		jointAngle.push(degToRad(timeToAngle(param.JointA5 + t)));
+		jointAngle.push(degToRad(timeToAngle(param.JointA6 + t)));
+		jointAngle.push(degToRad(timeToAngle(param.JointA7 + t)));
+		jointAngle.push(degToRad(timeToAngle(param.JointA8 + t)));
+		jointAngle.push(degToRad(timeToAngle(param.JointA9 + t)));
 		const BJsize: tBJSize[] = [
 			{
 				W1A2: W1A / 2,
@@ -236,7 +264,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `hand armEnd W2Ahand ${ffix(param.W2Ahand)}, W2Bhand ${ffix(param.W2Bhand)}\n`;
-		rGeome.logstr += `jointAngle ${ffix(jointAngleDeg)} degree  ${ffix(jointAngle)} rad\n`;
 		// step-7 : drawing of the figures
 		// sub-designs
 		// sub-armEnd1 shoulder
@@ -286,29 +313,30 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		checkGeom(armEnd2Geom);
 		rGeome.logstr += prefixLog(armEnd2Geom.logstr, armEnd2Param.getPartNameSuffix());
 		// sub-armBone
-		const armBoneParam: tParamVal[] = [];
+		const armBoneParam: DesignParam[] = [];
 		const armBoneGeom: tGeom[] = [];
 		for (let idx = 1; idx < param.jointNb; idx++) {
-			const aBoneParam = designParam(armBoneDef.pDef, idx);
-			aBoneParam.setVal('W2A', (BJsize2[param.jointNb].W1A2 + JRext) * 2);
-			aBoneParam.setVal('W2B', (BJsize2[param.jointNb].W1B2 + JRext) * 2);
+			const aBoneParam = designParam(armBoneDef.pDef, idx.toString());
+			aBoneParam.setVal('W2A', (BJsize2[idx].W1A2 + JRext) * 2);
+			aBoneParam.setVal('W2B', (BJsize2[idx].W1B2 + JRext) * 2);
 			aBoneParam.setVal('eqWAB', 0);
-			aBoneParam.setVal('L1', BJsize2[param.jointNb].L1);
-			aBoneParam.setVal('L2', BJsize2[param.jointNb].L2b);
-			aBoneParam.setVal('D1', BJsize2[param.jointNb].R1 * 2);
-			aBoneParam.setVal('S1', BJsize2[param.jointNb].S1);
+			aBoneParam.setVal('twist', 0);
+			aBoneParam.setVal('L1', BJsize2[idx].L1);
+			aBoneParam.setVal('L2', BJsize2[idx].L2f);
+			aBoneParam.setVal('D1', BJsize2[idx + 1].R1 * 2);
+			aBoneParam.setVal('S1', BJsize2[idx + 1].S1);
+			aBoneParam.setVal('L3', BJsize2[idx].L2b);
+			aBoneParam.setVal('D5', BJsize2[idx].R1 * 2);
+			aBoneParam.setVal('S2', BJsize2[idx].S1);
 			aBoneParam.setVal('D2', 0);
-			aBoneParam.setVal('D3A', BJsize2[param.jointNb].D3A);
-			aBoneParam.setVal('D3B', BJsize2[param.jointNb].D3B);
+			aBoneParam.setVal('D4', 0);
+			aBoneParam.setVal('D3A', BJsize2[idx].D3A);
+			aBoneParam.setVal('D3B', BJsize2[idx].D3B);
 			aBoneParam.setVal('T1', param.T1);
 			aBoneParam.setVal('Jmark', param.Jmark);
 			aBoneParam.setVal('Jradius', param.Jradius);
 			aBoneParam.setVal('Jneutral', param.Jneutral);
-			const aBoneGeom = armBoneDef.pGeom(
-				0,
-				aBoneParam.getParamVal(),
-				aBoneParam.getSuffix()
-			);
+			const aBoneGeom = armBoneDef.pGeom(0, aBoneParam.getParamVal(), aBoneParam.getSuffix());
 			checkGeom(aBoneGeom);
 			rGeome.logstr += prefixLog(aBoneGeom.logstr, aBoneParam.getPartNameSuffix());
 			armBoneParam.push(aBoneParam);
@@ -321,13 +349,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const end2T2d = transform2d()
 			.addRotation(Math.PI)
 			.addTranslation(0, trY1)
-			.addRotation(jointAngle)
+			.addRotation(jointAngle[0])
 			.addTranslation(0, trY2);
 		const end2Ta = end2T2d.getRotation();
 		const [end2Tx, end2Ty] = end2T2d.getTranslation();
-		//figA.mergeFigure(armEnd1Geom.fig.SFG_f00);
 		figA.mergeFigure(armEnd1Geom.fig.faceSide);
-		//figA.mergeFigure(armEnd2Geom.fig.SFG_f00.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
 		figA.mergeFigure(armEnd2Geom.fig.faceSide.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
 		// figB
 		const end2Ty2 = trY1 + trY2;
@@ -354,7 +380,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const end2T3d = transform3d()
 			.addRotation(0, 0, Math.PI)
 			.addTranslation(0, param.L1, 0)
-			.addRotation(0, 0, jointAngle)
+			.addRotation(0, 0, jointAngle[0])
 			.addTranslation(0, param.L1, param.T1 + param.E12);
 		const designName = rGeome.partName;
 		rGeome.vol = {
