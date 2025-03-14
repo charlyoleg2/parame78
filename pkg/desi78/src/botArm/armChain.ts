@@ -167,7 +167,8 @@ interface tBJSize {
 }
 
 interface tBJSize2 extends tBJSize {
-	t2d: Transform2d;
+	t2dA: Transform2d;
+	t2dB: Transform2d;
 }
 
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
@@ -249,15 +250,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				L2f: BJsize[param.jointNb - idx].L2f,
 				D3A: BJsize[param.jointNb - idx].D3A,
 				D3B: BJsize[param.jointNb - idx].D3B,
-				t2d: transform2d()
+				t2dA: transform2d(),
+				t2dB: transform2d()
 			};
 			BJsize2.push(nBJsize);
 		}
 		for (let idx = 1; idx < param.jointNb + 1; idx++) {
 			for (let i2 = idx; i2 > 0; i2--) {
-				BJsize2[idx].t2d
+				BJsize2[idx].t2dA
 					.addTranslation(0, BJsize2[i2].L2b)
 					.addRotation(jointAngle[i2 - 1])
+					.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
+				BJsize2[idx].t2dB
+					.addTranslation(0, BJsize2[i2].L2b)
 					.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
 			}
 		}
@@ -350,30 +355,49 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// figures
 		// figA
-		const trY1 = param.L1 + BJsize2[param.jointNb].L2b;
-		const trY2 = param.L1 + BJsize2[0].L2f;
 		figA.mergeFigure(armEnd1Geom.fig.faceSide);
 		for (let idx = 1; idx < param.jointNb; idx++) {
-			const bTa = BJsize2[idx].t2d.getRotation();
-			const [bTx, bTy] = BJsize2[idx].t2d.getTranslation();
+			const bTa = BJsize2[idx].t2dA.getRotation();
+			const [bTx, bTy] = BJsize2[idx].t2dA.getTranslation();
 			figA.mergeFigure(armBoneGeom[idx - 1].fig.faceA.rotate(0, 0, bTa).translate(bTx, bTy));
 		}
-		const end2T2d = transform2d()
+		const Aend2T2d = transform2d()
 			.addRotation(Math.PI)
 			.addTranslation(0, param.L1)
-			.addRotation(BJsize2[param.jointNb].t2d.getRotation())
-			.addTranslation(...BJsize2[param.jointNb].t2d.getTranslation());
-		const end2Ta = end2T2d.getRotation();
-		const [end2Tx, end2Ty] = end2T2d.getTranslation();
-		figA.mergeFigure(armEnd2Geom.fig.faceSide.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
+			.addRotation(BJsize2[param.jointNb].t2dA.getRotation())
+			.addTranslation(...BJsize2[param.jointNb].t2dA.getTranslation());
+		const Aend2Ta = Aend2T2d.getRotation();
+		const [Aend2Tx, Aend2Ty] = Aend2T2d.getTranslation();
+		figA.mergeFigure(
+			armEnd2Geom.fig.faceSide.rotate(0, 0, Aend2Ta).translate(Aend2Tx, Aend2Ty)
+		);
 		// figB
-		const end2Ty2 = trY1 + trY2;
 		figB.mergeFigure(armEnd1Geom.fig.faceTop);
-		figB.mergeFigure(armEnd2Geom.fig.faceTop.rotate(0, 0, Math.PI).translate(0, end2Ty2));
+		for (let idx = 1; idx < param.jointNb; idx++) {
+			const bTa = BJsize2[idx].t2dB.getRotation();
+			const [bTx, bTy] = BJsize2[idx].t2dB.getTranslation();
+			figB.mergeFigure(armBoneGeom[idx - 1].fig.faceB.rotate(0, 0, bTa).translate(bTx, bTy));
+		}
+		const Bend2T2d = transform2d()
+			.addRotation(Math.PI)
+			.addTranslation(0, param.L1)
+			.addRotation(BJsize2[param.jointNb].t2dB.getRotation())
+			.addTranslation(...BJsize2[param.jointNb].t2dB.getTranslation());
+		const Bend2Ta = Bend2T2d.getRotation();
+		const [Bend2Tx, Bend2Ty] = Bend2T2d.getTranslation();
+		figB.mergeFigure(armEnd2Geom.fig.faceTop.rotate(0, 0, Bend2Ta).translate(Bend2Tx, Bend2Ty));
 		// figSection
 		figSection.mergeFigure(
 			armEnd1Geom.fig.SFG_profiles.translate(-BJsize2[0].W1A2, -BJsize2[0].W1B2 - JRext)
 		);
+		for (let idx = 1; idx < param.jointNb; idx++) {
+			figSection.mergeFigure(
+				armBoneGeom[idx - 1].fig.SFG_profiles.translate(
+					-BJsize2[idx].W1A2,
+					-BJsize2[idx].W1B2 - JRext
+				)
+			);
+		}
 		figSection.mergeFigure(
 			armEnd2Geom.fig.SFG_profiles.translate(
 				-BJsize2[param.jointNb].W1A2,
