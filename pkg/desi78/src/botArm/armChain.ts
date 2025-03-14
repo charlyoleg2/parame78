@@ -140,10 +140,8 @@ function timeToAngle(iTime: number): number {
 	return rAngle;
 }
 function calcD3(iL1: number, iW1: number, iS1: number): number {
-	const rD3 = Math.min(iL1 - iS1, iW1); // Math.min(iL1 - 2 * iS1, iW1);
-	if (rD3 < 0) {
-		throw `err124: rD3 ${rD3} is negative because of L1 ${iL1}, iW1 ${iW1} and iS1 ${iS1}`;
-	}
+	const D3 = Math.min(iL1 - iS1, iW1); // Math.min(iL1 - 2 * iS1, iW1);
+	const rD3 = Math.max(D3, 0);
 	return rD3;
 }
 function calcL2b(iR1: number, iS1: number, iW1: number): number {
