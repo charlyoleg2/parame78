@@ -255,6 +255,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			};
 			BJsize2.push(nBJsize);
 		}
+		for (let idx = 1; idx < param.jointNb + 1; idx++) {
+			for (let i2 = idx; i2 > 0; i2--) {
+				BJsize2[idx].t2d
+					.addTranslation(0, BJsize2[i2].L2b)
+					.addRotation(jointAngle[i2 - 1])
+					.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
+			}
+		}
 		// step-5 : checks on the parameter values
 		if (W1A <= 0) {
 			throw `err150: W1A ${W1A} is negative because of JRext ${ffix(JRext)}`;
@@ -346,14 +354,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// figA
 		const trY1 = param.L1 + BJsize2[param.jointNb].L2b;
 		const trY2 = param.L1 + BJsize2[0].L2f;
+		figA.mergeFigure(armEnd1Geom.fig.faceSide);
+		for (let idx = 1; idx < param.jointNb; idx++) {
+			const bTa = BJsize2[idx].t2d.getRotation();
+			const [bTx, bTy] = BJsize2[idx].t2d.getTranslation();
+			figA.mergeFigure(armBoneGeom[idx - 1].fig.faceA.rotate(0, 0, bTa).translate(bTx, bTy));
+		}
 		const end2T2d = transform2d()
 			.addRotation(Math.PI)
-			.addTranslation(0, trY1)
-			.addRotation(jointAngle[0])
-			.addTranslation(0, trY2);
+			.addTranslation(0, param.L1)
+			.addRotation(BJsize2[param.jointNb].t2d.getRotation())
+			.addTranslation(...BJsize2[param.jointNb].t2d.getTranslation());
 		const end2Ta = end2T2d.getRotation();
 		const [end2Tx, end2Ty] = end2T2d.getTranslation();
-		figA.mergeFigure(armEnd1Geom.fig.faceSide);
 		figA.mergeFigure(armEnd2Geom.fig.faceSide.rotate(0, 0, end2Ta).translate(end2Tx, end2Ty));
 		// figB
 		const end2Ty2 = trY1 + trY2;
