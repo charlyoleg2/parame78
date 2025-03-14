@@ -54,7 +54,7 @@ import {
 //	sheetFold
 //} from 'sheetfold';
 import { armEndDef } from './armEnd';
-//import { armBoneDef } from './armBone';
+import { armBoneDef } from './armBone';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
@@ -285,6 +285,35 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		);
 		checkGeom(armEnd2Geom);
 		rGeome.logstr += prefixLog(armEnd2Geom.logstr, armEnd2Param.getPartNameSuffix());
+		// sub-armBone
+		const armBoneParam: tParamVal[] = [];
+		const armBoneGeom: tGeom[] = [];
+		for (let idx = 1; idx < param.jointNb; idx++) {
+			const aBoneParam = designParam(armBoneDef.pDef, idx);
+			aBoneParam.setVal('W2A', (BJsize2[param.jointNb].W1A2 + JRext) * 2);
+			aBoneParam.setVal('W2B', (BJsize2[param.jointNb].W1B2 + JRext) * 2);
+			aBoneParam.setVal('eqWAB', 0);
+			aBoneParam.setVal('L1', BJsize2[param.jointNb].L1);
+			aBoneParam.setVal('L2', BJsize2[param.jointNb].L2b);
+			aBoneParam.setVal('D1', BJsize2[param.jointNb].R1 * 2);
+			aBoneParam.setVal('S1', BJsize2[param.jointNb].S1);
+			aBoneParam.setVal('D2', 0);
+			aBoneParam.setVal('D3A', BJsize2[param.jointNb].D3A);
+			aBoneParam.setVal('D3B', BJsize2[param.jointNb].D3B);
+			aBoneParam.setVal('T1', param.T1);
+			aBoneParam.setVal('Jmark', param.Jmark);
+			aBoneParam.setVal('Jradius', param.Jradius);
+			aBoneParam.setVal('Jneutral', param.Jneutral);
+			const aBoneGeom = armBoneDef.pGeom(
+				0,
+				aBoneParam.getParamVal(),
+				aBoneParam.getSuffix()
+			);
+			checkGeom(aBoneGeom);
+			rGeome.logstr += prefixLog(aBoneGeom.logstr, aBoneParam.getPartNameSuffix());
+			armBoneParam.push(aBoneParam);
+			armBoneGeom.push(aBoneGeom);
+		}
 		// figures
 		// figA
 		const trY1 = param.L1 + BJsize2[param.jointNb].L2b;
