@@ -14,8 +14,8 @@ import type {
 	tPageDef,
 	tSubInst,
 	//tSubDesign,
-	Transform2d
-	//Transform3d
+	Transform2d,
+	Transform3d
 } from 'geometrix';
 import {
 	designParam,
@@ -169,6 +169,7 @@ interface tBJSize {
 interface tBJSize2 extends tBJSize {
 	t2dA: Transform2d;
 	t2dB: Transform2d;
+	t3d: Transform3d;
 }
 
 // step-3 : definition of the function that creates from the parameter-values the figures and construct the 3D
@@ -251,7 +252,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				D3A: BJsize[param.jointNb - idx].D3A,
 				D3B: BJsize[param.jointNb - idx].D3B,
 				t2dA: transform2d(),
-				t2dB: transform2d()
+				t2dB: transform2d(),
+				t3d: transform3d()
 			};
 			BJsize2.push(nBJsize);
 		}
@@ -462,6 +464,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			armEnd_1: subEnd1,
 			armEnd_2: subEnd2
 		};
+		for (let idx = 1; idx < param.jointNb; idx++) {
+			const subBone: tSubInst = {
+				partName: armBoneParam[idx - 1].getPartName(),
+				dparam: armBoneParam[idx - 1].getDesignParamList(),
+				orientation: BJsize2[idx].t3d.getRotation(),
+				position: BJsize2[idx].t3d.getTranslation()
+			};
+			rGeome.sub[`armBone_${idx - 1}`] = subBone;
+		}
 		// step-10 : final log message
 		// finalize
 		rGeome.logstr += 'armChain drawn successfully!\n';
