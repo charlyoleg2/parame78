@@ -141,7 +141,7 @@ function timeToAngle(iTime: number): number {
 	return rAngle;
 }
 function calcD3(iL1: number, iW1: number, iS1: number): number {
-	const D3 = Math.min(iL1 - iS1, iW1); // Math.min(iL1 - 2 * iS1, iW1);
+	const D3 = Math.min(iL1 - iS1, iW1 - iS1 * 0.01); //  iS1 * 0.01 for avoiding rounding error
 	const rD3 = Math.max(D3, 0);
 	return rD3;
 }
