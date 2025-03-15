@@ -10,6 +10,7 @@ import type {
 	tParamVal,
 	tGeom,
 	DesignParam,
+	tInherit,
 	//tExtrude,
 	tPageDef,
 	tSubInst,
@@ -266,6 +267,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				BJsize2[idx].t2dB
 					.addTranslation(0, BJsize2[i2].L2b)
 					.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
+				BJsize2[idx].t3d
+					.addTranslation(0, BJsize2[i2].L2b, 0)
+					.addRotation(0, 0, jointAngle[i2 - 1])
+					.addTranslation(
+						0,
+						BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f,
+						param.T1 + param.E12
+					);
 			}
 		}
 		// step-5 : checks on the parameter values
@@ -276,7 +285,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err153: W1B ${W1B} is negative because of JRext ${ffix(JRext)}`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `hand armEnd W2Ahand ${ffix(param.W2Ahand)}, W2Bhand ${ffix(param.W2Bhand)}\n`;
+		rGeome.logstr += `hand armEnd W2Ahand ${ffix(param.W2Ahand)}, W2Bhand ${ffix(param.W2Bhand)} mm\n`;
+		rGeome.logstr += `shoulder armEnd W2A ${ffix((BJsize2[0].W1A2 + JRext) * 2)}, W2B ${ffix((BJsize2[0].W1B2 + JRext) * 2)} mm\n`;
+		rGeome.logstr += `shoulder armEnd L1 ${ffix(BJsize2[0].L1)}, L2 ${ffix(BJsize2[0].L2f)}, D1 ${ffix(BJsize2[1].R1 * 2)}, S1 ${ffix(BJsize2[1].S1)} mm\n`;
 		// step-7 : drawing of the figures
 		// sub-designs
 		// sub-armEnd1 shoulder
@@ -329,7 +340,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const armBoneParam: DesignParam[] = [];
 		const armBoneGeom: tGeom[] = [];
 		for (let idx = 1; idx < param.jointNb; idx++) {
-			const aBoneParam = designParam(armBoneDef.pDef, idx.toString());
+			const aBoneParam = designParam(armBoneDef.pDef, (idx - 1).toString());
 			aBoneParam.setVal('W2A', (BJsize2[idx].W1A2 + JRext) * 2);
 			aBoneParam.setVal('W2B', (BJsize2[idx].W1B2 + JRext) * 2);
 			aBoneParam.setVal('eqWAB', 0);
@@ -417,9 +428,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const end2T3d = transform3d()
 			.addRotation(0, 0, Math.PI)
 			.addTranslation(0, param.L1, 0)
-			.addRotation(0, 0, jointAngle[0])
-			.addTranslation(0, param.L1, param.T1 + param.E12);
+			.addRotation(...BJsize2[param.jointNb].t3d.getRotation())
+			.addTranslation(...BJsize2[param.jointNb].t3d.getTranslation());
 		const designName = rGeome.partName;
+		const boneInherits: tInherit[] = [];
+		const boneInpaxList: string[] = [];
+		for (let idx = 1; idx < param.jointNb; idx++) {
+			const bInpax: tInherit = {
+				outName: `inpax_${designName}_bone${idx - 1}`,
+				subdesign: `pax_armBone${idx - 1}`,
+				subgeom: armBoneGeom[idx - 1],
+				rotate: BJsize2[idx].t3d.getRotation(),
+				translate: BJsize2[idx].t3d.getTranslation()
+			};
+			boneInherits.push(bInpax);
+			boneInpaxList.push(`inpax_${designName}_bone${idx - 1}`);
+		}
 		rGeome.vol = {
 			inherits: [
 				{
@@ -435,14 +459,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 					subgeom: armEnd2Geom,
 					rotate: end2T3d.getRotation(),
 					translate: end2T3d.getTranslation()
-				}
+				},
+				...boneInherits
 			],
 			extrudes: [],
 			volumes: [
 				{
 					outName: `pax_${designName}`,
 					boolMethod: EBVolume.eUnion,
-					inList: [`inpax_${designName}_end1`, `inpax_${designName}_end2`]
+					inList: [
+						`inpax_${designName}_end1`,
+						`inpax_${designName}_end2`,
+						...boneInpaxList
+					]
 				}
 			]
 		};
