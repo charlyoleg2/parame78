@@ -156,13 +156,13 @@ function calcL2b(iR1: number, iS1: number, iW1: number): number {
 	return rL2b;
 }
 
-function selBoneFig(iBoneGeom: tGeom[], idx: number, BnA: number): Figure {
-	const rFig = BnA === 0 ? iBoneGeom[idx].fig.faceA : iBoneGeom[idx].fig.faceB;
+function selBoneFig(iBoneGeom: tGeom[], idx: number, BnA: boolean): Figure {
+	const rFig = BnA ? iBoneGeom[idx].fig.faceB : iBoneGeom[idx].fig.faceA;
 	return rFig;
 }
 
-function selHandFig(iGeom: tGeom, BnA: number): Figure {
-	const rFig = BnA === 0 ? iGeom.fig.faceSide : iGeom.fig.faceTop;
+function selHandFig(iGeom: tGeom, BnA: boolean): Figure {
+	const rFig = BnA ? iGeom.fig.faceTop : iGeom.fig.faceSide;
 	return rFig;
 }
 
@@ -174,13 +174,14 @@ interface tBJSize {
 	L1: number;
 	L2b: number;
 	L2f: number;
+	twisted: boolean;
 }
 
 interface tBJSize2 extends tBJSize {
 	D3A: number;
 	D3B: number;
-	twistFigA: number;
-	twistFigB: number;
+	//twistFigA: number;
+	//twistFigB: number;
 	t2dA: Transform2d;
 	t2dB: Transform2d;
 	t2dC: Transform2d;
@@ -222,11 +223,16 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				S1: param.S1hand,
 				L1: param.L1,
 				L2b: calcL2b(param.D1hand / 2, param.S1hand, W1A / 2),
-				L2f: 0
+				L2f: 0,
+				twisted: param.twist === 1 && param.jointNb % 2 === 1
 			}
 		];
 		const progA = param.progressionA / 100;
 		for (let idx = 1; idx < param.jointNb + 1; idx++) {
+			let nTwisted = false;
+			if (param.twist === 1) {
+				nTwisted = !BJsize[idx - 1].twisted;
+			}
 			const zW1A2 = BJsize[idx - 1].W1A2 * progA + param.progressionB;
 			//const zW1B2 = BJsize[idx - 1].W1B2 * progA + param.progressionB;
 			const zW1B2 = BJsize[idx - 1].W1B2 + param.T1 + param.E12;
@@ -244,13 +250,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				S1: zS1,
 				L1: zL1,
 				L2b: calcL2b(zR1, zS1, zW1A2),
-				L2f: zL2f
+				L2f: zL2f,
+				twisted: nTwisted
 			};
 			BJsize.push(nBJsize);
 		}
 		const BJsize2: tBJSize2[] = [];
 		for (let idx = 0; idx < param.jointNb + 1; idx++) {
-			const twistPre = idx % 2;
+			//const twistPre = idx % 2;
 			const nBJsize = {
 				W1A2: BJsize[param.jointNb - idx].W1A2,
 				W1B2: BJsize[param.jointNb - idx].W1B2,
@@ -259,20 +266,25 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				L1: BJsize[param.jointNb - idx].L1,
 				L2b: BJsize[param.jointNb - idx].L2b,
 				L2f: BJsize[param.jointNb - idx].L2f,
+				twisted: BJsize[param.jointNb - idx].twisted,
 				D3A: 0,
 				D3B: 0,
-				twistFigA: param.twist === 1 ? twistPre : 0,
-				twistFigB: param.twist === 1 ? 1 - twistPre : 1,
+				//twistFigA: param.twist === 1 ? twistPre : 0,
+				//twistFigB: param.twist === 1 ? 1 - twistPre : 1,
 				t2dA: transform2d(),
 				t2dB: transform2d(),
 				t2dC: transform2d(),
 				t3d: transform3d()
 			};
 			BJsize2.push(nBJsize);
+			//const checkTwist = BJsize2[idx].twistFigA === 1;
+			//if (checkTwist !== BJsize2[idx].twisted) {
+			//	throw `err282: check-twist idx ${idx} twisted ${BJsize2[idx].twisted} twistFigA ${BJsize2[idx].twistFigA}`;
+			//}
 		}
 		for (let idx = 0; idx < param.jointNb + 1; idx++) {
-			const twisted = BJsize2[idx].twistFigA;
-			if (twisted === 1) {
+			const twisted = BJsize2[idx].twisted;
+			if (twisted) {
 				const tmpW1A2 = BJsize2[idx].W1A2;
 				BJsize2[idx].W1A2 = BJsize2[idx].W1B2;
 				BJsize2[idx].W1B2 = tmpW1A2;
@@ -282,17 +294,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			BJsize2[idx].D3B = calcD3(param.L1, BJsize2[idx].W1B2 * 2, BJsize[idx2].S1);
 			BJsize2[idx].t2dC
 				.addTranslation(-BJsize2[idx].W1A2, -BJsize2[idx].W1B2 - JRext)
-				.addRotation((twisted * Math.PI) / 2);
+				.addRotation(twisted ? Math.PI / 2 : 0);
 			for (let i2 = idx; i2 > 0; i2--) {
 				// t2dA
 				BJsize2[idx].t2dA.addTranslation(0, BJsize2[i2].L2b);
-				if (BJsize2[i2 - 1].twistFigA === 0) {
+				if (!BJsize2[i2 - 1].twisted) {
 					BJsize2[idx].t2dA.addRotation(jointAngle[i2 - 1]);
 				}
 				BJsize2[idx].t2dA.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
 				// t2dB
 				BJsize2[idx].t2dB.addTranslation(0, BJsize2[i2].L2b);
-				if (BJsize2[i2 - 1].twistFigB === 0) {
+				if (BJsize2[i2 - 1].twisted) {
 					BJsize2[idx].t2dB.addRotation(jointAngle[i2 - 1]);
 				}
 				BJsize2[idx].t2dB.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
@@ -404,7 +416,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const bTa = BJsize2[idx].t2dA.getRotation();
 			const [bTx, bTy] = BJsize2[idx].t2dA.getTranslation();
 			figA.mergeFigure(
-				selBoneFig(armBoneGeom, idx - 1, BJsize2[idx].twistFigA)
+				selBoneFig(armBoneGeom, idx - 1, BJsize2[idx].twisted)
 					.rotate(0, 0, bTa)
 					.translate(bTx, bTy)
 			);
@@ -417,7 +429,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Aend2Ta = Aend2T2d.getRotation();
 		const [Aend2Tx, Aend2Ty] = Aend2T2d.getTranslation();
 		figA.mergeFigure(
-			selHandFig(armEnd2Geom, BJsize2[param.jointNb - 1].twistFigA)
+			selHandFig(armEnd2Geom, BJsize2[param.jointNb - 1].twisted)
 				.rotate(0, 0, Aend2Ta)
 				.translate(Aend2Tx, Aend2Ty)
 		);
@@ -427,7 +439,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const bTa = BJsize2[idx].t2dB.getRotation();
 			const [bTx, bTy] = BJsize2[idx].t2dB.getTranslation();
 			figB.mergeFigure(
-				selBoneFig(armBoneGeom, idx - 1, BJsize2[idx].twistFigB)
+				selBoneFig(armBoneGeom, idx - 1, !BJsize2[idx].twisted)
 					.rotate(0, 0, bTa)
 					.translate(bTx, bTy)
 			);
@@ -440,7 +452,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Bend2Ta = Bend2T2d.getRotation();
 		const [Bend2Tx, Bend2Ty] = Bend2T2d.getTranslation();
 		figB.mergeFigure(
-			selHandFig(armEnd2Geom, BJsize2[param.jointNb - 1].twistFigB)
+			selHandFig(armEnd2Geom, !BJsize2[param.jointNb - 1].twisted)
 				.rotate(0, 0, Bend2Ta)
 				.translate(Bend2Tx, Bend2Ty)
 		);
