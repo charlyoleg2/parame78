@@ -161,6 +161,11 @@ function selBoneFig(iBoneGeom: tGeom[], idx: number, BnA: number): Figure {
 	return rFig;
 }
 
+function selHandFig(iGeom: tGeom, BnA: number): Figure {
+	const rFig = BnA === 0 ? iGeom.fig.faceSide : iGeom.fig.faceTop;
+	return rFig;
+}
+
 interface tBJSize {
 	W1A2: number;
 	W1B2: number;
@@ -272,7 +277,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			BJsize2.push(nBJsize);
 		}
 		for (let idx = 0; idx < param.jointNb + 1; idx++) {
-			BJsize2[idx].t2dC.addTranslation(-BJsize2[idx].W1A2, -BJsize2[idx].W1B2 - JRext);
+			BJsize2[idx].t2dC
+				.addTranslation(-BJsize2[idx].W1A2, -BJsize2[idx].W1B2 - JRext)
+				.addRotation((BJsize2[idx].twistFigA * Math.PI) / 2);
 			for (let i2 = idx; i2 > 0; i2--) {
 				BJsize2[idx].t2dA
 					.addTranslation(0, BJsize2[i2].L2b)
@@ -401,7 +408,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const Aend2Ta = Aend2T2d.getRotation();
 		const [Aend2Tx, Aend2Ty] = Aend2T2d.getTranslation();
 		figA.mergeFigure(
-			armEnd2Geom.fig.faceSide.rotate(0, 0, Aend2Ta).translate(Aend2Tx, Aend2Ty)
+			selHandFig(armEnd2Geom, BJsize2[param.jointNb - 1].twistFigA)
+				.rotate(0, 0, Aend2Ta)
+				.translate(Aend2Tx, Aend2Ty)
 		);
 		// figB
 		figB.mergeFigure(armEnd1Geom.fig.faceTop);
@@ -421,7 +430,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addTranslation(...BJsize2[param.jointNb].t2dB.getTranslation());
 		const Bend2Ta = Bend2T2d.getRotation();
 		const [Bend2Tx, Bend2Ty] = Bend2T2d.getTranslation();
-		figB.mergeFigure(armEnd2Geom.fig.faceTop.rotate(0, 0, Bend2Ta).translate(Bend2Tx, Bend2Ty));
+		figB.mergeFigure(
+			selHandFig(armEnd2Geom, BJsize2[param.jointNb - 1].twistFigB)
+				.rotate(0, 0, Bend2Ta)
+				.translate(Bend2Tx, Bend2Ty)
+		);
 		// figSection
 		figSection.mergeFigure(
 			armEnd1Geom.fig.SFG_profiles.rotate(0, 0, BJsize2[0].t2dC.getRotation()).translate(
