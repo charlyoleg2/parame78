@@ -174,11 +174,11 @@ interface tBJSize {
 	L1: number;
 	L2b: number;
 	L2f: number;
-	D3A: number;
-	D3B: number;
 }
 
 interface tBJSize2 extends tBJSize {
+	D3A: number;
+	D3B: number;
 	twistFigA: number;
 	twistFigB: number;
 	t2dA: Transform2d;
@@ -222,9 +222,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				S1: param.S1hand,
 				L1: param.L1,
 				L2b: calcL2b(param.D1hand / 2, param.S1hand, W1A / 2),
-				L2f: 0,
-				D3A: calcD3(param.L1, W1A, param.S1hand),
-				D3B: calcD3(param.L1, W1B, param.S1hand)
+				L2f: 0
 			}
 		];
 		const progA = param.progressionA / 100;
@@ -239,8 +237,6 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				BJsize[idx - 1].W1A2 + JRext,
 				BJsize[idx - 1].R1 + BJsize[idx - 1].S1
 			);
-			const zD3A = calcD3(zL1, zW1A2 * 2, BJsize[idx - 1].S1);
-			const zD3B = calcD3(zL1, zW1B2 * 2, BJsize[idx - 1].S1);
 			const nBJsize = {
 				W1A2: zW1A2,
 				W1B2: zW1B2,
@@ -248,9 +244,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				S1: zS1,
 				L1: zL1,
 				L2b: calcL2b(zR1, zS1, zW1A2),
-				L2f: zL2f,
-				D3A: zD3A,
-				D3B: zD3B
+				L2f: zL2f
 			};
 			BJsize.push(nBJsize);
 		}
@@ -265,8 +259,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				L1: BJsize[param.jointNb - idx].L1,
 				L2b: BJsize[param.jointNb - idx].L2b,
 				L2f: BJsize[param.jointNb - idx].L2f,
-				D3A: BJsize[param.jointNb - idx].D3A,
-				D3B: BJsize[param.jointNb - idx].D3B,
+				D3A: 0,
+				D3B: 0,
 				twistFigA: param.twist === 1 ? twistPre : 0,
 				twistFigB: param.twist === 1 ? 1 - twistPre : 1,
 				t2dA: transform2d(),
@@ -277,17 +271,32 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			BJsize2.push(nBJsize);
 		}
 		for (let idx = 0; idx < param.jointNb + 1; idx++) {
+			const twisted = BJsize2[idx].twistFigA;
+			if (twisted === 1) {
+				const tmpW1A2 = BJsize2[idx].W1A2;
+				BJsize2[idx].W1A2 = BJsize2[idx].W1B2;
+				BJsize2[idx].W1B2 = tmpW1A2;
+			}
+			const idx2 = Math.max(idx - 1, 0);
+			BJsize2[idx].D3A = calcD3(param.L1, BJsize2[idx].W1A2 * 2, BJsize[idx2].S1);
+			BJsize2[idx].D3B = calcD3(param.L1, BJsize2[idx].W1B2 * 2, BJsize[idx2].S1);
 			BJsize2[idx].t2dC
 				.addTranslation(-BJsize2[idx].W1A2, -BJsize2[idx].W1B2 - JRext)
-				.addRotation((BJsize2[idx].twistFigA * Math.PI) / 2);
+				.addRotation((twisted * Math.PI) / 2);
 			for (let i2 = idx; i2 > 0; i2--) {
-				BJsize2[idx].t2dA
-					.addTranslation(0, BJsize2[i2].L2b)
-					.addRotation(jointAngle[i2 - 1])
-					.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
-				BJsize2[idx].t2dB
-					.addTranslation(0, BJsize2[i2].L2b)
-					.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
+				// t2dA
+				BJsize2[idx].t2dA.addTranslation(0, BJsize2[i2].L2b);
+				if (BJsize2[i2 - 1].twistFigA === 0) {
+					BJsize2[idx].t2dA.addRotation(jointAngle[i2 - 1]);
+				}
+				BJsize2[idx].t2dA.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
+				// t2dB
+				BJsize2[idx].t2dB.addTranslation(0, BJsize2[i2].L2b);
+				if (BJsize2[i2 - 1].twistFigB === 0) {
+					BJsize2[idx].t2dB.addRotation(jointAngle[i2 - 1]);
+				}
+				BJsize2[idx].t2dB.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
+				// t3d
 				BJsize2[idx].t3d
 					.addTranslation(0, BJsize2[i2].L2b, 0)
 					.addRotation(0, 0, jointAngle[i2 - 1])
