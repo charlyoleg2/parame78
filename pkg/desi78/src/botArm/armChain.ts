@@ -282,10 +282,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			BJsize2[idx].D3A = calcD3(param.L1, BJsize2[idx].W1A2 * 2, BJsize[idx2].S1);
 			BJsize2[idx].D3B = calcD3(param.L1, BJsize2[idx].W1B2 * 2, BJsize[idx2].S1);
 			// t2dC
-			const idx3 = Math.min(idx, param.jointNb - 1);
+			//const idx3 = Math.min(idx, param.jointNb - 1);
 			BJsize2[idx].t2dC
 				.addTranslation(-BJsize2[idx].W1A2, -BJsize2[idx].W1B2 - JRext)
-				.addRotation(BJsize2[idx3].twisted ? Math.PI / 2 : 0);
+				.addRotation(BJsize2[idx].twisted ? Math.PI / 2 : 0);
 			for (let i2 = idx; i2 > 0; i2--) {
 				// t2dA
 				BJsize2[idx].t2dA.addTranslation(0, BJsize2[i2].L2b);
