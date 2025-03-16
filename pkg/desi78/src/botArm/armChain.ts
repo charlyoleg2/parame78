@@ -231,16 +231,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			if (param.twist === 1) {
 				nTwisted = !BJsize[idx - 1].twisted;
 			}
-			const zW1A2 = BJsize[idx - 1].W1A2 * progA + param.progressionB;
+			const Aref = nTwisted ? BJsize[idx - 1].W1B2 : BJsize[idx - 1].W1A2;
+			const Bref = nTwisted ? BJsize[idx - 1].W1A2 : BJsize[idx - 1].W1B2;
+			const zW1A2 = Aref * progA + param.progressionB;
 			//const zW1B2 = BJsize[idx - 1].W1B2 * progA + param.progressionB;
-			const zW1B2 = BJsize[idx - 1].W1B2 + param.T1 + param.E12;
+			const zW1B2 = Bref + param.T1 + param.E12;
 			const zR1 = BJsize[idx - 1].R1 * progA + param.progressionB;
 			const zS1 = BJsize[idx - 1].S1 * progA + param.progressionB;
 			const zL1 = param.L1;
-			const zL2f = Math.max(
-				BJsize[idx - 1].W1A2 + JRext,
-				BJsize[idx - 1].R1 + BJsize[idx - 1].S1
-			);
+			const zL2f = Math.max(Aref + JRext, BJsize[idx - 1].R1 + BJsize[idx - 1].S1);
 			const nBJsize = {
 				W1A2: zW1A2,
 				W1B2: zW1B2,
@@ -274,19 +273,17 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			};
 			BJsize2.push(nBJsize);
 		}
+		// sanity check
+		if (BJsize2[0].twisted) {
+			throw `dbg280: shoulderEnd should not be twisted ${BJsize2[0].twisted}`;
+		}
 		for (let idx = 0; idx < param.jointNb + 1; idx++) {
-			const twisted = BJsize2[idx].twisted;
-			if (twisted) {
-				const tmpW1A2 = BJsize2[idx].W1A2;
-				BJsize2[idx].W1A2 = BJsize2[idx].W1B2;
-				BJsize2[idx].W1B2 = tmpW1A2;
-			}
 			const idx2 = Math.max(idx - 1, 0);
 			BJsize2[idx].D3A = calcD3(param.L1, BJsize2[idx].W1A2 * 2, BJsize[idx2].S1);
 			BJsize2[idx].D3B = calcD3(param.L1, BJsize2[idx].W1B2 * 2, BJsize[idx2].S1);
 			BJsize2[idx].t2dC
 				.addTranslation(-BJsize2[idx].W1A2, -BJsize2[idx].W1B2 - JRext)
-				.addRotation(twisted ? Math.PI / 2 : 0);
+				.addRotation(BJsize2[idx].twisted ? Math.PI / 2 : 0);
 			for (let i2 = idx; i2 > 0; i2--) {
 				// t2dA
 				BJsize2[idx].t2dA.addTranslation(0, BJsize2[i2].L2b);
