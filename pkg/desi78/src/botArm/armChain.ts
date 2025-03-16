@@ -180,8 +180,6 @@ interface tBJSize {
 interface tBJSize2 extends tBJSize {
 	D3A: number;
 	D3B: number;
-	//twistFigA: number;
-	//twistFigB: number;
 	t2dA: Transform2d;
 	t2dB: Transform2d;
 	t2dC: Transform2d;
@@ -269,18 +267,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				twisted: BJsize[param.jointNb - idx].twisted,
 				D3A: 0,
 				D3B: 0,
-				//twistFigA: param.twist === 1 ? twistPre : 0,
-				//twistFigB: param.twist === 1 ? 1 - twistPre : 1,
 				t2dA: transform2d(),
 				t2dB: transform2d(),
 				t2dC: transform2d(),
 				t3d: transform3d()
 			};
 			BJsize2.push(nBJsize);
-			//const checkTwist = BJsize2[idx].twistFigA === 1;
-			//if (checkTwist !== BJsize2[idx].twisted) {
-			//	throw `err282: check-twist idx ${idx} twisted ${BJsize2[idx].twisted} twistFigA ${BJsize2[idx].twistFigA}`;
-			//}
 		}
 		for (let idx = 0; idx < param.jointNb + 1; idx++) {
 			const twisted = BJsize2[idx].twisted;
