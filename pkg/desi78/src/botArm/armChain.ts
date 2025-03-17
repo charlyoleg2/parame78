@@ -222,17 +222,24 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				L1: param.L1,
 				L2b: calcL2b(param.D1hand / 2, param.S1hand, W1A / 2),
 				L2f: 0,
-				twisted: param.twist === 1 && param.jointNb % 2 === 1
+				twisted: param.twist === 1 && param.jointNb % 2 === 0
 			}
 		];
 		const progA = param.progressionA / 100;
 		for (let idx = 1; idx < param.jointNb + 1; idx++) {
 			let nTwisted = false;
+			let swapW = false;
 			if (param.twist === 1) {
-				nTwisted = !BJsize[idx - 1].twisted;
+				if (idx === 1) {
+					nTwisted = BJsize[idx - 1].twisted;
+					swapW = false;
+				} else {
+					nTwisted = !BJsize[idx - 1].twisted;
+					swapW = true;
+				}
 			}
-			const Aref = nTwisted ? BJsize[idx - 1].W1B2 : BJsize[idx - 1].W1A2;
-			const Bref = nTwisted ? BJsize[idx - 1].W1A2 : BJsize[idx - 1].W1B2;
+			const Aref = swapW ? BJsize[idx - 1].W1B2 : BJsize[idx - 1].W1A2;
+			const Bref = swapW ? BJsize[idx - 1].W1A2 : BJsize[idx - 1].W1B2;
 			const zW1A2 = Aref * progA + param.progressionB;
 			//const zW1B2 = BJsize[idx - 1].W1B2 * progA + param.progressionB;
 			const zW1B2 = Bref + param.T1 + param.E12;
