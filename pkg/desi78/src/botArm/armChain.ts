@@ -148,7 +148,7 @@ function calcD3(iL1: number, iW1: number, iS1: number): number {
 }
 function calcL2b(iR1: number, iS1: number, iW1: number): number {
 	let rL2b = iR1;
-	const R1S1 = iR1 + iS1;
+	const R1S1 = (iR1 + iS1) * 1.01; // 1.01 for avoiding rounding error
 	const W1Limit = Math.sqrt(R1S1 ** 2 - iR1 ** 2);
 	if (iW1 < W1Limit) {
 		rL2b = Math.sqrt(R1S1 ** 2 - iW1 ** 2);
@@ -253,7 +253,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				R1: zR1,
 				S1: zS1,
 				L1: zL1,
-				L2b: calcL2b(zR1, zS1, zW1A2),
+				L2b: calcL2b(zR1, zS1, param.twist === 1 ? zW1B2 : zW1A2),
 				L2f: zL2f,
 				twisted: nTwisted
 			};

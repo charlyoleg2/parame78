@@ -109,13 +109,13 @@ const pDef: tParamDef = {
 	}
 };
 
-function calcPxy(iL2: number, iW1A2: number, iRext: number): [number, number] {
+function calcPxy(iL2: number, iW1A2: number, iRext: number, tag: string): [number, number] {
 	const lDiag = Math.sqrt(iL2 ** 2 + iW1A2 ** 2);
 	const a1 = Math.atan2(iW1A2, iL2);
 	let a2 = 0;
 	const Epsilon = 0.01;
 	if (iRext > lDiag + Epsilon) {
-		throw `err123: lDiag ${ffix(lDiag)} too small compare to iRext ${ffix(iRext)}`;
+		throw `err123: ${tag} lDiag ${ffix(lDiag)} too small compare to iRext ${ffix(iRext)}, iL2 ${ffix(iL2)} and iW1A2 ${ffix(iW1A2)}`;
 	} else if (iRext < lDiag - Epsilon) {
 		a2 = Math.acos(iRext / lDiag);
 	}
@@ -150,9 +150,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aCorner = Math.PI / 2;
 		const W1A2 = W1A / 2;
 		const W1B2 = W1B / 2;
-		const [p1x, p1y] = calcPxy(param.L2, W1A2, R1 + param.S1);
+		const [p1x, p1y] = calcPxy(param.L2, W1A2, R1 + param.S1, 'L2f');
 		const R2y = (param.L2 - R1) / 2;
-		const [p5x, p5y] = calcPxy(param.L3, param.twist === 1 ? W1B2 : W1A2, R5 + param.S2);
+		const [p5x, p5y] = calcPxy(param.L3, param.twist === 1 ? W1B2 : W1A2, R5 + param.S2, 'L3b');
 		const R5y = (param.L3 - R5) / 2;
 		const yLength = param.L1 + param.L2 + param.L3 + R1 + param.S1 + R5 + param.S2;
 		// step-5 : checks on the parameter values
