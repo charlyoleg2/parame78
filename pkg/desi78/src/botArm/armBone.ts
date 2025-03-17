@@ -147,6 +147,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			R3B = R3A;
 			W1B = W1A;
 		}
+		const W2B = W1B + 2 * JRext;
 		const aCorner = Math.PI / 2;
 		const W1A2 = W1A / 2;
 		const W1B2 = W1B / 2;
@@ -317,18 +318,19 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		figA.mergeFigure(facet2figure(fa1));
 		figA.addSecond(ctrRectangle(-param.W2A / 2, 0, (param.W2A - W1A) / 2, param.L1));
 		figA.addSecond(ctrRectangle(W1A / 2, 0, (param.W2A - W1A) / 2, param.L1));
+		const yLA = param.L3 + R5 + param.S2;
 		if (param.twist === 1) {
-			const yLA = param.L3 + R5 + param.S2;
 			figA.addMainO(ctrRectangle(-param.W2A / 2, -yLA, param.T1, yLA + param.L1));
 			figA.addMainO(ctrRectangle(param.W2A / 2 - param.T1, -yLA, param.T1, yLA + param.L1));
 		}
 		// figB
 		figB.mergeFigure(facet2figure(fa2));
-		figB.addSecond(ctrRectangle(-param.W2B / 2, 0, (param.W2B - W1B) / 2, param.L1));
-		figB.addSecond(ctrRectangle(W1B / 2, 0, (param.W2B - W1B) / 2, param.L1));
+		figB.addSecond(ctrRectangle(-W2B / 2, 0, (W2B - W1B) / 2, param.L1));
+		figB.addSecond(ctrRectangle(W1B / 2, 0, (W2B - W1B) / 2, param.L1));
+		const yLA2 = param.twist === 1 ? 0 : yLA;
 		const yLB = param.L1 + param.L2 + R1 + param.S1;
-		figB.addMainO(ctrRectangle(-param.W2B / 2, 0, param.T1, yLB));
-		figB.addMainO(ctrRectangle(param.W2B / 2 - param.T1, 0, param.T1, yLB));
+		figB.addMainO(ctrRectangle(-W2B / 2, -yLA2, param.T1, yLA2 + yLB));
+		figB.addMainO(ctrRectangle(W2B / 2 - param.T1, -yLA2, param.T1, yLA2 + yLB));
 		// final figure list
 		rGeome.fig = {
 			faceA: figA,
