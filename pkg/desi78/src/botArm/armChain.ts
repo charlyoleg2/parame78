@@ -307,6 +307,12 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				}
 				BJsize2[idx].t2dB.addTranslation(0, BJsize2[i2 - 1].L1 + BJsize2[i2 - 1].L2f);
 				// t3d
+				if (param.twist === 1 && i2 < param.jointNb) {
+					BJsize2[idx].t3d
+						.addTranslation(0, 0, -BJsize2[i2].W1B2 - JRext)
+						.addRotation(0, Math.PI / 2, 0)
+						.addTranslation(0, 0, BJsize2[i2].W1A2 + JRext);
+				}
 				BJsize2[idx].t3d
 					.addTranslation(0, BJsize2[i2].L2b, 0)
 					.addRotation(0, 0, jointAngle[i2 - 1])
