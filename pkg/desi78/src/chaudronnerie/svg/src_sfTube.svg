@@ -24,8 +24,8 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      inkscape:zoom="1.5696829"
-     inkscape:cx="221.70083"
-     inkscape:cy="222.65644"
+     inkscape:cx="222.3379"
+     inkscape:cy="223.29351"
      inkscape:window-width="1854"
      inkscape:window-height="1131"
      inkscape:window-x="0"
@@ -140,7 +140,7 @@
        height="98.943825"
        x="30.509081"
        y="23.598183"
-       inkscape:export-filename="stTube_pattern.svg"
+       inkscape:export-filename="sfTube_pattern.svg"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96" />
     <text
@@ -150,7 +150,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="19.111328"
          y="29.525504"
-         id="tspan13">src_sfTube.svg</tspan></text>
+         id="tspan1">src_sfTube.svg</tspan></text>
     <rect
        style="fill:#1a1a1a;stroke:#ffffff;stroke-width:0.264583;stroke-linejoin:round"
        id="rect2"
@@ -233,7 +233,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect7);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="154.62695"
          y="225.61144"
-         id="tspan14">W1</tspan></text>
+         id="tspan2">W1</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,22.333021,-3.8544446)"
@@ -241,7 +241,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect8);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="112.125"
          y="404.76183"
-         id="tspan15">W2</tspan></text>
+         id="tspan3">W2</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,-14.53533,-23.778777)"
@@ -249,7 +249,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect9);display:inline;fill:#000000;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="327.33594"
          y="399.02746"
-         id="tspan16">L1</tspan></text>
+         id="tspan4">L1</tspan></text>
     <path
        style="fill:none;stroke:#0000ff;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide)"
        d="M 70.73231,64.639505 73.092129,46.43519"
@@ -265,19 +265,19 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect10);fill:#0000ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="57.972656"
          y="94.507926"
-         id="tspan17">Jangle
+         id="tspan5">Jangle
 </tspan><tspan
          x="57.972656"
          y="114.50793"
-         id="tspan18">Jradius
+         id="tspan6">Jradius
 </tspan><tspan
          x="57.972656"
          y="134.50793"
-         id="tspan19">Jneutral
+         id="tspan7">Jneutral
 </tspan><tspan
          x="57.972656"
          y="154.50793"
-         id="tspan20">Jmark</tspan></text>
+         id="tspan8">Jmark</tspan></text>
     <path
        style="fill:none;stroke:#008080;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
        d="m 39.886114,104.25076 c 0,0 15.609483,5.73116 23.598182,4.88823 7.630702,-0.80517 21.069807,-9.270771 21.069807,-9.270771"
@@ -304,7 +304,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect13);fill:#008080;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="330.64062"
          y="418.13878"
-         id="tspan21">N1</tspan></text>
+         id="tspan9">N1</tspan></text>
     <text
        xml:space="preserve"
        transform="matrix(0.26458333,0,0,0.26458333,29.604048,-9.8633343)"
@@ -312,7 +312,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect14);fill:#999999;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="52.876953"
          y="393.93175"
-         id="tspan22">a1</tspan></text>
+         id="tspan10">a1</tspan></text>
     <path
        style="fill:#999999;stroke:#999999;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none;marker-start:url(#ArrowWide);marker-end:url(#ArrowWide)"
        d="M 38.001455,68.347791 V 96.497052"
@@ -324,7 +324,7 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect15);fill:#999999;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="85.367188"
          y="435.97863"
-         id="tspan23">h1</tspan></text>
+         id="tspan11">h1</tspan></text>
     <path
        style="fill:#ffffff;stroke:#ff00ff;stroke-width:0.264583;stroke-linejoin:round;marker-end:url(#ArrowWide)"
        d="m 43.319525,115.12543 4.719635,-3.70829"
@@ -336,6 +336,6 @@
        style="font-size:16px;line-height:normal;font-family:'Liberation Mono';-inkscape-font-specification:'Liberation Mono';text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect11);fill:#ff00ff;stroke-width:1;-inkscape-stroke:none;stop-color:#000000"><tspan
          x="42.046875"
          y="483.75793"
-         id="tspan24">Th</tspan></text>
+         id="tspan12">Th</tspan></text>
   </g>
 </svg>
