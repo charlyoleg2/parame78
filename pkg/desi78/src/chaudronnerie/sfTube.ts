@@ -58,8 +58,8 @@ const pDef: tParamDef = {
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('H1', 'mm', 2000, 100, 10000, 1),
-		pNumber('D1', 'mm', 100, 1, 500, 1),
-		pNumber('D2', 'mm', 200, 1, 2000, 1),
+		pNumber('D1', 'mm', 200, 1, 2000, 1),
+		pNumber('D2', 'mm', 500, 1, 5000, 1),
 		//pNumber('Jangle', 'degree', 120, 60, 180, 0.1),
 		pNumber('N1', 'facet', 6, 3, 200, 1),
 		pSectionSeparator('Thickness and fold'),
@@ -123,8 +123,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		if (aJr < aJn * param.Th) {
 			throw `err107: Jradius ${aJr} is too small compare to Th ${param.Th} and Jneutral ${param.Jneutral}`;
 		}
-		if (W1 < 0.01) {
-			throw `err126: W1 ${ffix(W1)} is negative or too close to zero`;
+		if (TW1 < 0.01) {
+			throw `err126: TW1 ${ffix(TW1)} is negative or too close to zero`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += str1 + str2;
