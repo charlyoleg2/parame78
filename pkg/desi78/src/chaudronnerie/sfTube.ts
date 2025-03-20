@@ -39,6 +39,7 @@ import {
 	//EExtrude,
 	//EBVolume
 } from 'geometrix';
+import { triLALrL, triLLLrA } from 'triangule';
 import type { Facet, tJuncs } from 'sheetfold';
 import {
 	tJDir,
@@ -56,9 +57,9 @@ const pDef: tParamDef = {
 	partName: 'sfTube',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
-		pNumber('L1', 'mm', 2000, 100, 10000, 1),
-		pNumber('W1', 'mm', 100, 1, 500, 1),
-		pNumber('W2', 'mm', 200, 1, 2000, 1),
+		pNumber('H1', 'mm', 2000, 100, 10000, 1),
+		pNumber('D1', 'mm', 100, 1, 500, 1),
+		pNumber('D2', 'mm', 200, 1, 2000, 1),
 		//pNumber('Jangle', 'degree', 120, 60, 180, 0.1),
 		pNumber('N1', 'facet', 6, 3, 200, 1),
 		pSectionSeparator('Thickness and fold'),
@@ -68,14 +69,14 @@ const pDef: tParamDef = {
 		pNumber('Jmark', 'mm', 1, 0, 20, 0.1)
 	],
 	paramSvg: {
-		L1: 'sfTube_pattern.svg',
-		W1: 'sfTube_pattern.svg',
-		W2: 'sfTube_pattern.svg',
+		H1: 'sfTube_top.svg',
+		D1: 'sfTube_top.svg',
+		D2: 'sfTube_top.svg',
 		//Jangle: 'sfTube_pattern.svg',
 		N1: 'sfTube_pattern.svg',
-		Th: 'sfTube_pattern.svg',
+		Th: 'sfTube_top.svg',
 		Jradius: 'sfTube_pattern.svg',
-		Jneutral: 'sfTube_pattern.svg',
+		Jneutral: 'sfTube_top.svg',
 		Jmark: 'sfTube_pattern.svg'
 	},
 	sim: {
@@ -95,20 +96,42 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aJr = param.Jradius;
 		const aJm = param.Jmark;
 		//const aJa = degToRad(param.Jangle);
-		const aJa = (2 * Math.PI) / param.N1;
-		const W12 = (param.W2 - param.W1) / 2;
-		const a1 = Math.acos(W12 / param.L1);
-		const h1 = Math.sqrt(param.L1 ** 2 - W12 ** 2);
+		const CAB = (2 * Math.PI) / param.N1;
+		const R1 = param.D1 / 2;
+		const R2 = param.D2 / 2;
+		if (R2 < R1) {
+			throw `err109: D2 ${param.D2} is smaller than D1 ${param.D1}`;
+		}
+		const aTilt1 = Math.atan2(param.H1, R2 - R1);
+		const aTilt2 = Math.atan2(param.H1, (R2 - R1) * Math.cos(CAB / 2));
+		const W1 = R1 * 2 * Math.sin(CAB / 2);
+		const W2 = R2 * 2 * Math.sin(CAB / 2);
+		const W12 = (W2 - W1) / 2;
+		const L1 = param.H1 / Math.sin(aTilt1);
+		const CAD = Math.acos(W12 / L1);
+		const CD = W2 * Math.sin(CAD);
+		const [BC, str1] = triLALrL(W2, CAB, W2);
+		const [CDB, str2] = triLLLrA(CD, BC, CD);
+		const a1 = CAD;
+		const aJa = CDB;
+		const GF = aJr / Math.tan(aJa / 2);
+		const GA = GF / Math.sin(a1);
+		const TW2 = W2 - 2 * GA;
+		const TW1 = W1 - 2 * GA;
+		const T1 = Math.sqrt(L1 ** 2 - W12 ** 2);
 		// step-5 : checks on the parameter values
 		if (aJr < aJn * param.Th) {
 			throw `err107: Jradius ${aJr} is too small compare to Th ${param.Th} and Jneutral ${param.Jneutral}`;
 		}
-		if (param.W2 < param.W1) {
-			throw `err109: W2 ${param.W2} is smaller than W1 ${param.W1}`;
+		if (W1 < 0.01) {
+			throw `err126: W1 ${ffix(W1)} is negative or too close to zero`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `Trapeze: a1 ${ffix(radToDeg(a1))} degree, h1 ${ffix(h1)} mm\n`;
-		rGeome.logstr += `Joint: Jangle ${ffix(radToDeg(aJa))} degree, Jlength ${ffix(aJa * aJr)} mm\n`;
+		rGeome.logstr += str1 + str2;
+		rGeome.logstr += `Cone tilt: Tilt1 ${ffix(radToDeg(aTilt1))} degree, Tilt2 ${ffix(radToDeg(aTilt2))} degree\n`;
+		rGeome.logstr += `Polygone: N1 ${param.N1}, W1 ${ffix(W1)}, W2 ${ffix(W2)} mm, CAB ${ffix(radToDeg(CAB))} degree\n`;
+		rGeome.logstr += `Trapeze: a1 ${ffix(radToDeg(a1))} degree, T1 ${ffix(T1)}, TW1 ${ffix(TW1)}, TW2 ${ffix(TW2)} mm\n`;
+		rGeome.logstr += `Joint: L1 ${ffix(L1)} mm, Jangle ${ffix(radToDeg(aJa))} degree, JW ${ffix(aJa * aJr)} mm\n`;
 		// step-7 : drawing of the figures
 		// facet-loop
 		const facetList: Facet[] = [];
@@ -116,11 +139,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		for (let idx = 0; idx < param.N1; idx++) {
 			const Jpost = `J${idx + 1}`;
 			const Jpre = `J${idx}`;
-			const ctr1 = contourJ(-param.W2 / 2, 0)
-				.addSegStrokeR(param.W2, 0)
+			const ctr1 = contourJ(-W2 / 2, 0)
+				.addSegStrokeR(W2, 0)
 				.startJunction(Jpost, tJDir.eA, tJSide.eABLeft)
-				.addSegStrokeR(-W12, h1)
-				.addSegStrokeR(-param.W1, 0);
+				.addSegStrokeR(-W12, T1)
+				.addSegStrokeR(-W1, 0);
 			if (idx > 0) {
 				ctr1.startJunction(Jpre, tJDir.eB, tJSide.eABRight);
 			}
@@ -130,14 +153,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			jointList[Jpost] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
 		}
 		// sheetFold
-		const half1 = ['J1', param.W1];
-		const half2 = ['J1', param.W1];
+		const half1 = ['J1', W1];
+		const half2 = ['J1', W1];
 		const sFold = sheetFold(
 			facetList,
 			jointList,
 			[
-				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: half1, post: half1 },
-				{ x1: 0, y1: 1.5 * param.W1, a1: 0, l1: param.W1, ante: half1, post: half2 }
+				{ x1: 0, y1: 0, a1: 0, l1: W1, ante: half1, post: half1 },
+				{ x1: 0, y1: 1.5 * W1, a1: 0, l1: W1, ante: half1, post: half2 }
 			],
 			param.Th,
 			rGeome.partName
