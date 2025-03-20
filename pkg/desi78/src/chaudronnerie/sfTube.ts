@@ -27,7 +27,7 @@ import {
 	//contourCircle,
 	//ctrRectangle,
 	//figure,
-	degToRad,
+	//degToRad,
 	radToDeg,
 	//pointCoord,
 	ffix,
@@ -39,6 +39,7 @@ import {
 	//EExtrude,
 	//EBVolume
 } from 'geometrix';
+import type { Facet, tJuncs } from 'sheetfold';
 import {
 	tJDir,
 	tJSide,
@@ -57,9 +58,9 @@ const pDef: tParamDef = {
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('L1', 'mm', 2000, 100, 10000, 1),
 		pNumber('W1', 'mm', 100, 1, 500, 1),
-		pNumber('W2', 'mm', 200, 1, 500, 1),
-		pNumber('Jangle', 'degree', 120, 90, 180, 0.1),
-		pNumber('N1', 'facet', 6, 1, 200, 1),
+		pNumber('W2', 'mm', 200, 1, 2000, 1),
+		//pNumber('Jangle', 'degree', 120, 60, 180, 0.1),
+		pNumber('N1', 'facet', 6, 3, 200, 1),
 		pSectionSeparator('Thickness and fold'),
 		pNumber('Th', 'mm', 10, 1, 20, 1),
 		pNumber('Jradius', 'mm', 20, 1, 50, 1),
@@ -70,7 +71,7 @@ const pDef: tParamDef = {
 		L1: 'sfTube_pattern.svg',
 		W1: 'sfTube_pattern.svg',
 		W2: 'sfTube_pattern.svg',
-		Jangle: 'sfTube_pattern.svg',
+		//Jangle: 'sfTube_pattern.svg',
 		N1: 'sfTube_pattern.svg',
 		Th: 'sfTube_pattern.svg',
 		Jradius: 'sfTube_pattern.svg',
@@ -93,6 +94,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aJn = param.Jneutral / 100;
 		const aJr = param.Jradius;
 		const aJm = param.Jmark;
+		//const aJa = degToRad(param.Jangle);
+		const aJa = (2 * Math.PI) / param.N1;
 		const W12 = (param.W2 - param.W1) / 2;
 		const a1 = Math.acos(W12 / param.L1);
 		const h1 = Math.sqrt(param.L1 ** 2 - W12 ** 2);
@@ -105,23 +108,33 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		// step-6 : any logs
 		rGeome.logstr += `Trapeze: a1 ${ffix(radToDeg(a1))} degree, h1 ${ffix(h1)} mm\n`;
+		rGeome.logstr += `Joint: Jangle ${ffix(radToDeg(aJa))} degree, Jlength ${ffix(aJa * aJr)} mm\n`;
 		// step-7 : drawing of the figures
-		// facet1
-		const ctr1 = contourJ(-param.W2 / 2, 0)
-			.addSegStrokeR(param.W2, 0)
-			.startJunction('J1', tJDir.eA, tJSide.eABLeft)
-			.addSegStrokeR(-W12, h1)
-			.addSegStrokeR(-param.W1, 0)
-			.closeSegStroke();
-		const fa1 = facet([ctr1]);
+		// facet-loop
+		const facetList: Facet[] = [];
+		const jointList: tJuncs = {};
+		for (let idx = 0; idx < param.N1; idx++) {
+			const Jpost = `J${idx + 1}`;
+			const Jpre = `J${idx}`;
+			const ctr1 = contourJ(-param.W2 / 2, 0)
+				.addSegStrokeR(param.W2, 0)
+				.startJunction(Jpost, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(-W12, h1)
+				.addSegStrokeR(-param.W1, 0);
+			if (idx > 0) {
+				ctr1.startJunction(Jpre, tJDir.eB, tJSide.eABRight);
+			}
+			ctr1.closeSegStroke();
+			const fa1 = facet([ctr1]);
+			facetList.push(fa1);
+			jointList[Jpost] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+		}
 		// sheetFold
 		const half1 = ['J1', param.W1];
 		const half2 = ['J1', param.W1];
 		const sFold = sheetFold(
-			[fa1],
-			{
-				J1: { angle: degToRad(param.Jangle), radius: aJr, neutral: aJn, mark: aJm }
-			},
+			facetList,
+			jointList,
 			[
 				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: half1, post: half1 },
 				{ x1: 0, y1: 1.5 * param.W1, a1: 0, l1: param.W1, ante: half1, post: half2 }
