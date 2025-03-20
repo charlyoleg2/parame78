@@ -97,6 +97,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aJm = param.Jmark;
 		//const aJa = degToRad(param.Jangle);
 		const CAB = (2 * Math.PI) / param.N1;
+		const CAB2 = Math.PI - CAB;
 		const R1 = param.D1 / 2;
 		const R2 = param.D2 / 2;
 		if (R2 < R1) {
@@ -110,10 +111,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const L1 = param.H1 / Math.sin(aTilt1);
 		const CAD = Math.acos(W12 / L1);
 		const CD = W2 * Math.sin(CAD);
-		const [BC, str1] = triLALrL(W2, CAB, W2);
+		const [BC, str1] = triLALrL(W2, CAB2, W2);
 		const [CDB, str2] = triLLLrA(CD, BC, CD);
 		const a1 = CAD;
-		const aJa = CDB;
+		const aJa = Math.PI - CDB;
 		const GF = aJr / Math.tan(aJa / 2);
 		const GA = GF / Math.sin(a1);
 		const TW2 = W2 - 2 * GA;
@@ -129,7 +130,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-6 : any logs
 		rGeome.logstr += str1 + str2;
 		rGeome.logstr += `Cone tilt: Tilt1 ${ffix(radToDeg(aTilt1))} degree, Tilt2 ${ffix(radToDeg(aTilt2))} degree\n`;
-		rGeome.logstr += `Polygone: N1 ${param.N1}, W1 ${ffix(W1)}, W2 ${ffix(W2)} mm, CAB ${ffix(radToDeg(CAB))} degree\n`;
+		rGeome.logstr += `Polygone: N1 ${param.N1}, W1 ${ffix(W1)}, W2 ${ffix(W2)} mm, CAB2 ${ffix(radToDeg(CAB2))} degree\n`;
 		rGeome.logstr += `Trapeze: a1 ${ffix(radToDeg(a1))} degree, T1 ${ffix(T1)}, TW1 ${ffix(TW1)}, TW2 ${ffix(TW2)} mm\n`;
 		rGeome.logstr += `Joint: L1 ${ffix(L1)} mm, Jangle ${ffix(radToDeg(aJa))} degree, JW ${ffix(aJa * aJr)} mm\n`;
 		// step-7 : drawing of the figures
