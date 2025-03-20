@@ -40,7 +40,7 @@ import {
 	//EBVolume
 } from 'geometrix';
 import { triLALrL, triLLLrA } from 'triangule';
-import type { Facet, tJuncs } from 'sheetfold';
+import type { Facet, tJuncs, tHalfProfile } from 'sheetfold';
 import {
 	tJDir,
 	tJSide,
@@ -137,6 +137,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// facet-loop
 		const facetList: Facet[] = [];
 		const jointList: tJuncs = {};
+		const half1: tHalfProfile = [];
+		const half2: tHalfProfile = [];
 		for (let idx = 0; idx < param.N1; idx++) {
 			const Jpost = `J${idx + 1}`;
 			const Jpre = `J${idx}`;
@@ -152,16 +154,20 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const fa1 = facet([ctr1]);
 			facetList.push(fa1);
 			jointList[Jpost] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+			if (idx > 0) {
+				half1.push(Jpost);
+				half1.push(TW1);
+				half2.push(Jpost);
+				half2.push(TW2);
+			}
 		}
 		// sheetFold
-		const half1 = ['J1', W1];
-		const half2 = ['J1', W1];
 		const sFold = sheetFold(
 			facetList,
 			jointList,
 			[
-				{ x1: 0, y1: 0, a1: 0, l1: W1, ante: half1, post: half1 },
-				{ x1: 0, y1: 1.5 * W1, a1: 0, l1: W1, ante: half1, post: half2 }
+				{ x1: 0, y1: 0, a1: 0, l1: TW1, ante: [], post: half1 },
+				{ x1: 0, y1: 4 * TW2, a1: 0, l1: TW2, ante: [], post: half2 }
 			],
 			param.Th,
 			rGeome.partName

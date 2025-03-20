@@ -932,5 +932,5 @@ function facet2figure(iFacet: Facet): Figure {
 	return rfig;
 }
 
-export type { tJuncs, SheetFold };
+export type { tJuncs, tHalfProfile, SheetFold };
 export { sheetFold, facet2figure };
