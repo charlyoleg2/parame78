@@ -58,7 +58,7 @@ const pDef: tParamDef = {
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('D1', 'mm', 200, 10, 500, 1),
-		pNumber('D2', 'mm', 300, 10, 500, 1),
+		pNumber('E2', 'mm', 20, 10, 500, 1),
 		pNumber('N1', '', 3, 1, 8, 1),
 		pSectionSeparator('Foot'),
 		pNumber('W1', 'mm', 50, 1, 200, 1),
@@ -81,7 +81,7 @@ const pDef: tParamDef = {
 	],
 	paramSvg: {
 		D1: 'multiFacets_overview.svg',
-		D2: 'multiFacets_overview.svg',
+		E2: 'multiFacets_overview.svg',
 		N1: 'multiFacets_overview.svg',
 		W1: 'multiFacets_foot.svg',
 		W2: 'multiFacets_foot.svg',
