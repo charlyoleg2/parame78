@@ -30,7 +30,7 @@ import {
 	degToRad,
 	//radToDeg,
 	//pointCoord,
-	//ffix,
+	ffix,
 	pNumber,
 	//pCheckbox,
 	//pDropdown,
@@ -41,6 +41,7 @@ import {
 } from 'geometrix';
 //import { triLALrL, triLLLrA } from 'triangule';
 //import type { Facet, tJuncs, tHalfProfile } from 'sheetfold';
+import type { tJuncs } from 'sheetfold';
 import {
 	tJDir,
 	tJSide,
@@ -116,28 +117,67 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const aJr = param.Jradius;
 		const aJm = param.Jmark;
 		const aJa = degToRad(param.Jangle);
+		const Rd1 = param.D1 / 2;
+		const Rd2 = Rd1 + param.E2;
+		const V12 = param.V1 / 2;
+		const V12y = Math.sqrt(Rd1 ** 2 - V12 ** 2);
+		const W12 = param.W1 / 2;
+		const W12x = Math.sqrt(Rd2 ** 2 - W12 ** 2);
+		const aW12 = Math.asin(W12 / Rd2);
+		const aW12b = Math.PI / param.N1 - aW12;
 		// step-5 : checks on the parameter values
 		if (aJr < aJn * param.Th) {
 			throw `err107: Jradius ${aJr} is too small compare to Th ${param.Th} and Jneutral ${param.Jneutral}`;
 		}
+		if (aW12b < 0.001) {
+			throw `err132: aW12b ${ffix(aW12b)} is negative or quasi-negative`;
+		}
 		// step-6 : any logs
 		rGeome.logstr += `multiFacets: N1 ${param.N1}\n`;
 		// step-7 : drawing of the figures
-		// facet-loop
-		const ctr1 = contourJ(0, 0)
-			.addSegStrokeR(param.W1, 0)
-			.startJunction('J1', tJDir.eA, tJSide.eABLeft)
-			.addSegStrokeR(0, param.W2)
-			.addSegStrokeR(-param.W1, 0)
+		// facet fa1
+		const jointFootList: tJuncs = {};
+		const ctr1 = contourJ(W12x, W12);
+		for (let idx = 0; idx < param.N1; idx++) {
+			const Jfoot = `Jf${idx}`;
+			const a1 = idx * (2 * aW12b + 2 * aW12) + aW12;
+			const a2 = a1 + aW12b;
+			const a3 = a2 + aW12b;
+			const a4 = a3 + 2 * aW12;
+			ctr1.addPointAP(a2, Rd2)
+				.addPointAP(a3, Rd2)
+				.addSegArc2()
+				.startJunction(Jfoot, tJDir.eA, tJSide.eABLeft);
+			if (idx < param.N1 - 1) {
+				ctr1.addSegStrokeAP(a4, Rd2);
+			} else {
+				ctr1.closeSegStroke();
+			}
+			jointFootList[Jfoot] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+		}
+		const ctr2 = contourJ(V12, -V12y)
+			.addPointA(Rd1, 0)
+			.addPointA(V12, V12y)
+			.addSegArc2()
+			.startJunction('Ji11', tJDir.eA, tJSide.eABRight)
+			.addSegStrokeA(-V12, V12y)
+			.addPointA(-Rd1, 0)
+			.addPointA(-V12, -V12y)
+			.addSegArc2()
+			.startJunction('Ji21', tJDir.eA, tJSide.eABRight)
 			.closeSegStroke();
-		const fa1 = facet([ctr1]);
+		const fa1 = facet([ctr1, ctr2]);
 		// sheetFold
 		const sFold = sheetFold(
 			[fa1],
-			{ J1: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm } },
+			{
+				...jointFootList,
+				Ji11: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm },
+				Ji21: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm }
+			},
 			[
-				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: [], post: ['J1', param.W1] },
-				{ x1: 0, y1: 4 * param.W2, a1: 0, l1: param.V1, ante: [], post: ['J1', param.V1] }
+				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: [], post: ['Ji11', param.W1] },
+				{ x1: 0, y1: 4 * param.W2, a1: 0, l1: param.V1, ante: [], post: ['Ji21', param.V1] }
 			],
 			param.Th,
 			rGeome.partName
