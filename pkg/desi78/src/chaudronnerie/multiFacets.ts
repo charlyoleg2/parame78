@@ -135,8 +135,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-6 : any logs
 		rGeome.logstr += `multiFacets: N1 ${param.N1}\n`;
 		// step-7 : drawing of the figures
-		// facet fa1
-		// central disc
+		// facet faC central disc
 		const jointFootList: tJuncs = {};
 		const ctr1 = contourJ(W12x, W12);
 		for (let idx = 0; idx < param.N1; idx++) {
@@ -167,21 +166,22 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addSegArc2()
 			.startJunction('Ji21', tJDir.eA, tJSide.eABRight)
 			.closeSegStroke();
-		// foot
+		const faC = facet([ctr1, ctr2]);
+		// facet faF1 foot
 		const footCtr3 = contourJ(0, 0)
-			.startJunction('Jf01', tJDir.eA, tJSide.eABRight)
+			.startJunction('Jf01', tJDir.eB, tJSide.eABRight)
 			.addSegStrokeR(param.W1, 0)
-			.addSegStrokeR(0, param.W4 - param.W2)
+			.addSegStrokeR(0, param.W4)
 			.startJunction('Jf02', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeR(0, param.W2)
 			.addSegStrokeR(-param.W1, 0)
 			.startJunction('Jf03', tJDir.eA, tJSide.eABLeft)
 			.addSegStrokeR(0, -param.W2)
 			.closeSegStroke();
-		const fa1 = facet([ctr1, ctr2, footCtr3]);
+		const faF1 = facet([footCtr3]);
 		// sheetFold
 		const sFold = sheetFold(
-			[fa1],
+			[faC, faF1],
 			{
 				...jointFootList,
 				Jf02: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm },
