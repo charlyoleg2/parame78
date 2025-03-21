@@ -155,9 +155,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			facetList.push(fa1);
 			jointList[Jpost] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
 			if (idx > 0) {
-				half1.push(Jpost);
+				half1.push(Jpre);
 				half1.push(TW1);
-				half2.push(Jpost);
+				half2.push(Jpre);
 				half2.push(TW2);
 			}
 		}
