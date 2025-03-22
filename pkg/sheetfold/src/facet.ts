@@ -155,11 +155,11 @@ class Facet {
 		}
 		return ctrsPure;
 	}
-	getContourJ(iFacetIdx: number): ContourJ[] {
+	getContourJ(iFacetIdx: number, checkOrientation: boolean): ContourJ[] {
 		const ctrsJ: ContourJ[] = [];
 		for (const [iCtrIdx, iCtr] of this.outerInner.entries()) {
 			if (iCtr instanceof ContourJ) {
-				if (iCtr.getEnvelop().orientation !== true) {
+				if (checkOrientation && iCtr.getEnvelop().orientation !== true) {
 					throw `err890: orientation of ContourJ ${iFacetIdx} ${iCtrIdx} is not CCW`;
 				}
 				iCtr.setIdx(iFacetIdx, iCtrIdx);

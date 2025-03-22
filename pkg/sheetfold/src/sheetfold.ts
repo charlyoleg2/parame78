@@ -613,7 +613,7 @@ class SheetFold {
 		for (const [iFacetIdx, iFacet] of facetPlaced.entries()) {
 			ctrsAll.push(...iFacet.getContourAll());
 			ctrsPure.push(...iFacet.getContourPure());
-			ctrsJ.push(...iFacet.getContourJ(iFacetIdx));
+			ctrsJ.push(...iFacet.getContourJ(iFacetIdx, false));
 		}
 		// second layer
 		const rfig = figure();
