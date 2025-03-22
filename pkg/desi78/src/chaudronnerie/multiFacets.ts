@@ -24,7 +24,7 @@ import {
 	//line,
 	//vector,
 	//contour,
-	//contourCircle,
+	contourCircle,
 	//ctrRectangle,
 	//figure,
 	degToRad,
@@ -41,7 +41,7 @@ import {
 } from 'geometrix';
 //import { triLALrL, triLLLrA } from 'triangule';
 //import type { Facet, tJuncs, tHalfProfile } from 'sheetfold';
-import type { tJuncs } from 'sheetfold';
+import type { Facet, tJuncs } from 'sheetfold';
 import {
 	tJDir,
 	tJSide,
@@ -125,6 +125,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const W12x = Math.sqrt(Rd2 ** 2 - W12 ** 2);
 		const aW12 = Math.asin(W12 / Rd2);
 		const aW12b = Math.PI / param.N1 - aW12;
+		const W16 = param.W1 / 6;
+		const W426 = (param.W4 + param.W2) / 6;
+		const W16b = 4 * W16 - 2 * param.E1;
 		// step-5 : checks on the parameter values
 		if (aJr < aJn * param.Th) {
 			throw `err107: Jradius ${aJr} is too small compare to Th ${param.Th} and Jneutral ${param.Jneutral}`;
@@ -168,24 +171,51 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.closeSegStroke();
 		const faC = facet([ctr1, ctr2]);
 		// facet faF1 foot
-		const footCtr3 = contourJ(0, 0)
-			.startJunction('Jf01', tJDir.eB, tJSide.eABRight)
-			.addSegStrokeR(param.W1, 0)
-			.addSegStrokeR(0, param.W4)
-			.startJunction('Jf02', tJDir.eA, tJSide.eABLeft)
-			.addSegStrokeR(0, param.W2)
-			.addSegStrokeR(-param.W1, 0)
-			.startJunction('Jf03', tJDir.eA, tJSide.eABLeft)
-			.addSegStrokeR(0, -param.W2)
-			.closeSegStroke();
-		const faF1 = facet([footCtr3]);
+		const faF: Facet[] = [];
+		const jointFoot2List: tJuncs = {};
+		for (let idx = 0; idx < param.N1; idx++) {
+			const Jfoot1 = `Jf${idx}1`;
+			const Jfoot2 = `Jf${idx}2`;
+			const Jfoot3 = `Jf${idx}3`;
+			const Jfoot4 = `Jf${idx}4`;
+			const footCtr3 = contourJ(0, 0)
+				.startJunction(Jfoot1, tJDir.eB, tJSide.eABRight)
+				.addSegStrokeR(param.W1, 0)
+				.addSegStrokeR(0, param.W4)
+				.startJunction(Jfoot2, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(0, param.W2)
+				.addSegStrokeR(-param.W1, 0)
+				.startJunction(Jfoot3, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(0, -param.W2)
+				.closeSegStroke();
+			const footCtr4 = contourJ(W16, W426)
+				.addSegStrokeR(4 * W16, 0)
+				.addSegStrokeR(0, 4 * W426)
+				.addSegStrokeR(-param.E1, 0)
+				.startJunction(Jfoot4, tJDir.eA, tJSide.eABRight)
+				.addSegStrokeR(-W16b, 0)
+				.addSegStrokeR(-param.E1, 0)
+				.closeSegStroke();
+			const footCtr5 = contourJ(0, 0)
+				.addSegStrokeR(W16b, 0)
+				.addSegStrokeR(0, 2 * W426)
+				.startJunction(Jfoot4, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(-W16b, 0)
+				.closeSegStroke();
+			jointFoot2List[Jfoot2] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot3] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot4] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+			faF.push(facet([footCtr3, footCtr4]));
+			faF.push(
+				facet([footCtr5, contourCircle(W16b / 2, W426, (Math.min(W16b / 2, W426) * 2) / 3)])
+			);
+		}
 		// sheetFold
 		const sFold = sheetFold(
-			[faC, faF1],
+			[faC, ...faF],
 			{
 				...jointFootList,
-				Jf02: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm },
-				Jf03: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm },
+				...jointFoot2List,
 				Ji11: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm },
 				Ji21: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm }
 			},
