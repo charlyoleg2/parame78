@@ -25,7 +25,7 @@ import {
 	//vector,
 	//contour,
 	contourCircle,
-	//ctrRectangle,
+	ctrRectangle,
 	//figure,
 	degToRad,
 	//radToDeg,
@@ -70,9 +70,9 @@ const pDef: tParamDef = {
 		pNumber('R1', 'mm', 5, 1, 20, 1),
 		pSectionSeparator('Intern'),
 		pNumber('V1', 'mm', 20, 1, 200, 1),
-		pNumber('V2', 'mm', 20, 1, 200, 1),
+		pNumber('V2', 'mm', 15, 1, 200, 1),
 		pNumber('V3', 'mm', 30, 1, 200, 1),
-		pNumber('V4', 'mm', 50, 1, 200, 1),
+		pNumber('V4', 'mm', 80, 1, 200, 1),
 		pSectionSeparator('Thickness and fold'),
 		pNumber('Th', 'mm', 10, 1, 20, 1),
 		pNumber('Jangle', 'degree', 60, -120, 120, 0.1),
@@ -131,6 +131,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const W16 = param.W1 / 6;
 		const W426 = (param.W4 + param.W2) / 6;
 		const W16b = 4 * W16 - 2 * param.E1;
+		const V412 = (param.V4 - param.V1) / 2;
+		const V18 = param.V1 / 8;
+		const V416 = param.V4 / 16;
 		// step-5 : checks on the parameter values
 		if (aJrF < aJn * param.Th) {
 			throw `err107: JradiusF ${aJrF} is too small compare to Th ${param.Th} and Jneutral ${param.Jneutral}`;
@@ -140,6 +143,9 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		}
 		if (aW12b < 0.001) {
 			throw `err132: aW12b ${ffix(aW12b)} is negative or quasi-negative`;
+		}
+		if (V412 < 0.1) {
+			throw `err147: V4 ${param.V4} is too small compare to V1 ${param.V1}`;
 		}
 		// step-6 : any logs
 		rGeome.logstr += `multiFacets: N1 ${param.N1}\n`;
@@ -256,6 +262,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		for (let idx = 0; idx < 2; idx++) {
 			const Jintern1 = `Ji${idx + 1}1`;
 			const Jintern2 = `Ji${idx + 1}2`;
+			const Jintern3 = `Ji${idx + 1}3`;
+			const Jintern4 = `Ji${idx + 1}4`;
+			const Jintern5 = `Ji${idx + 1}5`;
+			const Jintern6 = `Ji${idx + 1}6`;
+			const Jintern7 = `Ji${idx + 1}7`;
 			const internCtr1 = contourJ(0, 0)
 				.startJunction(Jintern1, tJDir.eA, tJSide.eABLeft)
 				.addSegStrokeR(param.V1, 0)
@@ -263,9 +274,79 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.startJunction(Jintern2, tJDir.eA, tJSide.eABLeft)
 				.addSegStrokeR(-param.V1, 0)
 				.closeSegStroke();
+			const internCtr2 = contourJ(0, 0)
+				.startJunction(Jintern2, tJDir.eA, tJSide.eABRight)
+				.addSegStrokeR(-param.V1, 0)
+				.addSegStrokeR(-param.V3, param.V3)
+				.startJunction(Jintern3, tJDir.eB, tJSide.eABLeft)
+				.addSegStrokeR(param.V1, 0)
+				.closeSegStroke();
+			const internCtr3 = contourJ(0, 0)
+				.startJunction(Jintern3, tJDir.eB, tJSide.eABRight)
+				.addSegStrokeR(param.V1, 0)
+				.addSegStrokeR(0, param.V4)
+				.startJunction(Jintern4, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(-param.V1, 0)
+				.addSegStrokeR(0, -V412)
+				.startJunction(Jintern5, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(0, -param.V1)
+				.closeSegStroke();
+			const internCtr3i = contourJ(V18, V416)
+				.addSegStrokeR(V18, 0)
+				.startJunction(Jintern6, tJDir.eA, tJSide.eABRight)
+				.addSegStrokeR(4 * V18, 0)
+				.addSegStrokeR(V18, 0)
+				.addSegStrokeR(0, 14 * V416)
+				.addSegStrokeR(-V18, 0)
+				.startJunction(Jintern7, tJDir.eA, tJSide.eABRight)
+				.addSegStrokeR(-4 * V18, 0)
+				.addSegStrokeR(-V18, 0)
+				.closeSegStroke();
+			const internCtr4 = contourJ(0, 0)
+				.startJunction(Jintern4, tJDir.eB, tJSide.eABRight)
+				.addSegStrokeR(param.V1, 0)
+				.addSegStrokeR(0, param.V2)
+				.addSegStrokeR(-param.V1, 0)
+				.closeSegStroke();
+			const internCtr4i = ctrRectangle(
+				param.V1 / 6,
+				param.V2 / 6,
+				(param.V1 * 2) / 3,
+				(param.V2 * 2) / 3
+			);
+			const internCtr5 = contourJ(0, 0)
+				.startJunction(Jintern5, tJDir.eB, tJSide.eABRight)
+				.addSegStrokeR(param.V1, 0)
+				.addSegStrokeR(0, param.V2)
+				.addSegStrokeR(-param.V1, 0)
+				.closeSegStroke();
+			const internCtr6 = contourJ(0, 0)
+				.startJunction(Jintern6, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(4 * V18, 0)
+				.addSegStrokeR(0, 4 * V416)
+				.addSegStrokeR(-4 * V18, 0)
+				.closeSegStroke();
+			const internCtr7 = contourJ(0, 0)
+				.startJunction(Jintern7, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(4 * V18, 0)
+				.addSegStrokeR(0, 4 * V416)
+				.addSegStrokeR(-4 * V18, 0)
+				.closeSegStroke();
+			const rIn67 = (Math.min(2 * V18, 2 * V416) * 2) / 3;
 			jointInternList[Jintern1] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
 			jointInternList[Jintern2] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern3] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern4] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern5] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern6] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern7] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
 			faI.push(facet([internCtr1]));
+			faI.push(facet([internCtr2]));
+			faI.push(facet([internCtr3, internCtr3i]));
+			faI.push(facet([internCtr4, internCtr4i]));
+			faI.push(facet([internCtr5]));
+			faI.push(facet([internCtr6, contourCircle(2 * V18, 2 * V416, rIn67)]));
+			faI.push(facet([internCtr7, contourCircle(2 * V18, 2 * V416, rIn67)]));
 		}
 		// sheetFold
 		const sFold = sheetFold(
