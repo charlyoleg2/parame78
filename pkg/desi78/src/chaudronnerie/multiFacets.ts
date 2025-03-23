@@ -178,6 +178,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			const Jfoot2 = `Jf${idx}2`;
 			const Jfoot3 = `Jf${idx}3`;
 			const Jfoot4 = `Jf${idx}4`;
+			const Jfoot6 = `Jf${idx}6`;
+			const Jfoot8 = `Jf${idx}8`;
 			const footCtr3 = contourJ(0, 0)
 				.startJunction(Jfoot1, tJDir.eB, tJSide.eABRight)
 				.addSegStrokeR(param.W1, 0)
@@ -202,13 +204,45 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.startJunction(Jfoot4, tJDir.eA, tJSide.eABLeft)
 				.addSegStrokeR(-W16b, 0)
 				.closeSegStroke();
+			const footCtr6 = contourJ(0, 0)
+				.startJunction(Jfoot2, tJDir.eB, tJSide.eABRight)
+				.addSegStrokeR(param.W2, 0)
+				.addSegStrokeR(0, param.W3)
+				.startJunction(Jfoot6, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(-param.W2, 0)
+				.closeSegStroke();
+			const footCtr7 = contourJ(0, 0)
+				.startJunction(Jfoot6, tJDir.eB, tJSide.eABRight)
+				.addSegStrokeR(param.W2, 0)
+				.addSegStrokeR(0, param.W3)
+				.addSegStrokeR(-param.W2, 0)
+				.closeSegStroke();
+			const footCtr8 = contourJ(0, 0)
+				.startJunction(Jfoot3, tJDir.eB, tJSide.eABRight)
+				.addSegStrokeR(param.W2, 0)
+				.addSegStrokeR(0, param.W3)
+				.startJunction(Jfoot8, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(-param.W2, 0)
+				.closeSegStroke();
+			const footCtr9 = contourJ(0, 0)
+				.startJunction(Jfoot8, tJDir.eB, tJSide.eABRight)
+				.addSegStrokeR(param.W2, 0)
+				.addSegStrokeR(0, param.W3)
+				.addSegStrokeR(-param.W2, 0)
+				.closeSegStroke();
 			jointFoot2List[Jfoot2] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
 			jointFoot2List[Jfoot3] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
 			jointFoot2List[Jfoot4] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot6] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot8] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+			const rIn5 = (Math.min(W16b / 2, W426) * 2) / 3;
+			const rIn7 = (Math.min(param.W2 / 2, param.W3) * 2) / 3;
 			faF.push(facet([footCtr3, footCtr4]));
-			faF.push(
-				facet([footCtr5, contourCircle(W16b / 2, W426, (Math.min(W16b / 2, W426) * 2) / 3)])
-			);
+			faF.push(facet([footCtr5, contourCircle(W16b / 2, W426, rIn5)]));
+			faF.push(facet([footCtr6]));
+			faF.push(facet([footCtr7, contourCircle(param.W2 / 2, param.W3 / 2, rIn7)]));
+			faF.push(facet([footCtr8]));
+			faF.push(facet([footCtr9, contourCircle(param.W2 / 2, param.W3 / 2, rIn7)]));
 		}
 		// sheetFold
 		const sFold = sheetFold(
