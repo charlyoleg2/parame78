@@ -197,10 +197,10 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeR(-param.E1, 0)
 				.closeSegStroke();
 			const footCtr5 = contourJ(0, 0)
-				.addSegStrokeR(0, 2 * W426)
-				.startJunction(Jfoot4, tJDir.eB, tJSide.eABLeft)
 				.addSegStrokeR(W16b, 0)
-				.addSegStrokeR(0, -2 * W426)
+				.addSegStrokeR(0, 2 * W426)
+				.startJunction(Jfoot4, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(-W16b, 0)
 				.closeSegStroke();
 			jointFoot2List[Jfoot2] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
 			jointFoot2List[Jfoot3] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
