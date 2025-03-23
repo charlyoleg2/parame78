@@ -75,7 +75,7 @@ const pDef: tParamDef = {
 		pNumber('V4', 'mm', 80, 1, 200, 1),
 		pSectionSeparator('Thickness and fold'),
 		pNumber('Th', 'mm', 10, 1, 20, 1),
-		pNumber('Jangle', 'degree', 60, -120, 120, 0.1),
+		pNumber('Jangle', 'degree', 45, -120, 120, 0.1),
 		pNumber('JradiusF', 'mm', 20, 1, 50, 1),
 		pNumber('JradiusI', 'mm', 10, 1, 50, 1),
 		pNumber('Jneutral', '%', 50, 0, 100, 1),
@@ -168,7 +168,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			} else {
 				ctr1.closeSegStroke();
 			}
-			jointFootList[Jfoot] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
+			jointFootList[Jfoot] = { angle: -aJa, radius: aJrF, neutral: aJn, mark: aJm };
 		}
 		const ctr2 = contourJ(V12, -V12y)
 			.addPointA(Rd1, 0)
@@ -202,7 +202,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.startJunction(Jfoot3, tJDir.eA, tJSide.eABLeft)
 				.addSegStrokeR(0, -param.W2)
 				.closeSegStroke();
-			const footCtr4 = contourJ(W16, W426)
+			const footCtr3i = contourJ(W16, W426)
 				.addSegStrokeR(4 * W16, 0)
 				.addSegStrokeR(0, 4 * W426)
 				.addSegStrokeR(-param.E1, 0)
@@ -242,14 +242,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeR(0, param.W3)
 				.addSegStrokeR(-param.W2, 0)
 				.closeSegStroke();
-			jointFoot2List[Jfoot2] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
-			jointFoot2List[Jfoot3] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
-			jointFoot2List[Jfoot4] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot2] = { angle: -aJa, radius: aJrF, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot3] = { angle: -aJa, radius: aJrF, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot4] = { angle: 2 * aJa, radius: aJrF, neutral: aJn, mark: aJm };
 			jointFoot2List[Jfoot6] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
 			jointFoot2List[Jfoot8] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
 			const rIn5 = (Math.min(W16b / 2, W426) * 2) / 3;
 			const rIn7 = (Math.min(param.W2 / 2, param.W3) * 2) / 3;
-			faF.push(facet([footCtr3, footCtr4]));
+			faF.push(facet([footCtr3, footCtr3i]));
 			faF.push(facet([footCtr5, contourCircle(W16b / 2, W426, rIn5)]));
 			faF.push(facet([footCtr6]));
 			faF.push(facet([footCtr7, contourCircle(param.W2 / 2, param.W3 / 2, rIn7)]));
@@ -333,13 +333,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeR(-4 * V18, 0)
 				.closeSegStroke();
 			const rIn67 = (Math.min(2 * V18, 2 * V416) * 2) / 3;
-			jointInternList[Jintern1] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
-			jointInternList[Jintern2] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
-			jointInternList[Jintern3] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
-			jointInternList[Jintern4] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
-			jointInternList[Jintern5] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
-			jointInternList[Jintern6] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
-			jointInternList[Jintern7] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern1] = { angle: 2 * aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern2] = { angle: -aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern3] = { angle: -aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern4] = { angle: 2 * aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern5] = { angle: 2 * aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern6] = { angle: 2 * aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern7] = { angle: 2 * aJa, radius: aJrI, neutral: aJn, mark: aJm };
 			faI.push(facet([internCtr1]));
 			faI.push(facet([internCtr2]));
 			faI.push(facet([internCtr3, internCtr3i]));
