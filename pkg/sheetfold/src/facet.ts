@@ -20,6 +20,14 @@ interface tJunction {
 	jPosition: number;
 }
 
+function invertJDir(iJDir: tJDir): tJDir {
+	let rJDir = tJDir.eA;
+	if (iJDir === rJDir) {
+		rJDir = tJDir.eB;
+	}
+	return rJDir;
+}
+
 /**
  * class `ContourJ`
  *
@@ -82,6 +90,35 @@ class ContourJ extends Contour {
 		rctrJ.lastPosition = this.lastPosition;
 		return rctrJ;
 	}
+	generateRevertOrientation(): ContourJ {
+		const ctrA = super.generateRevertOrientation();
+		const rctrJ = new ContourJ(ctrA.segments[0].px, ctrA.segments[0].py);
+		for (const seg of ctrA.segments) {
+			const nseg = seg.clone();
+			if (nseg.sType !== SegEnum.eStart) {
+				rctrJ.addSeg(nseg);
+				if (isSeg(nseg.sType)) {
+					rctrJ.setLastPoint(nseg.px, nseg.py);
+				}
+			}
+		}
+		const jnb = this.pJuncs.length;
+		for (let idx = 0; idx < jnb; idx++) {
+			const iJunc = this.pJuncs[jnb - idx - 1];
+			const lastPos = this.segments.length - 2 - iJunc.jPosition;
+			if (lastPos < 0) {
+				throw `err110: revert ctrJ len ${this.segments.length} has lastPos ${lastPos} negative`;
+			}
+			rctrJ.pJuncs.push({
+				jName: iJunc.jName,
+				jDir: invertJDir(iJunc.jDir),
+				jSide: iJunc.jSide,
+				jPosition: lastPos
+			});
+			rctrJ.lastPosition = lastPos;
+		}
+		return rctrJ;
+	}
 	translate(ix: number, iy: number): ContourJ {
 		const ctrA = super.translate(ix, iy);
 		const rCtrJ = this.cloneJ(ctrA);
@@ -109,6 +146,15 @@ class ContourJ extends Contour {
 	}
 	incrementUsed() {
 		this.used += 1;
+	}
+	normOrientation(iOuterInner: boolean): ContourJ {
+		const orientation1 = super.getEnvelop().orientation;
+		if (orientation1 !== iOuterInner) {
+			//console.log(`dbg155: orientation revert with ${iOuterInner} ${orientation1}`);
+			return this.generateRevertOrientation();
+		} else {
+			return this;
+		}
 	}
 }
 
@@ -155,15 +201,13 @@ class Facet {
 		}
 		return ctrsPure;
 	}
-	getContourJ(iFacetIdx: number, checkOrientation: boolean): ContourJ[] {
+	getContourJ(iFacetIdx: number): ContourJ[] {
 		const ctrsJ: ContourJ[] = [];
 		for (const [iCtrIdx, iCtr] of this.outerInner.entries()) {
 			if (iCtr instanceof ContourJ) {
-				if (checkOrientation && iCtr.getEnvelop().orientation !== true) {
-					throw `err890: orientation of ContourJ ${iFacetIdx} ${iCtrIdx} is not CCW`;
-				}
-				iCtr.setIdx(iFacetIdx, iCtrIdx);
-				ctrsJ.push(iCtr);
+				const ctrN = iCtr.normOrientation(iCtrIdx === 0);
+				ctrN.setIdx(iFacetIdx, iCtrIdx);
+				ctrsJ.push(ctrN);
 			}
 		}
 		return ctrsJ;
