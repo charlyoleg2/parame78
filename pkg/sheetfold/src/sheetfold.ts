@@ -70,6 +70,7 @@ interface tJunc2 {
 interface tJunc3 {
 	jName: string;
 	segPosition: number;
+	jDir: tJDir;
 }
 
 type tHalfProfile = (string | number)[];
@@ -433,7 +434,8 @@ class SheetFold {
 		for (const iJunc of iCtrJ.pJuncs) {
 			const j3: tJunc3 = {
 				jName: iJunc.jName,
-				segPosition: iJunc.jPosition
+				segPosition: iJunc.jPosition,
+				jDir: iJunc.jDir
 			};
 			rJ3List.push(j3);
 		}
@@ -500,11 +502,16 @@ class SheetFold {
 				const vABy = By - Ay;
 				const lAB = Math.sqrt(vABx ** 2 + vABy ** 2);
 				const aAB = Math.atan2(vABy, vABx);
+				let a90plus = 0;
+				if (tJDir.eB === iJuncList[i1].jDir) {
+					console.log('dbg505: eB in junction without facet-2');
+					a90plus = Math.PI;
+				}
 				const jLen = junc.angle === 0 ? junc.radius : Math.abs(junc.angle) * junc.radius;
 				//console.log(`dbg312: jLen ${ffix(jLen)} aAB ${ffix(aAB)} lAB ${ffix(lAB)}`);
 				const a90 = junc.a1Side === tJSide.eABLeft ? -Math.PI / 2 : Math.PI / 2;
 				//console.log(`dbg313: jLen ${ffix(jLen)} aAB ${ffix(aAB)} a90 ${ffix(a90)}`);
-				rCtr.addSegStrokeRP(aAB + a90, jLen);
+				rCtr.addSegStrokeRP(aAB + a90 + a90plus, jLen);
 				rCtr.addSegStrokeRP(aAB, lAB);
 				rCtr.addSegStrokeA(Bx, By);
 			} else {
@@ -532,7 +539,7 @@ class SheetFold {
 		const rCtrsNew: tContour[] = [];
 		for (const iCtrJ of iCtrsJ) {
 			if (iCtrJ.used === 0) {
-				const j0: tJunc3 = { jName: '', segPosition: 0 };
+				const j0: tJunc3 = { jName: '', segPosition: 0, jDir: tJDir.eA };
 				const juncList1 = [j0, ...this.generateJunc3List(iCtrJ)];
 				const ctrN = this.makePartialCtr(iCtrJ, juncList1, true, iCtrsJ);
 				//console.log(`dbg325: ${iCtrsJ.length} ctrN segNb ${ctrN.segments.length}`);
