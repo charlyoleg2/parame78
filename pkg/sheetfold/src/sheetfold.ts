@@ -504,7 +504,7 @@ class SheetFold {
 				const aAB = Math.atan2(vABy, vABx);
 				let a90plus = 0;
 				if (tJDir.eB === iJuncList[i1].jDir) {
-					console.log('dbg505: eB in junction without facet-2');
+					//console.log('dbg505: eB in junction without facet-2');
 					a90plus = Math.PI;
 				}
 				const jLen = junc.angle === 0 ? junc.radius : Math.abs(junc.angle) * junc.radius;
