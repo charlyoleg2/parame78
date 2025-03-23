@@ -9,6 +9,7 @@ export * from './chaudronnerie/reinforced_cone';
 export * from './chaudronnerie/sfDie';
 export * from './chaudronnerie/sfTube';
 export * from './chaudronnerie/multiFacets';
+export * from './chaudronnerie/sfCheck';
 export * from './optics/lens_x1';
 export * from './optics/lens_x3';
 export * from './printer3d/pulley';
