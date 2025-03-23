@@ -62,7 +62,7 @@
 		"clean": "rimraf dist dist2 node_modules"
 	},
 	"dependencies": {
-		"geometrix": "^1.0.16",
+		"geometrix": "^1.0.17",
 		"sheetfold": "^0.1.5",
 		"triangule": "^1.0.5"
 	},
