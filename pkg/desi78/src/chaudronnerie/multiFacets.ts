@@ -69,14 +69,15 @@ const pDef: tParamDef = {
 		pNumber('E1', 'mm', 5, 1, 20, 1),
 		pNumber('R1', 'mm', 5, 1, 20, 1),
 		pSectionSeparator('Intern'),
-		pNumber('V1', 'mm', 50, 1, 200, 1),
-		pNumber('V2', 'mm', 50, 1, 200, 1),
-		pNumber('V3', 'mm', 50, 1, 200, 1),
+		pNumber('V1', 'mm', 20, 1, 200, 1),
+		pNumber('V2', 'mm', 20, 1, 200, 1),
+		pNumber('V3', 'mm', 30, 1, 200, 1),
 		pNumber('V4', 'mm', 50, 1, 200, 1),
 		pSectionSeparator('Thickness and fold'),
 		pNumber('Th', 'mm', 10, 1, 20, 1),
 		pNumber('Jangle', 'degree', 60, -120, 120, 0.1),
-		pNumber('Jradius', 'mm', 20, 1, 50, 1),
+		pNumber('JradiusF', 'mm', 20, 1, 50, 1),
+		pNumber('JradiusI', 'mm', 10, 1, 50, 1),
 		pNumber('Jneutral', '%', 50, 0, 100, 1),
 		pNumber('Jmark', 'mm', 1, 0, 20, 0.1)
 	],
@@ -96,7 +97,8 @@ const pDef: tParamDef = {
 		V4: 'multiFacets_intern.svg',
 		Th: 'multiFacets_overview.svg',
 		Jangle: 'multiFacets_overview.svg',
-		Jradius: 'multiFacets_overview.svg',
+		JradiusF: 'multiFacets_overview.svg',
+		JradiusI: 'multiFacets_overview.svg',
 		Jneutral: 'multiFacets_overview.svg',
 		Jmark: 'multiFacets_overview.svg'
 	},
@@ -114,7 +116,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 	try {
 		// step-4 : some preparation calculation
 		const aJn = param.Jneutral / 100;
-		const aJr = param.Jradius;
+		const aJrF = param.JradiusF;
+		const aJrI = param.JradiusI;
 		const aJm = param.Jmark;
 		const aJa = degToRad(param.Jangle);
 		const Rd1 = param.D1 / 2;
@@ -129,8 +132,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const W426 = (param.W4 + param.W2) / 6;
 		const W16b = 4 * W16 - 2 * param.E1;
 		// step-5 : checks on the parameter values
-		if (aJr < aJn * param.Th) {
-			throw `err107: Jradius ${aJr} is too small compare to Th ${param.Th} and Jneutral ${param.Jneutral}`;
+		if (aJrF < aJn * param.Th) {
+			throw `err107: JradiusF ${aJrF} is too small compare to Th ${param.Th} and Jneutral ${param.Jneutral}`;
+		}
+		if (aJrI < aJn * param.Th) {
+			throw `err107: JradiusI ${aJrI} is too small compare to Th ${param.Th} and Jneutral ${param.Jneutral}`;
 		}
 		if (aW12b < 0.001) {
 			throw `err132: aW12b ${ffix(aW12b)} is negative or quasi-negative`;
@@ -156,7 +162,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			} else {
 				ctr1.closeSegStroke();
 			}
-			jointFootList[Jfoot] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+			jointFootList[Jfoot] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
 		}
 		const ctr2 = contourJ(V12, -V12y)
 			.addPointA(Rd1, 0)
@@ -230,11 +236,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				.addSegStrokeR(0, param.W3)
 				.addSegStrokeR(-param.W2, 0)
 				.closeSegStroke();
-			jointFoot2List[Jfoot2] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
-			jointFoot2List[Jfoot3] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
-			jointFoot2List[Jfoot4] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
-			jointFoot2List[Jfoot6] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
-			jointFoot2List[Jfoot8] = { angle: aJa, radius: aJr, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot2] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot3] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot4] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot6] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
+			jointFoot2List[Jfoot8] = { angle: aJa, radius: aJrF, neutral: aJn, mark: aJm };
 			const rIn5 = (Math.min(W16b / 2, W426) * 2) / 3;
 			const rIn7 = (Math.min(param.W2 / 2, param.W3) * 2) / 3;
 			faF.push(facet([footCtr3, footCtr4]));
@@ -244,14 +250,30 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			faF.push(facet([footCtr8]));
 			faF.push(facet([footCtr9, contourCircle(param.W2 / 2, param.W3 / 2, rIn7)]));
 		}
+		// facet faI intern
+		const faI: Facet[] = [];
+		const jointInternList: tJuncs = {};
+		for (let idx = 0; idx < 2; idx++) {
+			const Jintern1 = `Ji${idx + 1}1`;
+			const Jintern2 = `Ji${idx + 1}2`;
+			const internCtr1 = contourJ(0, 0)
+				.startJunction(Jintern1, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(param.V1, 0)
+				.addSegStrokeR(0, param.V2)
+				.startJunction(Jintern2, tJDir.eA, tJSide.eABLeft)
+				.addSegStrokeR(-param.V1, 0)
+				.closeSegStroke();
+			jointInternList[Jintern1] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			jointInternList[Jintern2] = { angle: aJa, radius: aJrI, neutral: aJn, mark: aJm };
+			faI.push(facet([internCtr1]));
+		}
 		// sheetFold
 		const sFold = sheetFold(
-			[faC, ...faF],
+			[faC, ...faF, ...faI],
 			{
 				...jointFootList,
 				...jointFoot2List,
-				Ji11: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm },
-				Ji21: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm }
+				...jointInternList
 			},
 			[
 				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: [], post: ['Ji11', param.W1] },
