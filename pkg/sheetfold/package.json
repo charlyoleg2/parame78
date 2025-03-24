@@ -1,6 +1,6 @@
 {
 	"name": "sheetfold",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"description": "a library for metal sheet construction",
 	"private": false,
 	"repository": {
