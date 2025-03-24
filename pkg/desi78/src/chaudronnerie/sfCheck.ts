@@ -24,10 +24,10 @@ import {
 	//line,
 	//vector,
 	//contour,
-	//contourCircle,
+	contourCircle,
 	//ctrRectangle,
 	//figure,
-	//degToRad,
+	degToRad,
 	//radToDeg,
 	//pointCoord,
 	//ffix,
@@ -43,8 +43,8 @@ import {
 //import type { Facet, tJuncs, tHalfProfile } from 'sheetfold';
 //import type { Facet, tJuncs } from 'sheetfold';
 import {
-	//tJDir,
-	//tJSide,
+	tJDir,
+	tJSide,
 	contourJ,
 	facet,
 	//contourJ2contour,
@@ -62,7 +62,7 @@ const pDef: tParamDef = {
 		pNumber('W1', 'mm', 100, 10, 500, 1),
 		pSectionSeparator('Thickness and fold'),
 		pNumber('Th', 'mm', 10, 1, 20, 1),
-		pNumber('Jangle', 'degree', 45, -120, 120, 0.1),
+		pNumber('Jangle', 'degree', 90, -120, 120, 0.1),
 		pNumber('Jradius', 'mm', 10, 1, 50, 1),
 		pNumber('Jneutral', '%', 50, 0, 100, 1),
 		pNumber('Jmark', 'mm', 1, 0, 20, 0.1)
@@ -91,8 +91,11 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		// step-4 : some preparation calculation
 		const aJn = param.Jneutral / 100;
 		const aJr = param.Jradius;
-		//const aJm = param.Jmark;
-		//const aJa = degToRad(param.Jangle);
+		const aJm = param.Jmark;
+		const aJa = degToRad(param.Jangle);
+		const L120 = param.L1 / 20;
+		const W120 = param.W1 / 20;
+		const rHollow = Math.min(3 * L120, 10 * W120) / 2;
 		// step-5 : checks on the parameter values
 		if (aJr < aJn * param.Th) {
 			throw `err107: Jradius ${aJr} is too small compare to Th ${param.Th} and Jneutral ${param.Jneutral}`;
@@ -101,17 +104,64 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		rGeome.logstr += `sfCheck: L1 ${param.L1} W1 ${param.W1} mm\n`;
 		// step-7 : drawing of the figures
 		// facet fa1
-		const ctr1 = contourJ(0, 0)
-			.addSegStrokeR(param.L1, 0)
-			.addSegStrokeR(0, param.W1)
-			.addSegStrokeR(-param.L1, 0)
+		const ctr11 = contourJ(0, 0)
+			.addSegStrokeR(10 * L120, 0)
+			.startJunction('J1', tJDir.eA, tJSide.eABLeft)
+			.addSegStrokeR(0, 16 * W120)
+			.addSegStrokeR(-10 * L120, 0)
 			.closeSegStroke();
-		const fa1 = facet([ctr1]);
+		const ctr12 = contourJ(L120, W120)
+			.addSegStrokeR(8 * L120, 0)
+			.addSegStrokeR(0, 1 * W120)
+			.startJunction('J2', tJDir.eA, tJSide.eABRight)
+			.addSegStrokeR(0, 12 * W120)
+			.addSegStrokeR(0, 1 * W120)
+			.addSegStrokeR(-8 * L120, 0)
+			.closeSegStroke();
+		const fa1 = facet([ctr11, ctr12]);
+		// facet fa2
+		const ctr21 = contourJ(0, 0)
+			.addSegStrokeR(20 * L120, 0)
+			.addSegStrokeR(0, 20 * W120)
+			.addSegStrokeR(-20 * L120, 0)
+			.closeSegStroke();
+		const ctr22 = contourJ(L120, W120)
+			.addSegStrokeR(18 * L120, 0)
+			.addSegStrokeR(0, 1 * W120)
+			.startJunction('J1', tJDir.eA, tJSide.eABRight)
+			.addSegStrokeR(0, 16 * W120)
+			.addSegStrokeR(0, 1 * W120)
+			.addSegStrokeR(-18 * L120, 0)
+			.addSegStrokeR(0, -1 * W120)
+			.startJunction('J3', tJDir.eA, tJSide.eABRight)
+			.addSegStrokeR(0, -16 * W120)
+			.closeSegStroke();
+		const fa2 = facet([ctr21, ctr22]);
+		// facet fa3
+		const ctr31 = contourJ(0, 0)
+			.addSegStrokeR(4 * L120, 0)
+			.addSegStrokeR(0, 16 * W120)
+			.addSegStrokeR(-4 * L120, 0)
+			.startJunction('J3', tJDir.eA, tJSide.eABLeft)
+			.closeSegStroke();
+		const ctr32 = contourCircle(2 * L120, 8 * W120, rHollow);
+		const fa3 = facet([ctr31, ctr32]);
+		// facet fa4
+		const ctr41 = contourJ(0, 0)
+			.addSegStrokeR(4 * L120, 0)
+			.startJunction('J2', tJDir.eA, tJSide.eABLeft)
+			.addSegStrokeR(0, 12 * W120)
+			.addSegStrokeR(-4 * L120, 0)
+			.closeSegStroke();
+		const ctr42 = contourCircle(2 * L120, 6 * W120, rHollow);
+		const fa4 = facet([ctr41, ctr42]);
 		// sheetFold
 		const sFold = sheetFold(
-			[fa1],
+			[fa1, fa2, fa3, fa4],
 			{
-				//J1: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm }
+				J1: { angle: -aJa, radius: aJr, neutral: aJn, mark: aJm },
+				J2: { angle: aJa, radius: aJr, neutral: aJn, mark: aJm },
+				J3: { angle: -aJa, radius: aJr, neutral: aJn, mark: aJm }
 			},
 			[
 				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: [], post: [] },
