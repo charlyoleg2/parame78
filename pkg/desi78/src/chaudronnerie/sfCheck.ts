@@ -164,8 +164,8 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				J3: { angle: -aJa, radius: aJr, neutral: aJn, mark: aJm }
 			},
 			[
-				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: [], post: [] },
-				{ x1: 0, y1: 4 * param.W1, a1: 0, l1: param.W1, ante: [], post: [] }
+				{ x1: 0, y1: 0, a1: 0, l1: L120, ante: ['J2', 4 * L120], post: ['J1', L120] },
+				{ x1: 0, y1: 4 * param.W1, a1: 0, l1: L120, ante: [], post: ['J3', 4 * L120] }
 			],
 			param.Th,
 			rGeome.partName

@@ -357,8 +357,14 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 				...jointInternList
 			},
 			[
-				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: [], post: ['Ji11', param.W1] },
-				{ x1: 0, y1: 4 * param.W2, a1: 0, l1: param.V1, ante: [], post: ['Ji21', param.V1] }
+				{
+					x1: 0,
+					y1: 0,
+					a1: 0,
+					l1: param.E2,
+					ante: ['Ji11', param.V2, 'Ji12', param.V3, 'Ji13', param.V4, 'Ji14', param.V2],
+					post: ['Jf11', param.W4 + param.W2, 'Jf12', param.W3, 'Jf16', param.W3]
+				}
 			],
 			param.Th,
 			rGeome.partName
