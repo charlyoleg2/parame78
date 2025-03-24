@@ -55,7 +55,7 @@ import {
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
 	// partName is used in URL. Choose a name without slash, backslash and space.
-	partName: 'sfTube',
+	partName: 'multiFacets',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('D1', 'mm', 200, 10, 500, 1),

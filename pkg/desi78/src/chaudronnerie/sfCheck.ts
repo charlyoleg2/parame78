@@ -55,7 +55,7 @@ import {
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
 	// partName is used in URL. Choose a name without slash, backslash and space.
-	partName: 'sfTube',
+	partName: 'sfCheck',
 	params: [
 		//pNumber(name, unit, init, min, max, step)
 		pNumber('L1', 'mm', 200, 10, 500, 1),
@@ -101,7 +101,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			throw `err107: Jradius ${aJr} is too small compare to Th ${param.Th} and Jneutral ${param.Jneutral}`;
 		}
 		// step-6 : any logs
-		rGeome.logstr += `sfCheck: L1 ${param.L1} W1 ${param.W1} mm\n`;
+		rGeome.logstr += `sfCheck: L1 ${param.L1} W1 ${param.W1} rHollow ${rHollow} mm\n`;
 		// step-7 : drawing of the figures
 		// facet fa1
 		const ctr11 = contourJ(0, 0)
@@ -165,7 +165,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			},
 			[
 				{ x1: 0, y1: 0, a1: 0, l1: param.W1, ante: [], post: [] },
-				{ x1: 0, y1: 4 * param.W1, a1: 0, l1: param.V1, ante: [], post: [] }
+				{ x1: 0, y1: 4 * param.W1, a1: 0, l1: param.W1, ante: [], post: [] }
 			],
 			param.Th,
 			rGeome.partName
