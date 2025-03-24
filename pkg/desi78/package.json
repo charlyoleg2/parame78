@@ -63,8 +63,8 @@
 	},
 	"dependencies": {
 		"geometrix": "^1.0.17",
-		"sheetfold": "^0.1.5",
-		"triangule": "^1.0.5"
+		"sheetfold": "^0.1.6",
+		"triangule": "^1.0.6"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.22.0",
@@ -78,7 +78,7 @@
 		"svgo": "^3.3.2",
 		"tsup": "^8.4.0",
 		"typescript": "^5.8.2",
-		"typescript-eslint": "^8.27.0",
+		"typescript-eslint": "^8.28.0",
 		"vitest": "^3.0.9"
 	}
 }
