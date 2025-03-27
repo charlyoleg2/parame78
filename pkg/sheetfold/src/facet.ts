@@ -235,5 +235,5 @@ function contourJ2contour(iContoutJ: tContourJ): tContour {
 	//return iContoutJ;
 }
 
-export type { tContourJ };
+export type { tJunction, tContourJ };
 export { tJDir, tJSide, ContourJ, Facet, contourJ, facet, contourJ2contour };
