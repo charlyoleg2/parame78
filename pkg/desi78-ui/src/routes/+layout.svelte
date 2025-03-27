@@ -80,6 +80,28 @@
 			</li>
 		</ol>
 	</article>
+	<article>
+		<h3>Sheetfold</h3>
+		<pre>Parametrix extension for metal sheet folding</pre>
+		<ol>
+			<li>
+				<a href="https://www.npmjs.com/package/sheetfold" rel="external"
+					>Sheetfold package</a
+				>
+			</li>
+			<li><a href="{base}/apidoc/" rel="external">Sheetfold API</a></li>
+			<li>
+				<a href="https://www.github.com/charlyoleg2/parame78" rel="external"
+					>Sheetfold sources</a
+				>
+			</li>
+			<li>
+				<a href="https://charlyoleg2.github.io/parame78/desi78/sfDie" rel="external"
+					>Sheetfold in use</a
+				>
+			</li>
+		</ol>
+	</article>
 </footer>
 
 <style lang="scss">
