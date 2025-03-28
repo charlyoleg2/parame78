@@ -222,9 +222,27 @@ class Facet {
 }
 
 // instantiation functions
+
+/**
+ * Intanciate a ContourJ object
+ * @internal
+ *
+ *  @param ix - x-coordiante of the starting point
+ *  @param iu - y-coordiante of the starting point
+ *  @param icolor - option color for displaying that contour
+ *  @returns the ContourJ object
+ */
 function contourJ(ix: number, iy: number, icolor = ''): ContourJ {
 	return new ContourJ(ix, iy, icolor);
 }
+
+/**
+ * Intanciate a Facet object
+ * @internal
+ *
+ *  @param iOuterInner - a list of CountourJ/Contour objects
+ *  @returns the Facet object
+ */
 function facet(iOuterInner: tContourJ[]): Facet {
 	return new Facet(iOuterInner);
 }
