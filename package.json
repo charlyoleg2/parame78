@@ -1,6 +1,6 @@
 {
 	"name": "parame78",
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"description": "The mono-repo for desi78, desi78-cli, desi78-ui and desi78-uis",
 	"private": true,
 	"repository": {
