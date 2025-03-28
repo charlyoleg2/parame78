@@ -63,7 +63,7 @@
 	},
 	"dependencies": {
 		"geometrix": "^1.0.17",
-		"sheetfold": "^0.1.7",
+		"sheetfold": "^1.0.1",
 		"triangule": "^1.0.8"
 	},
 	"devDependencies": {
