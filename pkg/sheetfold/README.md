@@ -50,13 +50,18 @@ npm -w sheetfold run ci
 Main functions of SheetFold
 ---------------------------
 
-### facet
-
-![sheetfold\_facet.svg](https://raw.githubusercontent.com/charlyoleg2/parame78/refs/heads/main/pkg/sheetfold/svg/sheetfold_facet.svg)
+### contourJ
 
 Replace the *Contour* class of *geometrix* for creating a contour with junctions.
 
 
-Common pitfalls around SheetFold
---------------------------------
+### facet
+
+Replace the *Figure* class of *geometrix* for creating a figure with junctions.
+
+
+### sheetFold
+
+Generate a *sheefold* design by combining facets.
+
 
