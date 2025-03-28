@@ -228,7 +228,7 @@ class Facet {
  * @internal
  *
  *  @param ix - x-coordiante of the starting point
- *  @param iu - y-coordiante of the starting point
+ *  @param iy - y-coordiante of the starting point
  *  @param icolor - option color for displaying that contour
  *  @returns the ContourJ object
  */
