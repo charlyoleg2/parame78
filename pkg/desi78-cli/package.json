@@ -58,8 +58,8 @@
 	},
 	"dependencies": {
 		"desi78": "^1.0.8",
-		"geomcli": "^1.0.20",
-		"geometrix": "^1.0.20"
+		"geomcli": "^1.0.21",
+		"geometrix": "^1.0.21"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.22.0",
