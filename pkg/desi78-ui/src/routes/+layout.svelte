@@ -55,7 +55,7 @@
 		<ol>
 			<li><a href="https://github.com/charlyoleg2/parametrix">Parametrix repo</a></li>
 			<li><a href="https://charlyoleg2.github.io/parametrix/">Parametrix page</a></li>
-			<li><a href="https://catalos-catalui.vercel.app/">Catalos</a></li>
+			<li><a href="https://parametrix.fr/">Parametrix catalog</a></li>
 		</ol>
 	</article>
 	<article>
