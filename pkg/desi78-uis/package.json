@@ -1,6 +1,6 @@
 {
 	"name": "desi78-uis",
-	"description": "mini-server for the web-app desi78-ui",
+	"description": "feli-package desi78-uis for installing locally the web-ui desi78-ui",
 	"version": "1.0.9",
 	"private": false,
 	"repository": {
@@ -12,8 +12,10 @@
 	"license": "ISC",
 	"keywords": [
 		"parametrix",
-		"3D",
-		"CAD"
+		"3D modeling",
+		"CAD",
+		"feli",
+		"front-end locally installed"
 	],
 	"type": "module",
 	"exports": {
@@ -33,7 +35,7 @@
 		"!dist/**/*.spec.*"
 	],
 	"engines": {
-		"node": ">=20.10.0"
+		"node": ">=22.0.0"
 	},
 	"tsup": {
 		"entry": [
@@ -63,7 +65,7 @@
 		"test:unit": "vitest",
 		"test:unit:once": "vitest --run",
 		"clean_public": "rimraf dist/public",
-		"copy_ui": "fse copy ../desi78-ui/build dist/public",
+		"copy_ui": "shx cp -r ../desi78-ui/build dist/public",
 		"checkCopy": "ls -l dist/public/index.html",
 		"copy_public": "run-s clean_public copy_ui checkCopy",
 		"ci": "run-s check build pretty lint test:unit:once copy_public",
@@ -72,24 +74,18 @@
 		"clean": "rimraf node_modules build dist tmp"
 	},
 	"dependencies": {
-		"express": "^5.1.0",
-		"fs-extra": "^11.3.0",
-		"get-port": "^7.1.0",
-		"open": "^10.1.2",
-		"yargs": "^18.0.0"
+		"feli": "^1.0.1"
 	},
 	"devDependencies": {
-		"@atao60/fse-cli": "^0.1.9",
-		"@eslint/js": "^9.22.0",
+		"@eslint/js": "^9.10.0",
 		"@types/eslint__js": "^8.42.3",
-		"@types/express": "^5.0.3",
-		"@types/fs-extra": "^11.0.4",
-		"@types/yargs": "^17.0.33",
+		"@types/node": "^24.0.10",
 		"eslint": "^9.30.1",
 		"eslint-config-prettier": "^10.1.5",
 		"npm-run-all2": "^8.0.4",
 		"prettier": "^3.6.2",
 		"rimraf": "^6.0.1",
+		"shx": "^0.4.0",
 		"tsup": "^8.5.0",
 		"typescript": "^5.8.3",
 		"typescript-eslint": "^8.35.1",
