@@ -60,6 +60,7 @@ const c_simOne = 0;
 const c_simTwo = 1;
 const c_simParallel = 2;
 const c_simObject = 3;
+const c_simNone = 4;
 
 // line intersection
 function lineXline(rs1: tRaySeg, rs2: tRaySeg): tInterX {
@@ -224,7 +225,9 @@ simType: ${simType}\n`;
 	const obj1: tRaySeg = { xx: objPx, yy: objPy, aa: ray1A1 };
 	const obj2: tRaySeg = { xx: objPx, yy: objPy, aa: ray2A1 };
 	const DlUsed = lenss[0].Dl * 0.98;
-	if (simType === c_simOne) {
+	if (simType === c_simNone) {
+		logSim += `No simulation\n`;
+	} else if (simType === c_simOne) {
 		const [ctrRay1] = traceOneRay(obj1, n0, lenss, imgPx);
 		rays.push(ctrRay1);
 	} else if (simType === c_simTwo) {

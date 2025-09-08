@@ -64,7 +64,7 @@ const pDef: tParamDef = {
 		pNumber('ray2Angle', 'degree', -2, -60, 60, 1),
 		pNumber('rayNb', 'rays', 3, 1, 100, 1),
 		pNumber('imagePx', 'mm', 120, 0, 2000, 1),
-		pDropdown('simType', ['oneRay', 'twoRays', 'parallel', 'object'])
+		pDropdown('simType', ['oneRay', 'twoRays', 'parallel', 'object', 'nosim'])
 	],
 	paramSvg: {
 		D1: 'lens_profile.svg',
