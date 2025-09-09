@@ -373,6 +373,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		lensX1Param_1.setVal('TypeR', param.l1TypeR);
 		lensX1Param_1.setVal('ni', param.l1ni);
 		lensX1Param_1.setVal('ne', param.ne);
+		lensX1Param_1.setVal('simType', 4); // nosim
 		const lensX1Geom_1 = lensX1Def.pGeom(
 			0,
 			lensX1Param_1.getParamVal(),
@@ -392,6 +393,7 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		lensX1Param_2.setVal('TypeR', param.l2TypeR);
 		lensX1Param_2.setVal('ni', param.l2ni);
 		lensX1Param_2.setVal('ne', param.ne);
+		lensX1Param_2.setVal('simType', 4); // nosim
 		const lensX1Geom_2 = lensX1Def.pGeom(
 			0,
 			lensX1Param_2.getParamVal(),
@@ -411,12 +413,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		lensX1Param_3.setVal('TypeR', param.l3TypeR);
 		lensX1Param_3.setVal('ni', param.l3ni);
 		lensX1Param_3.setVal('ne', param.ne);
+		lensX1Param_3.setVal('simType', 4); // nosim
 		const lensX1Geom_3 = lensX1Def.pGeom(
 			0,
 			lensX1Param_3.getParamVal(),
 			lensX1Param_3.getSuffix()
 		);
-		checkGeom(lensX1Geom_1);
+		checkGeom(lensX1Geom_3);
 		rGeome.logstr += prefixLog(lensX1Geom_3.logstr, lensX1Param_3.getPartNameSuffix());
 		// sub-design
 		rGeome.sub = {
