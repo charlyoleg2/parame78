@@ -62,9 +62,9 @@
 		"clean": "rimraf dist dist2 node_modules"
 	},
 	"dependencies": {
-		"geometrix": "^1.0.27",
-		"sheetfold": "^1.0.7",
-		"triangule": "^1.0.14"
+		"geometrix": "^1.0.28",
+		"sheetfold": "^1.0.9",
+		"triangule": "^1.0.16"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.22.0",
@@ -73,12 +73,12 @@
 		"eslint": "^9.39.2",
 		"eslint-config-prettier": "^10.1.8",
 		"npm-run-all2": "^8.0.4",
-		"prettier": "^3.7.4",
+		"prettier": "^3.8.0",
 		"rimraf": "^6.1.2",
 		"svgo": "^4.0.0",
 		"tsup": "^8.5.1",
 		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.50.1",
-		"vitest": "^4.0.16"
+		"typescript-eslint": "^8.53.0",
+		"vitest": "^4.0.17"
 	}
 }
