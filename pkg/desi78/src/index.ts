@@ -18,6 +18,7 @@ export * from './codeExample/codeExample1';
 export * from './codeExample/demoTriangule';
 export * from './codeExample/demoSheetFold';
 export * from './codeExample/demoSheetFold2';
+export * from './codeExample/doubleArcs';
 export * from './botArm/armEnd';
 export * from './botArm/armAxis';
 export * from './botArm/armJoint';
