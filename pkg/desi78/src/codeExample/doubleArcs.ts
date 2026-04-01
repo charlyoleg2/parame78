@@ -18,18 +18,18 @@ import {
 	//designParam,
 	//checkGeom,
 	//prefixLog,
-	//point,
+	point,
 	//Point,
 	//ShapePoint,
-	//line,
-	//vector,
+	line,
+	vector,
 	contour,
 	//contourCircle,
 	//ctrRectangle,
 	figure,
 	degToRad,
 	radToDeg,
-	//pointCoord,
+	pointCoord,
 	ffix,
 	pNumber,
 	//pCheckbox,
@@ -81,10 +81,13 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 		const bT = degToRad(param.b);
 		const cT = degToRad(param.c);
 		const au = (aT + cT) / 2;
-		const av = Math.abs(bT - cT) / 2;
+		const av = (bT - cT) / 2;
 		const [tr1lAC, tr1lBC, str1] = triALArLL(Math.abs(au), param.lAB, Math.abs(av));
 		const [tr1aC, str2] = triAArA(Math.abs(au), Math.abs(av));
 		const sAB = Math.sign(aT * bT);
+		const vLen = param.lAB / 4;
+		const pi2 = Math.PI / 2;
+		const [Cx, Cy] = pointCoord(0, 0, au, tr1lAC);
 		rGeome.logstr += str1 + str2;
 		// step-5 : checks on the parameter values
 		if (sAB >= 0) {
@@ -100,9 +103,15 @@ function pGeom(t: number, param: tParamVal, suffix = ''): tGeom {
 			.addPointRP(au, tr1lAC)
 			.addSegArc3(aT, true)
 			.addPointA(param.lAB, 0)
-			.addSegArc3(bT, false)
+			.addSegArc3(Math.PI + bT, false)
 			.closeSegStroke();
 		fig1.addMainO(ctr1);
+		fig1.addVector(vector(aT, vLen, point(0, 0)));
+		fig1.addVector(vector(bT, vLen, point(param.lAB, 0)));
+		fig1.addVector(vector(cT, vLen, point(Cx, Cy)));
+		fig1.addLine(line(0, 0, aT + pi2));
+		fig1.addLine(line(Cx, Cy, cT + pi2));
+		fig1.addLine(line(param.lAB, 0, bT + pi2));
 		// final figure list
 		rGeome.fig = {
 			face1: fig1
