@@ -53,5 +53,3 @@ jobs:
               run: |
                   npm run ci  # rebuild without env BASE_PATH
                   npm run gh-publish
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
