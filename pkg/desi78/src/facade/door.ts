@@ -12,7 +12,7 @@ import type {
 	tPageDef
 	//tSubInst
 	//tSubDesign
-} from 'geometrix';
+} from '@parametrix/geometrix';
 import {
 	point,
 	Point,
@@ -32,7 +32,7 @@ import {
 	initGeom,
 	EExtrude,
 	EBVolume
-} from 'geometrix';
+} from '@parametrix/geometrix';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {

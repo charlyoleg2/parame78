@@ -30,12 +30,13 @@
 		"ci": "run-s cp_pgdsvg build lint check test:unit:once",
 		"format": "prettier --write .",
 		"github-pages-fix": "touch build/.nojekyll",
+		"jsrpub": "npx jsr publish",
 		"clean": "rimraf .svelte-kit build node_modules static/pgdsvg"
 	},
 	"dependencies": {
-		"desi78": "^1.0.21",
-		"geometrix": "^1.0.28",
-		"geomui": "^1.0.28"
+		"@parametrix/geometrix": "npm:@jsr/parametrix__geometrix@^1.0.33",
+		"@parametrix/geomui": "npm:@jsr/parametrix__geomui@^1.0.33",
+		"desi78": "^1.0.21"
 	},
 	"devDependencies": {
 		"@atao60/fse-cli": "^0.1.9",
@@ -48,6 +49,7 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.17.1",
 		"globals": "^17.6.0",
+		"jsr": "^0.14.3",
 		"npm-run-all2": "^8.0.4",
 		"prettier": "^3.8.3",
 		"prettier-plugin-svelte": "^3.5.2",

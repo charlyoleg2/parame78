@@ -13,7 +13,7 @@ import type {
 	tPageDef
 	//tSubInst
 	//tSubDesign
-} from 'geometrix';
+} from '@parametrix/geometrix';
 import {
 	//designParam,
 	//checkGeom,
@@ -38,7 +38,7 @@ import {
 	initGeom,
 	EExtrude,
 	EBVolume
-} from 'geometrix';
+} from '@parametrix/geometrix';
 //import { triAPiPi, triAArA, triALArLL, triLALrL, triALLrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
 //import { triAArA, triALArLL, triLALrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
 import { triALArLL, triAArA } from 'triangule';

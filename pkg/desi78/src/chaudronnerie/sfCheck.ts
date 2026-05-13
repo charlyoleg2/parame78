@@ -13,7 +13,7 @@ import type {
 	tPageDef
 	//tSubInst
 	//tSubDesign
-} from 'geometrix';
+} from '@parametrix/geometrix';
 import {
 	//designParam,
 	//checkGeom,
@@ -38,7 +38,7 @@ import {
 	initGeom
 	//EExtrude,
 	//EBVolume
-} from 'geometrix';
+} from '@parametrix/geometrix';
 //import { triLALrL, triLLLrA } from 'triangule';
 //import type { Facet, tJuncs, tHalfProfile } from 'sheetfold';
 //import type { Facet, tJuncs } from 'sheetfold';

@@ -13,7 +13,7 @@ import type {
 	tPageDef
 	//tSubInst
 	//tSubDesign
-} from 'geometrix';
+} from '@parametrix/geometrix';
 import {
 	point,
 	//Point,
@@ -34,7 +34,7 @@ import {
 	initGeom,
 	EExtrude,
 	EBVolume
-} from 'geometrix';
+} from '@parametrix/geometrix';
 import type { tLens } from './optic_sim';
 import { rayTrace } from './optic_sim';
 

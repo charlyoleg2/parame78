@@ -12,7 +12,7 @@ import type {
 	tPageDef
 	//tSubInst
 	//tSubDesign
-} from 'geometrix';
+} from '@parametrix/geometrix';
 import {
 	//point,
 	//Point,
@@ -33,7 +33,7 @@ import {
 	transform3d,
 	EExtrude,
 	EBVolume
-} from 'geometrix';
+} from '@parametrix/geometrix';
 //import { triAArA, triALArLL, triLALrL, triALLrLAA, triLLLrA, triLLLrAAA } from 'triangule';
 import { triLALrL, triLLLrA, triALArLL } from 'triangule';
 

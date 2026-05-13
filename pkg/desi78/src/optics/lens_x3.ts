@@ -13,7 +13,7 @@ import type {
 	tPageDef
 	//tSubInst
 	//tSubDesign
-} from 'geometrix';
+} from '@parametrix/geometrix';
 import {
 	designParam,
 	checkGeom,
@@ -37,7 +37,7 @@ import {
 	initGeom,
 	EExtrude,
 	EBVolume
-} from 'geometrix';
+} from '@parametrix/geometrix';
 //import type { tPL } from './lens_helper';
 import { initPL, e1plus, checkLensParam, logLens, ctrHalfLens, otherHalfLens } from './lens_helper';
 import type { tLens } from './optic_sim';

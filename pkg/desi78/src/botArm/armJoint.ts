@@ -13,7 +13,7 @@ import type {
 	tPageDef,
 	tSubInst
 	//tSubDesign
-} from 'geometrix';
+} from '@parametrix/geometrix';
 import {
 	designParam,
 	checkGeom,
@@ -40,7 +40,7 @@ import {
 	transform3d,
 	//EExtrude,
 	EBVolume
-} from 'geometrix';
+} from '@parametrix/geometrix';
 //import type { tContourJ } from 'sheetfold';
 //import {
 //	tJDir,

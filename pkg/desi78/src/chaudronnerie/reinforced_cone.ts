@@ -12,7 +12,7 @@ import type {
 	//tSubInst,
 	//tSubDesign,
 	tPageDef
-} from 'geometrix';
+} from '@parametrix/geometrix';
 import {
 	designParam,
 	checkGeom,
@@ -35,7 +35,7 @@ import {
 	initGeom,
 	EExtrude,
 	EBVolume
-} from 'geometrix';
+} from '@parametrix/geometrix';
 
 // design import
 import { reinforcedTubeDef } from './reinforced_tube';

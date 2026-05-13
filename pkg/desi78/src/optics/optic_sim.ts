@@ -6,7 +6,7 @@
 import type {
 	//Contour,
 	tContour
-} from 'geometrix';
+} from '@parametrix/geometrix';
 import {
 	withinHPiHPi,
 	//point,
@@ -21,7 +21,7 @@ import {
 	degToRad,
 	radToDeg,
 	ffix
-} from 'geometrix';
+} from '@parametrix/geometrix';
 
 interface tLens {
 	E1: number;
