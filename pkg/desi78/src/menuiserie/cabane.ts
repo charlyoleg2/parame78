@@ -12,7 +12,7 @@ import type {
 	//tSubInst,
 	//tSubDesign,
 	tPageDef
-} from '@parametrix/geometrix';
+} from 'geometrix';
 import {
 	designParam,
 	checkGeom,
@@ -35,7 +35,7 @@ import {
 	initGeom,
 	EExtrude,
 	EBVolume
-} from '@parametrix/geometrix';
+} from 'geometrix';
 
 // design import
 import { cabanePlancherDef } from './cabane_plancher';

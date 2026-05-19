@@ -1,7 +1,7 @@
 // facet.ts
 
-import type { tContour, Transform2d } from '@parametrix/geometrix';
-import { Contour, SegEnum, isSeg } from '@parametrix/geometrix';
+import type { tContour, Transform2d } from 'geometrix';
+import { Contour, SegEnum, isSeg } from 'geometrix';
 
 enum tJDir {
 	eA,

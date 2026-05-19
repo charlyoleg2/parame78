@@ -1,8 +1,8 @@
 // lens_helper.ts
 // helper function for creating design with several lens on the Ox axis
 
-import type { Contour } from '@parametrix/geometrix';
-import { contour, ffix } from '@parametrix/geometrix';
+import type { Contour } from 'geometrix';
+import { contour, ffix } from 'geometrix';
 
 interface tPL {
 	D1: number;

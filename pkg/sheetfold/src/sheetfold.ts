@@ -10,7 +10,7 @@ import type {
 	tBVolume,
 	Transform2d,
 	Transform3d
-} from '@parametrix/geometrix';
+} from 'geometrix';
 import {
 	contour,
 	ctrRectangle,
@@ -27,7 +27,7 @@ import {
 	transform3d,
 	EExtrude,
 	EBVolume
-} from '@parametrix/geometrix';
+} from 'geometrix';
 import type { Facet } from './facet';
 import { tJDir, tJSide, ContourJ, contourJ2contour } from './facet';
 

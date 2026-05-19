@@ -13,7 +13,7 @@ import type {
 	tPageDef
 	//tSubInst
 	//tSubDesign
-} from '@parametrix/geometrix';
+} from 'geometrix';
 import {
 	//designParam,
 	//checkGeom,
@@ -38,7 +38,7 @@ import {
 	initGeom
 	//EExtrude,
 	//EBVolume
-} from '@parametrix/geometrix';
+} from 'geometrix';
 import {
 	tJDir,
 	tJSide,

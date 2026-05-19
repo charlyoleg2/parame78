@@ -18,7 +18,7 @@ import type {
 	//tSubDesign,
 	Transform2d,
 	Transform3d
-} from '@parametrix/geometrix';
+} from 'geometrix';
 import {
 	designParam,
 	checkGeom,
@@ -45,7 +45,7 @@ import {
 	transform3d,
 	//EExtrude,
 	EBVolume
-} from '@parametrix/geometrix';
+} from 'geometrix';
 //import type { tContourJ } from 'sheetfold';
 //import {
 //	tJDir,
