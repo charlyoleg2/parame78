@@ -24,7 +24,7 @@ const config = {
 		}),
 		paths: {
 			base: dev ? '' : `/${basePath}`,
-			relative: false
+			relative: true
 		}
 	}
 };
