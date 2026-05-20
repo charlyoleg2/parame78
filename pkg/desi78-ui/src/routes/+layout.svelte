@@ -19,9 +19,8 @@
 <header>
 	<h1>Welcome to Desi78-UI</h1>
 	<h6>
-		Display the designs of <a href={topPackage.homepage} rel="external"
-			>{libPackage.name}</a
-		>. Powered by the framework
+		Display the designs of <a href={topPackage.homepage} rel="external">{libPackage.name}</a>.
+		Powered by the framework
 		<a href="https://charlyoleg2.github.io/parametrix/">parametrix</a>.
 	</h6>
 	<nav>
@@ -35,9 +34,7 @@
 	<article>
 		<h3>{topPackage.name}</h3>
 		<code>
-			<a href={repoToHomepage(topPackage.repository.url)} rel="external"
-				>{topPackage.name}</a
-			>
+			<a href={repoToHomepage(topPackage.repository.url)} rel="external">{topPackage.name}</a>
 			version {topPackage.version}
 		</code>
 	</article>
