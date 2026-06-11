@@ -361,7 +361,7 @@ function triLLLrA(
  *  @param l2 - the second length of the triangle
  *  @param l3 - the third length of the triangle
  *  @param checkLevel - the level of check
- *  @returns the three angles a12, a23, a31 of the triangle + string-for-log
+ *  @returns the three angles a31, a12, a23 of the triangle + string-for-log
  */
 function triLLLrAAA(
 	l1: number,
