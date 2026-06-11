@@ -355,7 +355,7 @@ function triLLLrA(
 }
 
 /**
- * Calculate the angles a12, a23, a31 of a triangle from the lengths l1, l2 and l3
+ * Calculate the angles a31, a12, a23 of a triangle from the lengths l1, l2 and l3
  *
  *  @param l1 - the first length of the triangle
  *  @param l2 - the second length of the triangle
