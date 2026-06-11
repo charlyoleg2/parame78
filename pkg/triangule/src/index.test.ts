@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import * as dut from './index';
+import * as dut from './index.ts';
 
 describe('triangule under tests', () => {
 	// angle conversion

@@ -28,8 +28,8 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-import type { Facet } from './facet';
-import { tJDir, tJSide, ContourJ, contourJ2contour } from './facet';
+import type { Facet } from './facet.ts';
+import { tJDir, tJSide, ContourJ, contourJ2contour } from './facet.ts';
 
 interface tJunc {
 	angle: number;

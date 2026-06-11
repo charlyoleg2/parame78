@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { repoToHomepage } from '$lib/general';
+	import { repoToHomepage } from '$lib/general.js';
 	import { resolve, asset } from '$app/paths';
 	import { version_details } from 'geometrix';
-	import topPackage from '../../../../package.json';
-	import libPackage from '../../../desi78/package.json';
-	import appPackage from '../../package.json';
+	import topPackage from '../../../../package.json' with { type: 'json' };
+	import libPackage from '../../../desi78/package.json' with { type: 'json' };
+	import appPackage from '../../package.json' with { type: 'json' };
 
 	// props
 	interface Props {

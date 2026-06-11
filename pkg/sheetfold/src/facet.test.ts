@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-//import * as dut from './facet';
+//import * as dut from './facet.ts';
 
 describe('facet under tests', () => {
 	// TODO facet unit-test

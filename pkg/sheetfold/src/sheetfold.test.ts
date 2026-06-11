@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-//import * as dut from './sheetfold';
+//import * as dut from './sheetfold.ts';
 
 describe('sheetfold under tests', () => {
 	// TODO sheetfold unit-test

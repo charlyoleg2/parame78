@@ -39,11 +39,18 @@ import {
 	EBVolume
 } from 'geometrix';
 //import type { tPL } from './lens_helper';
-import { initPL, e1plus, checkLensParam, logLens, ctrHalfLens, otherHalfLens } from './lens_helper';
-import type { tLens } from './optic_sim';
-import { rayTrace } from './optic_sim';
+import {
+	initPL,
+	e1plus,
+	checkLensParam,
+	logLens,
+	ctrHalfLens,
+	otherHalfLens
+} from './lens_helper.ts';
+import type { tLens } from './optic_sim.ts';
+import { rayTrace } from './optic_sim.ts';
 // design import for sub-design
-import { lensX1Def } from './lens_x1';
+import { lensX1Def } from './lens_x1.ts';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {

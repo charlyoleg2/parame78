@@ -51,8 +51,8 @@ import {
 //	//facet2figure,
 //	sheetFold
 //} from 'sheetfold';
-import { armAxisDef } from './armAxis';
-import { armEndDef } from './armEnd';
+import { armAxisDef } from './armAxis.ts';
+import { armEndDef } from './armEnd.ts';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {

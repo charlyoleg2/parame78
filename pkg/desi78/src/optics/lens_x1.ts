@@ -35,8 +35,8 @@ import {
 	EExtrude,
 	EBVolume
 } from 'geometrix';
-import type { tLens } from './optic_sim';
-import { rayTrace } from './optic_sim';
+import type { tLens } from './optic_sim.ts';
+import { rayTrace } from './optic_sim.ts';
 
 // step-2 : definition of the parameters and more (part-name, svg associated to each parameter, simulation parameters)
 const pDef: tParamDef = {
