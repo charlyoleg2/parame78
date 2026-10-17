@@ -32,19 +32,21 @@
 		"!dist/**/*.test.*",
 		"!dist/**/*.spec.*"
 	],
-	"tsup": {
+	"tsdown": {
 		"entry": [
 			"src/desi78-cli.ts"
 		],
 		"format": "esm",
+		"target": "esnext",
+		"fixedExtension": false,
 		"splitting": false,
 		"dts": false,
 		"sourcemap": false,
 		"clean": true
 	},
 	"scripts": {
-		"dev": "tsup --watch",
-		"build": "tsup",
+		"dev": "tsdown --watch",
+		"build": "tsdown",
 		"check": "tsc --noEmit",
 		"pretty": "prettier --check .",
 		"format": "prettier --write .",
