@@ -68,7 +68,7 @@
 					>Triangule package</a
 				>
 			</li>
-			<li><a href={asset('apidoc/')} rel="external">Triangule API</a></li>
+			<li><a href={asset('apidoc/index.html')} rel="external">Triangule API</a></li>
 			<li>
 				<a href="https://www.github.com/charlyoleg2/parame78" rel="external"
 					>Triangule sources</a
@@ -90,7 +90,7 @@
 					>Sheetfold package</a
 				>
 			</li>
-			<li><a href={asset('apidoc/')} rel="external">Sheetfold API</a></li>
+			<li><a href={asset('apidoc/index.html')} rel="external">Sheetfold API</a></li>
 			<li>
 				<a href="https://www.github.com/charlyoleg2/parame78" rel="external"
 					>Sheetfold sources</a
