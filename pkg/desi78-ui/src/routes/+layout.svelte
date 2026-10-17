@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { repoToHomepage } from '$lib/general.js';
+	import { repoToHomepage } from '#lib/general.js';
 	import { resolve, asset } from '$app/paths';
 	import { version_details } from 'geometrix';
 	import topPackage from '../../../../package.json' with { type: 'json' };
@@ -11,8 +11,8 @@
 	interface Props {
 		children?: Snippet;
 	}
-	let { children }: Props = $props();
 
+	let { children }: Props = $props();
 	const detailed_versions = version_details(appPackage);
 </script>
 
@@ -68,7 +68,7 @@
 					>Triangule package</a
 				>
 			</li>
-			<li><a href={asset('/apidoc/')} rel="external">Triangule API</a></li>
+			<li><a href={asset('apidoc/')} rel="external">Triangule API</a></li>
 			<li>
 				<a href="https://www.github.com/charlyoleg2/parame78" rel="external"
 					>Triangule sources</a
@@ -90,7 +90,7 @@
 					>Sheetfold package</a
 				>
 			</li>
-			<li><a href={asset('/apidoc/')} rel="external">Sheetfold API</a></li>
+			<li><a href={asset('apidoc/')} rel="external">Sheetfold API</a></li>
 			<li>
 				<a href="https://www.github.com/charlyoleg2/parame78" rel="external"
 					>Sheetfold sources</a
