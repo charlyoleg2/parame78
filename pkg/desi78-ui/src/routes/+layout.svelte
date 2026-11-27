@@ -64,20 +64,23 @@
 		<pre>A companion library for basic calculations of triangulation</pre>
 		<ol>
 			<li>
-				<a href="https://www.npmjs.com/package/triangule" rel="external"
-					>Triangule package</a
-				>
+				<a href="https://www.npmjs.com/package/triangule" rel="external">
+					Triangule package
+				</a>
 			</li>
 			<li><a href={asset('apidoc/index.html')} rel="external">Triangule API</a></li>
 			<li>
-				<a href="https://www.github.com/charlyoleg2/parame78" rel="external"
-					>Triangule sources</a
-				>
+				<a href="https://www.github.com/charlyoleg2/parame78" rel="external">
+					Triangule sources
+				</a>
 			</li>
 			<li>
-				<a href="https://charlyoleg2.github.io/parame78/desi78/demoTriangule" rel="external"
-					>Triangule in use</a
+				<a
+					href="https://charlyoleg2.github.io/parame78/desi78/demoTriangule"
+					rel="external"
 				>
+					Triangule in use
+				</a>
 			</li>
 		</ol>
 	</article>
@@ -86,20 +89,20 @@
 		<pre>Parametrix extension for metal sheet folding</pre>
 		<ol>
 			<li>
-				<a href="https://www.npmjs.com/package/sheetfold" rel="external"
-					>Sheetfold package</a
-				>
+				<a href="https://www.npmjs.com/package/sheetfold" rel="external">
+					Sheetfold package
+				</a>
 			</li>
 			<li><a href={asset('apidoc/index.html')} rel="external">Sheetfold API</a></li>
 			<li>
-				<a href="https://www.github.com/charlyoleg2/parame78" rel="external"
-					>Sheetfold sources</a
-				>
+				<a href="https://www.github.com/charlyoleg2/parame78" rel="external">
+					Sheetfold sources
+				</a>
 			</li>
 			<li>
-				<a href="https://charlyoleg2.github.io/parame78/desi78/sfDie" rel="external"
-					>Sheetfold in use</a
-				>
+				<a href="https://charlyoleg2.github.io/parame78/desi78/sfDie" rel="external">
+					Sheetfold in use
+				</a>
 			</li>
 		</ol>
 	</article>
